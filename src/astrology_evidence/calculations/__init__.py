@@ -239,7 +239,9 @@ def calculate_chart(birth: BirthInput, settings: ChartSettings | None = None) ->
     try:
         import swisseph as swe
     except ImportError as exc:
-        raise RuntimeError("Calculation engine unavailable; use the supported Python 3.12 runtime") from exc
+        raise RuntimeError(
+            "Calculation engine unavailable; use the supported Python 3.12 runtime"
+        ) from exc
     settings = settings or ChartSettings()
     resolved = resolve_birth_time(birth)
     input_hash = _digest(birth.model_dump(mode="json"))

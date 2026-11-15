@@ -1,1 +1,1 @@
-﻿"""Evidence-first astrology application."""
+"""Evidence-first astrology application."""

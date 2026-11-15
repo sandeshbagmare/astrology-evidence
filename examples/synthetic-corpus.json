@@ -1,0 +1,44 @@
+{
+  "title": "Synthetic qualification fixture",
+  "author": "Test author",
+  "tradition": "jyotish",
+  "language": "en",
+  "review_state": "approved",
+  "bibliographic_metadata": {
+    "edition": "synthetic-1",
+    "synthetic": true
+  },
+  "rights": {
+    "evidence_reference": "Original test fixture; no real book",
+    "reviewer": "test-admin",
+    "status": "approved",
+    "jurisdictions": [
+      "test"
+    ],
+    "permissions": {
+      "store_original": true,
+      "index": true,
+      "display": true,
+      "model_transmit": true
+    },
+    "excerpt_policy": {
+      "max_chars": 10000,
+      "attribution": "Synthetic test author"
+    }
+  },
+  "passages": [
+    {
+      "text": "Jupiter gives a synthetic result unless combust.",
+      "locators": {
+        "chapter": "1",
+        "verse": "1",
+        "printed_page": "3",
+        "pdf_page_index": 5
+      },
+      "layer_type": "commentary",
+      "attributed_author": "Test author",
+      "attribution_evidence": "Synthetic title page",
+      "review_state": "approved"
+    }
+  ]
+}

@@ -10,6 +10,9 @@ from sqlalchemy import text
 
 from astrology_evidence.config import Settings
 from astrology_evidence.db import create_db
+from astrology_evidence.identity import router as identity_router
+from astrology_evidence.privacy import router as privacy_router
+from astrology_evidence.profiles import router as profiles_router
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -30,6 +33,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app = FastAPI(title="Astrology Evidence", lifespan=lifespan)
     app.state.settings = settings
     app.state.db = database
+    app.include_router(identity_router)
+    app.include_router(profiles_router)
+    app.include_router(privacy_router)
 
     @app.middleware("http")
     async def security_headers(request, call_next):
