@@ -1,0 +1,82 @@
+﻿# Research synthesis and build readiness
+
+Prepared 2026-11-15. This is the integration audit for the documentation-only planning package. No application code, benchmark, provider call, ingestion run, deployment, rights approval, or accessibility test has been completed. The specialist dossiers are design evidence and proposed acceptance criteria; they must not be reported as implemented results.
+
+## Executive assessment
+
+The package is architecturally coherent around a useful boundary: deterministic chart facts, reviewed traditional rules, bounded retrieval, and model synthesis are separate evidence classes. PostgreSQL is the authority for ownership, rights, publication state and request state; Qdrant is rebuildable retrieval infrastructure; the browser is never authoritative. Documents 01, 03, 04, 12, 21, 30–33 and 37 reinforce this design. The strongest launch blockers are external: edition-level rights and provider-processing permission, the Swiss Ephemeris licensing route, a verified Responses-compatible provider contract, a reliable privacy-job executor, and measured hosting capacity. None of these can be inferred from a proposed setting or a passing unit test.
+
+The main integration risk was contract drift. The coordinator has now integrated canonical request/answer mapping, publication states, endpoint operations, exact provider URL, deadline classification and evaluation denominators. These are reviewed documentation resolutions, not implemented safeguards. The project is ready for a future vertical slice after user authorization; it is not built or launch-ready.
+
+## Requirement-to-authority-to-work mapping
+
+| User requirement | Authoritative documents | Implementation work | Release gate |
+|---|---|---|---|
+| Python, FastAPI/Jinja/HTMX | 01, 03, 04, 14, 15 | Task 1 scaffold; Task 8 UI; pinned lockfile | Build artifact, type/lint/tests, browser flow |
+| Responses-compatible supplied provider | 04, 11, 32, 43 | Task 1 fake-server matrix; direct `/v1/responses`; no fallback | Native route, schema, timeout, privacy and no-duplicate evidence |
+| Qdrant retrieval | 03, 07, 24, 31 | Tasks 4–5 staged collection, hybrid filters, physical collection pinning | Recall evaluation, rights filters, rebuild/rollback drill |
+| Google authentication/private data | 01, 08, 12, 28–29 | Task 2 OIDC/session/CSRF; Task 8 deletion/export | Ownership adversarial suite; deletion and restore replay |
+| Detailed source-backed answers | 01, 06, 12, 13, 26, 38 | Tasks 4–7 rights ledger, rule registry, citation validator | 100% exercised ID/quote resolution; support review |
+| Book/domain research | 06, 18–20, 25–26, 39 | Task 4 acquire 3–5 approved editions; editorial review | Action-specific rights and attribution approval |
+| Unknown time/place uncertainty | 05, 21–23, 43 | Task 3 interval calculations, geocoder/manual path, UI states | DST fold/gap, boundary and no-noon fixtures |
+| Realistic free hosting | 10, 34–35, 43 | Task 9 measure memory, uptime, worker and deletion executor | Either synthetic-only demo or proven real-user executor |
+| Evaluation and honesty | 01, 17, 24, 27, 37, 40 | Task 5/7 frozen 150-item benchmark and blind review | Published numerators, denominators, intervals and limitations |
+
+Document 15 is the execution authority for sequencing, but its checkboxes are future work. Document 12 is the API/data authority; document 21 is the UI behavior authority and explicitly says it consumes 12. Where a specialist proposes additional fields (quota reservations, outbox, deletion tombstones, lease generation), 12’s persistence refinement should be merged into the schema before coding rather than treated as optional prose.
+
+## Conflicts and required canonical resolutions
+
+**Status vocabulary resolution.** The canonical registry in document 12 distinguishes ReadingRequest execution status from ReadingAnswer support status and UI progress phases. The mapping is now explicit and consistent with 33: supported/partial/insufficient evidence are successful answer outcomes; clarification is a failed request with a clarification code. Timeouts and uncertain sends never become partial answers. Task 7 must prove every mapping and terminal-state race.
+
+**Provider base URL and endpoint.** Configuration 43 gives `AI_BASE_URL=https://freegg.app/v1` and the adapter must send exactly `/v1/responses`; 32 also rejects a base URL ending in `/responses` and tests duplicate `/v1/v1`. Make one canonical rule: the configured base URL is exactly `https://freegg.app/v1`, client appends `/responses`, and startup rejects endpoint-shaped values, credentials, query strings, redirects and private destinations. Record the resolved route in the release manifest. LiteLLM remains an opt-in alternative only after the proxy recording test proves native Responses passthrough.
+
+**Repair, retries and timing.** Architecture 03, workflow 33, provider 32 and UI 21 agree on a 150-second total deadline, at most two generation calls, and no automatic provider retry. The risk is accidental SDK/LangChain/schema retry. Task 1 must assert retry settings at every layer, while Task 7 must test deadline exhaustion during repair and uncertain send after transport loss. A repair may correct schema/citation defects only; it cannot add a new passage, rule or chart fact. The user retry is a new idempotency key and must warn that duplicate provider processing is possible.
+
+**Publication aliases and authority.** Documents 03, 12 and 31 agree that aliases are operational convenience. The canonical registry now defines corpus publication states and requires pinning the PostgreSQL generation and physical collection. Publication verifies IDs, hashes, dimensions and count before activation; current rights remain separately checked. Crash tests must prove aliases cannot activate incomplete generations or resurrect withdrawn sources.
+
+**Geocoder and place privacy.** Documents 05, 15, 21 and 43 permit an external geocoder only with policy approval, user-agent, attribution, caching and no birth-date/question transmission. The implementation plan also requires duplicate-city, timeout fallback, timezone-border confirmation and a test that identifiers are excluded. Canonical behavior should be explicit-submit search, user confirmation, manual coordinate/timezone fallback, and no background GPS. Store provider and resolution metadata, but never send the birth date, alias or question to the geocoder. A geocoder outage is a recoverable input state, not a reason to fabricate a timezone.
+
+**Aliases and identity.** 12 and 21 use an optional profile alias (80 characters), while identity is issuer+subject and email is only a snapshot. Keep alias out of model prompts by default and out of operational logs. Require a dedicated test proving two users with equal aliases cannot cross-read records. Do not conflate an alias with a public handle or immutable identity.
+
+**Privacy model and deletion.** 29, 30, 33, 39 and 43 require immediate synchronous read denial plus asynchronous purge across database, Qdrant, objects, checkpoints, caches, jobs, exports and backups. A deletion tombstone must remain in a protected journal so restored backups cannot resurrect data. The 24-hour purge target is a policy gate, not a guarantee. If a free host sleeps or the ingestion workstation is offline, real-user collection is prohibited; use synthetic records or fund a reliable executor. Provider deletion cannot be assumed after an excerpt was transmitted unless contract and operational evidence establish it.
+
+**Evaluation denominator resolution.** The frozen release design is now 100 held-out questions comprising 86 answerable and 14 unanswerable, propagated through core product, retrieval and implementation documents. The earlier minimum of 70 was compatible but too vague for scoring. Macro Recall@10 uses all 86 answerable items before top-eight selection; errors count as zero. All 14 abstention cases must pass the observed 95% target. Report Hit@10, claim counts including uncited claims, coverage, false abstention and intervals separately. These sample gates cannot establish 95% population reliability.
+
+**Rights and source publication.** 06, 19, 26, 38 and 39 consistently require edition/action-level rights, but no candidate edition is currently cleared. “Ancient author,” public URL, purchase, CC label, OCR output or embedding model license is insufficient. The first corpus remains blocked until title/copyright metadata, translator/commentary attribution, allowed indexing/provider transmission/excerpt/export actions, territory, term and withdrawal procedure are recorded. Rights withdrawal must deny serving immediately even if vector deletion is asynchronous.
+
+**Trust vocabulary resolution.** Document 40 now preserves Calculated fact, Traditional interpretation and AI synthesis, with empirical-validity limitations separately visible. Its suggested uncertainty annotations do not extend ReadingAnswer status. The proposed 90% comprehension/rejection study targets need pilot design, sample sizes and prospective approval; they do not replace benchmark gates. Carlson remains metadata-only with full text inaccessible; Lee and See was inspected at abstract level; NIST guidance does not certify the product. No predictive-validity result is claimed.
+
+**Place-search resolution.** Document 21 now requires explicit Search submission, operator review of the optional provider and manual coordinate/timezone fallback. The previous debounced-autocomplete wording was removed to agree with 05 and 23. Task 3 must test no keystroke traffic to public Nominatim, shared rate limits, cached repeated queries, duplicate city names and absence of birth identifiers in outbound requests.
+
+**Operation and deadline resolution.** Document 12 now lists owner-authorized profile/chart reads, cancellation, job status, export retrieval and place search. Document 33 now classifies deadlines as failed before transmission or unknown where provider processing is uncertain; cancelled is reserved for cancellation/deletion. Task 8 must test unauthorized jobs/exports/fragments, while Task 7 proves late completion cannot publish after terminal transition.
+
+**Encryption policy resolution.** Document 29 now makes transport and encrypted storage/backup protection baseline requirements. Application-field encryption remains an explicit deployment ADR; selected encryption requires keys outside the database, recorded key versions, rotation and historical-key restore tests. Deferral requires documented host controls and rationale. Row deletion is not cryptographic erasure; deleting a shared key is not an account-specific purge.
+## Ranked gaps and actionable resolution
+
+1. **Rights, provider terms and ephemeris license (launch blocker).** Assign an owner and decision record for each pilot edition, provider retention/transmission terms, Swiss Ephemeris AGPL/professional route, Ghostscript/transitive SBOM. No real-user or public corpus mode until signed evidence and attribution generation are tested (39, 04, 15).
+2. **Canonical registry still requires implementation evidence (future build gate).** Documentation gap resolved in 12; now implement its state mapping, endpoint operations, publication protocol, quota reservations and deletion tombstones, then execute meaningful failure tests. No schema or application behavior currently exists.
+3. **No measured provider capability or hosting evidence (launch blocker).** Run the 18-case fake Responses matrix, then an approved live smoke test with a fresh secret. Measure encoder startup/peak RAM, cold/warm latency, concurrent answers, worker heartbeat and deletion execution. Until measured, offer only local or synthetic demo (10, 32, 43).
+4. **Evaluation set and labels do not exist (build and launch blocker for quality claims).** Curate 150 questions, freeze family splits, obtain two independent reviewers, seal 100 held-out items, and publish all denominators/intervals. No benchmark number may be claimed before this artifact exists (27, 37).
+5. **Rule registry and editorial review incomplete (build blocker for grounded answers).** Dossier 38 supplies a proposed rule design, not reviewed production rules. Implement reviewed predicates, source-layer attribution, exceptions and applicability tests before allowing model claims to appear as traditional authority.
+6. **Privacy executor and restore semantics unproven (launch blocker).** Exercise account deletion with stopped web/worker processes, backup restore, tombstone replay, Qdrant rebuild, rights withdrawal and late provider completion. Fail closed if any path can resurrect or expose data (29–31, 35, 39).
+7. **Accessibility and browser journeys untested (release blocker).** Run keyboard, NVDA/VoiceOver, no-JavaScript and 320px/200% zoom scenarios, including dynamic polling and withdrawn evidence. Automated axe output alone is insufficient (36, 21).
+8. **Research coverage remains hypothesis-level.** Competitor pages were public-document observations; some pages were blocked and no end-to-end apps were exercised (02, 20). Conduct the proposed novice/experienced sessions and direct product trials before marketing differentiation claims.
+
+## Build versus launch decisions
+
+Integrate now: deterministic calculation boundary and uncertainty states; server-derived ownership; direct Responses path; bounded two-call workflow; physical Qdrant generation pinning; action-level rights ledger; 150/100/86/14 evaluation protocol; deletion tombstones; explicit UI evidence classes; and measured-resource gates. These are cross-document invariants, not optional enhancements.
+
+Keep optional and clearly labeled: LiteLLM gateway, larger multilingual models, reranking, private uploads, D9/dashas/transits, multilingual explanations, user feedback experiments, and hosted ingestion. Each requires a separate compatibility, rights, security or evaluation gate. Do not let optional features expand MVP scope or weaken fail-closed behavior.
+
+Current readiness supports documentation review and planning for a later authorized implementation. Public launch, real-user beta, source publication and quality claims remain blocked by the listed evidence gates. Dossiers 38, 39 and 40 are complete research documents, not executable rules, cleared editions or validity studies. No implementation or benchmark result has been produced.
+
+## Source coverage and empirical limits
+
+The package inspected primary or official material for LangGraph/LangChain behavior, provider protocol risks, Qdrant/PostgreSQL operations, WCAG, licensing, retrieval evaluation and statistical intervals. Those sources support engineering choices and measurement protocols. They do not prove provider reliability, rights permission for any title, retrieval performance on Sanskrit, user comprehension, accessibility conformance, or astrological predictive validity. Public competitor research is observational and incomplete. Every future claim should identify its source, date, version, denominator and whether it is a proposal, measured result or legal determination.
+
+
+## Audit verification and handoff references
+
+The final pass re-read the coordinator's canonical registry and the corrected interaction, workflow, privacy and trust sections. Documentation fixes are recorded as resolved above; numerical fixture, provider, browser, security, retrieval and recovery tests remain unexecuted. No external source was independently re-fetched by this integration assignment: source-access assertions are attributed to the individual dossiers, and this review checked how those findings are used across the package.
+
+Use [contracts and canonical registry](12-data-and-api-contracts.md#canonical-execution-publication-and-endpoint-registry), [implementation tasks](15-implementation-plan.md), [evaluation denominators](27-evaluation-and-benchmark-design.md#metrics-with-fixed-denominators), [privacy lifecycle](29-privacy-and-data-lifecycle.md), [workflow transitions](33-workflow-state-and-failure-design.md), [rights audit](39-content-rights-and-license-audit.md), and [trust and validity](40-trust-calibration-and-validity.md) as the handoff authorities. The [configuration inventory](43-configuration-reference.md) supplies exact proposed defaults. Stricter shared provider-time allocation in dossier 35, study metrics in 40, and sparse-encoder choices in 31 remain explicitly proposed experiments unless promoted through the decision log and verified.
