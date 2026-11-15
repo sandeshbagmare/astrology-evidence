@@ -1,4 +1,4 @@
-﻿# Qdrant index, capacity, and publication
+# Qdrant index, capacity, and publication
 
 Status: proposed design and primary-document research, 2026-11-15. No cluster was provisioned, no books were ingested, and no performance results exist. This extends contracts 03, 07, 10, 12, 24 and 30; PostgreSQL remains authoritative. Bracketed references identify documentation facts; all operational choices are proposals.
 
@@ -66,4 +66,3 @@ Read on 2026-11-15 using official Qdrant pages. HTTP fetches succeeded; API beha
 - Q6 Quantization: `https://qdrant.tech/documentation/guides/quantization/`
 - Q7 Cloud resources and limitations: `https://qdrant.tech/documentation/cloud/create-cluster/`
 - Q8 Snapshots: `https://qdrant.tech/documentation/snapshots/`
-

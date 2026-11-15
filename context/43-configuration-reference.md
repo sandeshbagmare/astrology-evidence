@@ -1,4 +1,4 @@
-﻿# Configuration inventory and environment boundaries
+# Configuration inventory and environment boundaries
 
 Prepared 2026-11-15. These are proposed application-owned setting names and defaults, not a generated environment file or vendor SDK parameter guarantee. Values must be validated through typed settings at startup. No credentials belong in this document.
 

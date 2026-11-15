@@ -1,4 +1,4 @@
-﻿# OCR and multilingual quality
+# OCR and multilingual quality
 
 Research date: 2026-11-15. Proposed specification; no books downloaded, OCR executed, or accuracy benchmark measured. Extends [corpus rights](06-corpus-and-sources.md), [ingestion](07-ingestion-and-retrieval.md), and [editorial acquisition](19-corpus-acquisition-and-editorial-playbook.md). Numeric limits below are initial engineering choices requiring a licensed pilot.
 

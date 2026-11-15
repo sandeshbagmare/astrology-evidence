@@ -1,4 +1,4 @@
-﻿# Research synthesis and build readiness
+# Research synthesis and build readiness
 
 Prepared 2026-11-15. This is the integration audit for the documentation-only planning package. No application code, benchmark, provider call, ingestion run, deployment, rights approval, or accessibility test has been completed. The specialist dossiers are design evidence and proposed acceptance criteria; they must not be reported as implemented results.
 

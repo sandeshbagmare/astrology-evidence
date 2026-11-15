@@ -1,4 +1,4 @@
-﻿# Corpus, bibliography and source rights
+# Corpus, bibliography and source rights
 
 Status: acquisition plan, 2026-11-15. No book has been downloaded, licensed, OCRed, or ingested. This is a candidate bibliography, not a claim that the application already knows these books.
 
@@ -94,4 +94,3 @@ The [Wisdom Library Brihat Samhita record](https://www.wisdomlib.org/hinduism/bo
 ## Expanded acquisition research
 
 Read [the editorial playbook](19-corpus-acquisition-and-editorial-playbook.md) for 42 candidate works, a ten-work acquisition matrix, observed edition metadata and source-identity pitfalls. Publisher search matches and descriptions can be wrong or mix commentators; inspect title/copyright pages before assigning edition identity. The initial 22-title table above remains an overview, not the complete research bibliography.
-

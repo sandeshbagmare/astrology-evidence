@@ -1,4 +1,4 @@
-﻿# Expanded research program
+# Expanded research program
 
 The user requested substantially deeper research and 20 additional focused research-agent assignments. They are run in waves of at most three researchers alongside the coordinator; the environment cannot run 20 simultaneously. This program supplements the architecture, not application implementation.
 
@@ -43,4 +43,3 @@ Every dossier must distinguish inspected evidence, unverified research leads, de
 Each dossier includes purpose, sources actually inspected with access date, alternatives, chosen/recommended approach, concrete edge cases, measurable acceptance criteria, open questions and links to the governing architecture. More files do not override the core contracts automatically. Recommendations requiring scope or schema changes are recorded as proposals until integrated.
 
 The final assignment reads the expanded package and checks coherence. The coordinator also validates local links and checks for accidental credential inclusion. Progress and source status are updated from actual results, not the initial queue above.
-

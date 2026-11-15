@@ -1,4 +1,4 @@
-﻿# Architecture decisions
+# Architecture decisions
 
 All entries proposed on 2026-11-15. Change them with evidence and update affected contracts, tests and progress.
 

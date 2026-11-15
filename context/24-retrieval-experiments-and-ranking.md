@@ -1,4 +1,4 @@
-﻿# Retrieval experiments and ranking
+# Retrieval experiments and ranking
 
 Status: research and experiment design, 2026-11-15. No retrieval experiment has been run, and no quality, latency, or memory result in this document is a measured result. The purpose is to make the comparison reproducible before implementation changes the corpus or model.
 
@@ -85,6 +85,3 @@ Freeze the development-selected configuration before running the 100-question re
 - Cormack, Clarke and Buettcher, “Reciprocal Rank Fusion outperforms Condorcet and individual Rank Learning Methods,” SIGIR 2009: https://cormack.uwaterloo.ca/cormacksigir09-rrf.pdf (original paper discovery target; PDF download returned HTTP 200, but full text was not extracted in this research pass. Fusion mechanics above are grounded in inspected Qdrant documentation).
 
 These sources guide experiment design only. No benchmark was executed, no model was selected as proven, and no latency or memory budget has been demonstrated.
-
-
-

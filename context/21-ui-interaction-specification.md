@@ -1,4 +1,4 @@
-﻿# UI interaction specification
+# UI interaction specification
 
 Status: proposed implementation specification, 2026-11-15. Extends [09 UI overview](09-ui-and-user-flows.md) and uses [12 API/data contracts](12-data-and-api-contracts.md) as the canonical schema. English, adult private beta, Vedic D1 natal scope. No screens, accessibility checks or browser tests have been implemented. Numerical limits below are proposed UI/service requirements that must be synchronized with server validation; browser validation alone is insufficient.
 
@@ -132,4 +132,3 @@ Target WCAG 2.2 AA using semantic headings, landmark regions, explicit labels, v
 14. **Comprehension:** prototype users can distinguish calculation, attributed rule and AI synthesis without interpreting support status as outcome probability.
 
 These scenarios belong in the implementation test plan and release evidence, not a claim that the current documentation passes them. Related official references: [FastAPI templates](https://fastapi.tiangolo.com/advanced/templates/), [HTMX progressive enhancement](https://htmx.org/docs/), [WCAG 2.2](https://www.w3.org/TR/WCAG22/), and [Google OpenID Connect](https://developers.google.com/identity/openid-connect/openid-connect), directly retrieved during the earlier research pass on 2026-11-15.
-

@@ -1,4 +1,4 @@
-﻿# Competitor and product research dossier
+# Competitor and product research dossier
 
 Prepared 2026-11-15. This extends [02 Market research](02-market-research.md); it does not replace the approved scope or claim that the proposed product has been built. Research used direct HTTP retrieval of official pages and upstream repositories because web-search calls returned no readable payloads. No paid subscriptions, logged-in applications, binaries, or source code executions were tested. “Observed” below means documented in a readable primary source; it does not mean independently verified in operation.
 

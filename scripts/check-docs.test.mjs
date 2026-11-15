@@ -1,4 +1,4 @@
-﻿import test from 'node:test';
+import test from 'node:test';
 import assert from 'node:assert/strict';
 import { inspectText } from './check-docs.mjs';
 test('rejects credential-shaped values without echoing them', () => {

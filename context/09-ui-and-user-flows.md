@@ -1,4 +1,4 @@
-﻿# UI, configuration, and user flows
+# UI, configuration, and user flows
 
 Status: proposed design; no UI has been implemented. Prepared 2026-11-15. These are product decisions, not claims about an existing application.
 

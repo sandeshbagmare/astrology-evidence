@@ -1,4 +1,4 @@
-﻿# Product and scope
+# Product and scope
 
 ## Intent
 
@@ -55,6 +55,3 @@ Create 150 reviewed questions: 20 calibration, 30 development, and a separately 
 ## Product risk
 
 A large library can contain incompatible schools, edition errors and unsupported claims. Retrieval can find a passage without proving it applies to a chart. Therefore applicability checks, disagreement reporting and source review are essential. No source count, AI model name, or attractive UI establishes predictive reliability.
-
-
-

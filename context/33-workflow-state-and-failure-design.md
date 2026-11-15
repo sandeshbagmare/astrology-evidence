@@ -1,4 +1,4 @@
-﻿# Workflow state and failure design
+# Workflow state and failure design
 
 Prepared 2026-11-15. This document defines the bounded answer workflow for Astrology Evidence. It is a design and research record; no workflow code or execution result is implied.
 
@@ -115,4 +115,3 @@ This design keeps the graph inspectable and bounded while allowing durable contr
 
 
 Deadline exhaustion is not user cancellation: classify it as failed with deadline_exceeded when no external result is uncertain, or unknown when a provider send may still be processing. Both fence publication. Canonical request/answer mappings and cancellation endpoints are in document12.
-

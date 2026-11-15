@@ -1,4 +1,4 @@
-﻿# Privacy and data lifecycle
+# Privacy and data lifecycle
 
 Prepared 2026-11-15. Proposed engineering contract, not implemented behavior or legal advice. Read with [authentication](08-authentication-and-security.md), [deployment](10-deployment-and-costs.md), [data contracts](12-data-and-api-contracts.md), and [configuration](43-configuration-reference.md). Jurisdictions, applicable legal bases, transfer requirements and notification duties remain unresolved launch decisions; this document does not invent statutory deadlines.
 
@@ -82,4 +82,3 @@ Access date for all sources: 2026-11-15. References support principles; retentio
 
 
 Encryption policy authority: TLS in transit and encrypted deployed storage/backups are mandatory. Application-level field encryption is an explicit ADR decision before real-user mode; if selected, key separation, rotation and recovery tests become mandatory. If not selected, document the threat model and host controls; do not claim application-level protection.
-

@@ -64,5 +64,3 @@ Add a proxy recording test that proves LiteLLM's outbound path is `/v1/responses
 ## Upgrade protocol
 
 Pin Python, `langchain-openai`, `openai`, LiteLLM (if enabled), and prompt/schema versions. Record requested and reported model identifiers, endpoint mode, capability matrix, fake-server results and date in the release manifest. On every dependency or provider alias change, rerun the matrix, compare serialized request shapes and normalized outputs, inspect retry behavior, and review privacy/logging. A failed native-route, privacy, schema, timeout or no-duplicate test blocks release. Compatibility with official OpenAI specifications must be labeled separately from compatibility verified against FreeGG; neither implies the other.
-
-

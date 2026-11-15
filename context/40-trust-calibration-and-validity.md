@@ -1,4 +1,4 @@
-﻿# Trust calibration and validity
+# Trust calibration and validity
 
 Prepared 2026-11-15. This dossier defines what the product may claim about astrology, how it should communicate uncertainty, and how to measure whether users rely on the interface appropriately. It is a planning document. No predictive-validity result, user study, or production behavior has been established by writing it.
 
@@ -56,4 +56,3 @@ Release blockers include any UI that turns retrieval similarity into probability
 - NIST AI RMF overview, https://www.nist.gov/itl/ai-risk-management-framework. Overview inspected 2026-11-15; **readable official page**.
 
 No books, app code, provider claims, or traditional authorities were used as evidence for empirical validity. All study thresholds and UX metrics above are proposed acceptance criteria pending preregistration or pilot measurement.
-

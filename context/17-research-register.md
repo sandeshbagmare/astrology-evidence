@@ -1,4 +1,4 @@
-﻿# Research register and evidence limits
+# Research register and evidence limits
 
 Research date: 2026-11-15. The user asked for source research and links; durable URLs are included in the specialist documents.
 
@@ -57,4 +57,3 @@ Every future source-derived change records URL, access date, relevant fact, whet
 
 
 See [expanded assignments](42-expanded-research-program.md) and [integration synthesis](41-research-synthesis-and-build-readiness.md) for the completed deep-research map. The bibliography expanded from 22 overview candidates to 42 candidates with a ten-work acquisition matrix. Inspect each dossier source register for its exact access status; the project does not claim every listed book was read.
-

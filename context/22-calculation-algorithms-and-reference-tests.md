@@ -1,4 +1,4 @@
-﻿# Calculation algorithms and independent reference tests
+# Calculation algorithms and independent reference tests
 
 Research dossier, 2026-11-15. This is a proposed calculation specification, not implemented code or a certified ephemeris. It extends [domain scope](05-astrology-domain.md), [data contracts](12-data-and-api-contracts.md), and implementation Task 3. Defaults remain Gregorian births from 1900 through the present, Vedic sidereal/Lahiri, geocentric positions, whole-sign houses and mean lunar nodes. No numerical chart was generated during this research.
 
@@ -158,4 +158,3 @@ All C1–C8 sources were retrieved directly with HTTP 200 and relevant content i
 - **C8** [Astrodienst sweodef.h](https://raw.githubusercontent.com/aloistr/swisseph/master/sweodef.h): build-conditional TLS definition.
 
 No upstream implementation code has been copied into this application; no application exists yet. The formulas and test cases above are proposed specifications, not completed reference computations.
-

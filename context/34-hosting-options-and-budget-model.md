@@ -1,4 +1,4 @@
-﻿# Hosting options and budget model
+# Hosting options and budget model
 
 Prepared 2026-11-15. Research and proposed deployment gates only: no account, paid resource, application, benchmark or deployment was created. Read with documents 10, 29, 30, 31 and 43. Prices below are observed USD list-price inputs, excluding taxes; refresh them in the actual account before purchase. Free allowances, trials and promotional credits are different instruments, and none establishes permanent free operation.
 

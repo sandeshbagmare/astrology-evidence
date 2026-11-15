@@ -1,4 +1,4 @@
-﻿# Ingestion, chunking and retrieval
+# Ingestion, chunking and retrieval
 
 Status: proposed engineering specification, 2026-11-15; no corpus or embedding benchmark exists yet. Read [corpus rights](06-corpus-and-sources.md) and [calculation contract](05-astrology-domain.md) first.
 
@@ -90,5 +90,3 @@ No embedding, OCR or retrieval execution was performed. Chunk sizes, retrieval c
 ## Detailed evaluation protocol
 
 The exact proposed 150-question allocation and review method are in [27 Evaluation and benchmark design](27-evaluation-and-benchmark-design.md): 20 calibration, 30 development and 100 held-out questions, of which 86 are answerable and 14 require abstention. The at-least-70 supported minimum above remains a lower bound; this allocation is the planned inventory. Report sample counts and uncertainty intervals. Achieving a sample gate permits only the limited pilot and cannot substantiate a population-wide reliability claim. Use the four-level relevance rubric from dossier 24 consistently.
-
-

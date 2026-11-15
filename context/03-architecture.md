@@ -1,4 +1,4 @@
-﻿# System architecture
+# System architecture
 
 ## Chosen shape
 

@@ -1,4 +1,4 @@
-﻿# Rule registry and knowledge model
+# Rule registry and knowledge model
 
 Status: researched proposal, 2026-11-15. Documentation only; no executable rules, licensed verses, application code or tests were produced. This extends [domain](05-astrology-domain.md), [contracts](12-data-and-api-contracts.md), [domain research](18-domain-research-dossier.md), [editorial workflow](19-corpus-acquisition-and-editorial-playbook.md) and [evidence validation](26-evidence-validation-and-contradictions.md).
 

@@ -1,4 +1,4 @@
-﻿# Content rights and license audit
+# Content rights and license audit
 
 Prepared 2026-11-15. This is a due-diligence plan, not legal advice or a finding that any edition is reusable. No book was downloaded, purchased, OCRed, indexed, or published for this project.
 

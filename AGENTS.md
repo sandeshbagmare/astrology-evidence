@@ -1,4 +1,4 @@
-﻿# Astrology Evidence — agent instructions
+# Astrology Evidence — agent instructions
 
 Status: research, documentation and public reading site, 2026-11-15. Product name is provisional.
 
@@ -60,4 +60,3 @@ For detailed research, read [the expanded research program](context/42-expanded-
 ## Small commits and continuous verification
 
 Follow [the delivery rules](context/44-small-commits-and-continuous-verification.md) and [CONTRIBUTING.md](CONTRIBUTING.md). Commit one coherent tested change at a time. Run relevant tests during development and before each commit; repair failures before dependent work. Use independent agent review/testing for risky logic with disjoint file ownership, then validate the combined revision. For this repository run both documented Node checks. Future Python checks are required only once those components exist. Never claim that passing documentation CI makes the application production-ready.
-

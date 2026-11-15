@@ -1,4 +1,4 @@
-﻿# Domain research dossier: what the astrology engine must know
+# Domain research dossier: what the astrology engine must know
 
 Prepared 2026-11-15. This extends [the domain contract](05-astrology-domain.md). It is a researched design dossier, not an assertion that the texts have been comprehensively read, that chart calculations have been implemented, or that astrology has demonstrated predictive validity. Source inspection notes appear at the end. Traditional definitions below require edition-specific editorial approval before becoming executable rules.
 
@@ -115,4 +115,3 @@ Unsafe traditional claims need explicit treatment. Do not generate death dates, 
 - [IANA timezone database](https://www.iana.org/time-zones), inspected in summary research: timezone data authority.
 
 No verse-level rule here was verified against a full licensed edition. That editorial work is scheduled before rule implementation. Retrieval evaluation follows the coordinated plan: 150 items split into 20 calibration, 30 development and 100 held-out items, with 86 answerable and 14 unanswerable held-out questions; proposed Recall@10 target is at least 0.90 before selecting up to eight generation passages. These are future acceptance criteria, not achieved results.
-

@@ -1,4 +1,4 @@
-﻿# Readiness report
+# Readiness report
 
 Prepared November 15, 2026. This report separates research completion, publication and future implementation.
 

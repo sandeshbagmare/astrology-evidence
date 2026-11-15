@@ -1,4 +1,4 @@
-﻿:root{--ink:#182d32;--muted:#506467;--paper:#f7f8f3;--accent:#1b6558;--line:#dce3da;--warm:#785319}
+:root{--ink:#182d32;--muted:#506467;--paper:#f7f8f3;--accent:#1b6558;--line:#dce3da;--warm:#785319}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:2rem}
 body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -99,5 +99,3 @@ a{color:black}
 .hero{padding:20px 0}
 details{display:block}
 }
-
-

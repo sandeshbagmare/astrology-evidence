@@ -1,4 +1,4 @@
-﻿# PostgreSQL jobs and consistency
+# PostgreSQL jobs and consistency
 
 Prepared 2026-11-15. Proposed design extending documents 03, 08, 10, 12, 15 and 43; no schema, migration or application tests have run. PostgreSQL remains authoritative; Qdrant is rebuildable. Redis is deferred until measured contention or scheduling needs justify it. Defaults require implementation tests and measurements.
 
@@ -108,4 +108,3 @@ Accessed 2026-11-15. PostgreSQL pages resolved to version 18; SQLAlchemy referen
 - P6: PostgreSQL SET — `https://www.postgresql.org/docs/current/sql-set.html`
 - P7: SQLAlchemy asynchronous I/O, concurrent sessions and implicit I/O — `https://docs.sqlalchemy.org/en/20/orm/extensions/asyncio.html`
 - P8: PostgreSQL backup and restore — `https://www.postgresql.org/docs/current/backup.html`
-

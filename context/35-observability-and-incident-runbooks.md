@@ -1,4 +1,4 @@
-﻿# Observability and incident runbooks
+# Observability and incident runbooks
 
 **Status:** proposed operating design, researched 2026-11-15. This document defines instrumentation and response procedures; no telemetry pipeline or alert has been deployed. Thresholds are launch defaults to validate in local, demonstration, and production load tests.
 
@@ -65,6 +65,3 @@ Additional operational proposals: retain metadata logs and traces for at most 14
 - [S1: Google SRE alerting on SLOs](https://sre.google/workbook/alerting-on-slos/) — multiwindow burn-rate alerting pattern; inspected 2026-11-15.
 
 All thresholds and SLOs above are proposed acceptance targets. They require measured validation in each operating mode and must be updated in [16 progress and open decisions](16-progress-and-open-decisions.md) when evidence changes them.
-
-
-

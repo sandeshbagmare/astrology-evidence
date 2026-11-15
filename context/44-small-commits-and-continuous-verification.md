@@ -1,4 +1,4 @@
-﻿# Small commits and continuous verification
+# Small commits and continuous verification
 
 Adopted for future work on 2026-11-15 at the user's request. This policy applies to people and coding agents. Publishing this documentation and its reading website is authorized; it does not itself authorize building or launching the astrology application.
 

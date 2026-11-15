@@ -1,4 +1,4 @@
-﻿# Security threat model and release evidence
+# Security threat model and release evidence
 
 Status: proposed design, researched 2026-11-15. This is not an audit, implemented protection, or ASVS certification. It extends documents 08, 12, 13 and 43; task numbers refer to [the implementation plan](15-implementation-plan.md). All verification cases below remain pending. FreeGG endpoint behavior is user-reported and unverified; no provider request was made for this research.
 
@@ -64,4 +64,3 @@ Inspected readable pages on 2026-11-15; links support principles, not an assessm
 Identity owner must close threats 1, 3–6 and 17 through Task 2 evidence. Corpus/retrieval owners must prove quarantine, publication integrity and withdrawal through Tasks 4–6. Answer/provider owner must prove payload minimization, bounded spending and injection containment through Tasks 1/7. UI/privacy owner must prove renderer, fragments, exports, caches and deletion through Task 8. Operator owns network isolation, key rotation, production settings and restore evidence through Task 9.
 
 Before real-user launch, attach reproducible test results, redacted configuration review and named signoff to each applicable threat. Resolve provider processing/retention terms and reliable privacy execution first; otherwise retain synthetic-only operation. No P0 remains open, and no P1 capability is exposed without its control evidence. The launch reviewer records residual risks and applicable ASVS coverage; documentation completion is not security verification.
-

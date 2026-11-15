@@ -1,4 +1,4 @@
-﻿# Evidence validation and contradictions
+# Evidence validation and contradictions
 
 Status: researched proposal, 2026-11-15. No validator, corpus, benchmark or application code was executed. This dossier extends [retrieval](07-ingestion-and-retrieval.md), [contracts](12-data-and-api-contracts.md), [AI rules](13-ai-context-and-rules.md) and [domain research](18-domain-research-dossier.md); proposed additions require contract reconciliation before implementation.
 
@@ -104,4 +104,3 @@ All entries accessed 2026-11-15 through direct HTTP, status 200; web-tool calls 
 - **S3:** [Nie et al., Adversarial NLI, ACL 2020](https://aclanthology.org/2020.acl-main.441/). Original publisher abstract and metadata inspected; full PDF not inspected.
 - **S4:** [LangChain structured output](https://docs.langchain.com/oss/python/langchain/structured-output). Strategy, validation and error-handling sections inspected; endpoint compatibility untested.
 - **S5:** [Unicode UAX #15, revision 57](https://www.unicode.org/reports/tr15/tr15-57.html). Versioned normalization reference inspected alongside current landing page; no claim that this is the latest revision. Coordinate and display policies above are project proposals.
-

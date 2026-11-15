@@ -1,4 +1,4 @@
-﻿# Astrology Evidence Implementation Plan
+# Astrology Evidence Implementation Plan
 
 > **For agentic workers:** Use the available `subagent-driven-development` or `executing-plans` skill when the user starts implementation. This document does not authorize implementation during the current documentation-only task. Steps use checkboxes to track actual work.
 
@@ -181,10 +181,3 @@ Read [host comparison](34-hosting-options-and-budget-model.md), [operational run
 ## Definition of done
 
 Every MVP requirement maps to a tested task; no launch blocker is open; calculations and citations have independently reviewed evidence; all core UI flows work; the operator can restore and delete data; hosting/resource claims are measured; no exposed secret is in repository history. Mark actual progress with evidence only. A design-complete checkbox is never an application-complete checkbox.
-
-
-
-
-
-
-

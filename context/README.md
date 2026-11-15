@@ -1,4 +1,4 @@
-﻿# Context index
+# Context index
 
 Prepared 2026-11-15. Read this as a coherent proposed specification. Every implementation milestone is pending; research access and verification limits are tracked separately.
 
@@ -58,4 +58,3 @@ The expanded research program and its twenty focused assignments are indexed in 
 ## Publishing and development workflow
 
 Read [the short readiness report](../REPORT.md) and [small commits / continuous verification](44-small-commits-and-continuous-verification.md). The static reading guide lives in docs; it is separate from the future astrology application.
-

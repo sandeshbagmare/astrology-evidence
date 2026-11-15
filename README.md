@@ -1,4 +1,4 @@
-﻿# Astrology Evidence
+# Astrology Evidence
 
 **Understand the proposal in five minutes:** [Open the reading guide](https://sandeshbagmare.github.io/astrology-evidence/).
 

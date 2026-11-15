@@ -1,4 +1,4 @@
-﻿# Code standards, testing and release evidence
+# Code standards, testing and release evidence
 
 This document governs future implementation. No package environment or tests have been run for an application in this planning task.
 

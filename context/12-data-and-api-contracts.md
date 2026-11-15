@@ -1,4 +1,4 @@
-﻿# Data model and API contracts
+# Data model and API contracts
 
 Contracts below are design specifications, not implemented interfaces. All resource IDs are opaque UUIDs unless an explicit content hash is specified. All recorded instants use UTC with timezone-aware values; original local birth input remains preserved separately.
 

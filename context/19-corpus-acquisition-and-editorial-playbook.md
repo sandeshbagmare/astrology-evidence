@@ -1,4 +1,4 @@
-﻿# Corpus acquisition and editorial playbook
+# Corpus acquisition and editorial playbook
 
 Prepared 2026-11-15. Extends [corpus summary](06-corpus-and-sources.md) and [retrieval design](07-ingestion-and-retrieval.md). No books were acquired or ingested. Catalogue records were inspected; complete editions were not read. This distinction prevents a bibliography from becoming a false claim of knowledge already available to the application.
 
@@ -168,4 +168,3 @@ Executable predicates are authored against deterministic chart facts and tested 
 - Which editions have stable verse/page locators suitable for user citations?
 
 Until these are answered, corpus growth is research planning and no full text should be downloaded or processed into production.
-

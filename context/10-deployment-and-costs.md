@@ -1,4 +1,4 @@
-﻿# Deployment, capacity, and operating cost
+# Deployment, capacity, and operating cost
 
 Status: proposed plan. Official pages were retrieved directly on 2026-11-15; quotas are a snapshot, not a guarantee. No service account, deployment, domain, payment, or provider call was created.
 

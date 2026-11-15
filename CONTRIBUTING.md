@@ -1,4 +1,4 @@
-﻿# Contributing
+# Contributing
 
 Start with [AGENTS.md](AGENTS.md), the [context index](context/README.md), and the [small-commits and verification rules](context/44-small-commits-and-continuous-verification.md).
 

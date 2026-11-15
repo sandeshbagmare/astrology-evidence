@@ -1,4 +1,4 @@
-﻿# Astrology domain and calculation contract
+# Astrology domain and calculation contract
 
 Status: proposed design, 2026-11-15. No calculations or scientific validation have been performed in this planning task.
 
@@ -68,4 +68,3 @@ Tests: duplicate city names, city near a timezone border, remote/ocean coordinat
 ## Calculation-depth findings incorporated
 
 The [calculation dossier](22-calculation-algorithms-and-reference-tests.md) refines implementation requirements: preserve UTC/UT/TT conversion policy, especially historical dates; compare actual returned ephemeris flags with requested flags; test build-specific mutable engine state; and never certify interval stability from endpoints alone. Independent astronomical fixtures must reconcile coordinate frame, time scale and apparent/geometric corrections. These are prerequisites of Task 3, not optional numerical polish.
-

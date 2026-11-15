@@ -1,4 +1,4 @@
-﻿# Accessibility and responsive validation
+# Accessibility and responsive validation
 
 Prepared and primary sources inspected: 2026-11-15. Status: proposed requirements and validation protocol; no application, browser, assistive-technology or automated accessibility tests have run. This dossier extends documents 09, 21 and 43 without changing their scope.
 

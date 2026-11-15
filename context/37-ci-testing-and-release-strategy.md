@@ -1,4 +1,4 @@
-﻿# CI, testing and release strategy
+# CI, testing and release strategy
 
 Prepared 2026-11-15. Proposed implementation policy only: no workflows, application tests, benchmarks, dependency installs or provider calls were executed. This extends [standards](14-code-standards-and-testing.md), [implementation](15-implementation-plan.md), [calculation references](22-calculation-algorithms-and-reference-tests.md), [evaluation](27-evaluation-and-benchmark-design.md), [threat model](28-security-threat-model.md) and [provider contract](32-responses-provider-compatibility.md). Acceptance targets below are not results.
 

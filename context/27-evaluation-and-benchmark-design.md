@@ -1,4 +1,4 @@
-﻿# Evaluation and benchmark design
+# Evaluation and benchmark design
 
 Status: proposed protocol, 2026-11-15. No questions have been annotated, no benchmark has run, and no result is claimed. This document operationalizes the targets in 01, 07 and 24; numerical examples are illustrations. Evaluation establishes evidence-handling quality, not whether astrology predicts events.
 
@@ -87,5 +87,3 @@ Freeze configuration, corpus, glossary, prompts, provider/model revision and sco
 
 
 Primary source URLs: https://arxiv.org/abs/2104.08663 ; https://aclanthology.org/2024.eacl-demo.16/ ; https://arxiv.org/abs/2305.14627 ; https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm . Versioned records identified above should be retained in evaluation manifests.
-
-

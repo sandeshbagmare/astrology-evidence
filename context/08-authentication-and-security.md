@@ -1,4 +1,4 @@
-﻿# Authentication, privacy, and security
+# Authentication, privacy, and security
 
 Status: proposed implementation contract; no authentication has been implemented. Research accessed 2026-11-15. Decisions below are project requirements, not claims that the application already enforces them.
 
@@ -72,4 +72,3 @@ Before public use: verify provider terms, select region, document export/deletio
 - [A1: Google OpenID Connect](https://developers.google.com/identity/openid-connect/openid-connect) — official page retrieved HTTP 200 on 2026-11-15.
 - [A2: OWASP Session Management](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html) — primary guidance retrieved HTTP 200 on 2026-11-15.
 - [A3: Authlib Starlette client](https://docs.authlib.org/en/latest/client/starlette.html) — retrieval returned HTTP 429; exact API signatures remain unverified.
-

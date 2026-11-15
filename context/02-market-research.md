@@ -1,4 +1,4 @@
-﻿# Market research and product positioning
+# Market research and product positioning
 
 Research date: 2026-11-15. Scope: public product pages, publisher documentation, and upstream source repositories; no paid accounts or private implementation access. Web search returned no usable content in this session, so primary URLs were fetched directly with PowerShell Invoke-WebRequest. Ten comparator sources returned substantive readable content; Co-Star returned only its page title and Astrodienst returned a JavaScript browser challenge. These limitations are explicit below. Features are source observations, not independent validation of efficacy. Proposed gaps are research hypotheses, not claims that competitors lack a feature.
 
@@ -58,4 +58,3 @@ Three approaches considered:
 ## Implications for the first release
 
 A coherent Vedic-first scope with excellent evidence navigation is preferable to superficial support for every school. Keep public demonstrations, a transparent library, Google sign-in, one birth profile, chart methods, question/answer history, and expandable source cards. Defer social matching, payments, practitioner marketplace, push predictions and automated remedy sales. The architecture should permit later additions without making them prerequisites for learning whether source transparency matters.
-

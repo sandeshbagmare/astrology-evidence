@@ -1,4 +1,4 @@
-﻿name: Documentation quality
+name: Documentation quality
 on:
   push:
     branches: [main]

@@ -1,4 +1,4 @@
-﻿# AI context, tools and behavioral rules
+# AI context, tools and behavioral rules
 
 ## System purpose
 

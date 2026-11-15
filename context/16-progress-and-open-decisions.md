@@ -1,4 +1,4 @@
-﻿# Progress, risks and open decisions
+# Progress, risks and open decisions
 
 Updated 2026-11-15. Status reflects this documentation task, not a running application.
 
@@ -103,4 +103,3 @@ Checked 46 Markdown files: zero broken local Markdown links, zero credential-pat
 ## Publishing phase — November 15, 2026
 
 The user subsequently authorized a public repository and static GitHub Pages guide. README, REPORT, contribution rules, policy44, static assets and documentation CI were added. Earlier no-repository/no-deployment statements describe the original research phase. This publication does not implement or deploy the astrology application. Local documentation tests and an independent review pass; production application gates remain pending.
-
