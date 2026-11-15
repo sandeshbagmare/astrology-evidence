@@ -1,0 +1,1 @@
+{% extends "base.html" %}{% block content %}<h1>Your readings</h1>{% for reading in readings %}<article class="card"><a href="/readings/{{ reading.id }}">Reading created {{ reading.created_at }}</a></article>{% else %}<p>No saved readings yet.</p>{% endfor %}<a class="button" href="/readings/new">New reading</a>{% endblock %}

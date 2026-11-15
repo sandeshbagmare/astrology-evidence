@@ -1,0 +1,14 @@
+{% set zodiac = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'] %}
+{% set nakshatras = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishta','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'] %}
+{% macro fact_table(facts) %}
+{% if facts %}<div class="fact-scroll"><table><caption>Computed chart placements</caption><thead><tr><th scope="col">Body</th><th scope="col">Measure</th><th scope="col">Placement</th></tr></thead><tbody>
+{% for fact in facts %}<tr><th scope="row">{{ fact.body|replace('_',' ')|title }}</th><td>{{ fact.kind|replace('_',' ')|capitalize }}</td><td>{% if fact.kind == 'sign' and 1 <= fact.value <= 12 %}{{ zodiac[fact.value|int - 1] }}{% elif fact.kind == 'nakshatra' and 1 <= fact.value <= 27 %}{{ nakshatras[fact.value|int - 1] }}{% elif fact.value is boolean %}{{ 'Yes' if fact.value else 'No' }}{% elif fact.value is number %}{{ fact.value|round(6) }}{% if fact.unit not in ['index','boolean','bool'] %} {{ fact.unit|replace('_',' ') }}{% endif %}{% else %}{{ fact.value }}{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p>No computed placements are available for these inputs.</p>{% endif %}
+{% endmacro %}
+{% macro house_diagram(facts) %}
+{% set houses = facts|selectattr('kind','equalto','house')|list %}
+{% if houses %}
+<figure><svg class="house-diagram" viewBox="0 0 600 470" role="img" aria-labelledby="house-title house-description"><title id="house-title">Computed placements by house</title><desc id="house-description">Twelve numbered houses in reading order, not a traditional chart layout. {% for house in range(1,13) %}House {{ house }}: {% for fact in houses if fact.value == house %}{{ fact.body|title }}{% if not loop.last %}, {% endif %}{% else %}no listed bodies{% endfor %}. {% endfor %}The table below provides the same data.</desc>
+{% for house in range(1,13) %}{% set x = ((house-1) % 4) * 150 %}{% set y = ((house-1) // 4) * 155 %}<g><rect class="house-cell" x="{{ x + 2 }}" y="{{ y + 2 }}" width="146" height="151" rx="4"/><text class="house-number" x="{{ x + 10 }}" y="{{ y + 22 }}">House {{ house }}</text>{% for fact in houses if fact.value == house %}<text x="{{ x + 10 }}" y="{{ y + 39 + loop.index0 * 10 }}">{{ fact.body|replace('_',' ')|title }}</text>{% endfor %}</g>{% endfor %}</svg><figcaption>A numbered house overview using computed placements only.</figcaption></figure>
+{% else %}<p class="notice">A house diagram is unavailable because the calculation does not establish precise houses for these inputs.</p>{% endif %}
+{% endmacro %}

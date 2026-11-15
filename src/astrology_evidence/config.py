@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     ephemeris_license_reviewed: bool = False
     ephemeris_mode: Literal["moshier", "swiss"] = "moshier"
     ephemeris_path: str | None = None
+    calculation_python: str | None = None
+    calculation_pythonpath: str | None = None
     qdrant_url: str | None = None
     qdrant_api_key: SecretStr | None = None
     qdrant_path: str = "./data/qdrant"

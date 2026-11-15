@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% from "facts.html" import fact_table, house_diagram %}
+{% block title %}Chart{% endblock %}
+{% block content %}
+<h1>Chart snapshot</h1>
+<p class="muted">Method: {{ chart.settings.tradition|default('Jyotish')|capitalize }} / {{ chart.settings.zodiac|default('sidereal')|capitalize }} / {{ chart.settings.ayanamsha|default('Lahiri')|capitalize }}</p>
+{{ house_diagram(chart.facts) }}
+<h2>Calculated facts</h2>{{ fact_table(chart.facts) }}
+{% if chart.unavailable_facts %}<section class="notice"><h2>Unavailable calculations</h2><ul>{% for kind,reason in chart.unavailable_facts.items() %}<li>{{ kind|replace('_',' ')|capitalize }}: {{ reason|replace('_',' ') }}</li>{% endfor %}</ul></section>{% endif %}
+<details><summary>Calculation provenance and identifiers</summary><dl>{% for key,value in chart.manifest.items() %}<dt>{{ key|replace('_',' ')|capitalize }}</dt><dd>{{ value }}</dd>{% endfor %}</dl><ul>{% for fact in chart.facts %}<li>{{ fact.body|title }} / {{ fact.kind|replace('_',' ') }}: {{ fact.fact_id }}</li>{% endfor %}</ul></details>
+{% endblock %}
