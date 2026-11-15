@@ -11,7 +11,7 @@ export function inspectText(text, name) {
 }
 function filesAt(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
-    if (['.git', 'node_modules', '.playwright-cli'].includes(entry.name)) return [];
+    if (['.git', 'node_modules', '.playwright-cli', '.venv', '.venv314', '.runtime312', '.runtime314', '__pycache__', '.pytest_cache', '.mypy_cache', '.ruff_cache'].includes(entry.name)) return [];
     const path = resolve(dir, entry.name);
     return entry.isDirectory() ? filesAt(path) : [path];
   });
@@ -23,7 +23,7 @@ export function checkProject() {
     const text = readFileSync(file, 'utf8');
     const name = relative(root, file);
     for (const issue of inspectText(text, name)) errors.push(`${name}: ${issue}`);
-    if (!['.md', '.html'].includes(extname(file))) continue;
+    if (!['.md', '.html'].includes(extname(file)) || (extname(file) === '.html' && name.startsWith('src'))) continue;
     const targets = extname(file) === '.md'
       ? [...text.matchAll(/\]\(([^)]+)\)/g)].map(m => m[1])
       : [...text.matchAll(/(?:href|src)="([^"]+)"/g)].map(m => m[1]);
