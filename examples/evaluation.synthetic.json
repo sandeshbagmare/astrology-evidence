@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "items": [
+    {
+      "id": "a",
+      "split": "test",
+      "expected_evidence_units": {
+        "p1": 3,
+        "p2": 1
+      },
+      "ranked_ids": [
+        "p1"
+      ],
+      "status": "ok",
+      "abstained": false,
+      "claim_count": 2,
+      "supported_claim_count": 1
+    },
+    {
+      "id": "b",
+      "split": "test",
+      "expected_evidence_units": {
+        "p3": 2
+      },
+      "ranked_ids": [],
+      "status": "error",
+      "abstained": false,
+      "claim_count": 0,
+      "supported_claim_count": 0
+    },
+    {
+      "id": "c",
+      "split": "test",
+      "expected_evidence_units": {},
+      "ranked_ids": [],
+      "status": "ok",
+      "abstained": true,
+      "claim_count": 0,
+      "supported_claim_count": 0
+    },
+    {
+      "id": "d",
+      "split": "test",
+      "expected_evidence_units": {},
+      "ranked_ids": [],
+      "status": "error",
+      "abstained": true,
+      "claim_count": 0,
+      "supported_claim_count": 0
+    }
+  ]
+}
