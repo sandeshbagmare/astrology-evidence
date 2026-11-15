@@ -57,6 +57,7 @@ services:
     build: .
     environment:
       APP_ENV: development
+      QDRANT_URL: http://qdrant:6333
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-astrology}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in your shell or .env}@postgres:5432/${POSTGRES_DB:-astrology}
     command: ["python", "-m", "astrology_evidence.jobs.worker"]
     depends_on:

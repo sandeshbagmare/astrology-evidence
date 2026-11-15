@@ -54,3 +54,9 @@ node scripts/check-docs.mjs
 GitHub Actions runs these checks on pushes and pull requests. They check local links, credential-shaped text, damaged Unicode and fenced Markdown. They do **not** verify astrology claims, external source rights, provider behavior or application readiness.
 
 The public site is static HTML/CSS in `docs/`, published by GitHub Pages. The actual application and its Python tests have not been implemented. No books or credentials are distributed here.
+
+## Implementation update
+
+A functioning local application baseline now exists. Start with [the runbook](implementation/RUNBOOK.md) and [actual implementation progress](implementation/PROGRESS.md). The original research/readiness sections above describe the planning phase; current code supports accounts/profiles, chart calculations, source retrieval, bounded readings and privacy jobs. Production knowledge, provider and operating gates remain unresolved.
+
+Standard development: `uv sync --frozen`, then `uv run uvicorn astrology_evidence.main:create_app --factory`. Enable synthetic login only for local development. See the runbook for Docker, worker execution, curator setup and this laptop's approved runtime configuration. Never use real birth data or represent the synthetic corpus as licensed astrological knowledge.

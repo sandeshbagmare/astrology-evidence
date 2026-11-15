@@ -204,7 +204,7 @@ def ocr_image(
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
-                creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0,
+                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0) if os.name == "nt" else 0,
             )
             tsv = bounded_read(output.with_suffix(".tsv"), directory, 2_000_000)
         except (subprocess.SubprocessError, OSError) as exc:

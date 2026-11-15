@@ -285,3 +285,21 @@ def test_house_diagram_withholds_unknown_houses():
     assert 'role="img"' in html
     assert "House 3: Sun" in html
     assert html.count('class="house-cell"') == 12
+
+
+def test_form_dispatch_uses_worker_thread(client=None):
+    import asyncio
+    from unittest.mock import AsyncMock, patch
+
+    from starlette.requests import Request
+
+    from astrology_evidence.web import form_action
+
+    request = Request({"type": "http", "method": "POST", "path": "/web/action", "headers": []})
+    request._form = {}
+    sentinel = object()
+    with patch(
+        "astrology_evidence.web.run_in_threadpool", new=AsyncMock(return_value=sentinel)
+    ) as runner:
+        assert asyncio.run(form_action(request)) is sentinel
+        runner.assert_awaited_once()

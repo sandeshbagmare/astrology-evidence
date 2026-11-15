@@ -1,4 +1,4 @@
-# Provider implementation evidence — 2026-11-15
+# Provider implementation evidence â€” 2026-11-15
 
 Files: answers/contracts.py, answers/provider.py, answers/__init__.py, tests/test_provider.py.
 

@@ -1,4 +1,4 @@
-﻿# Corpus and retrieval implementation report
+# Corpus and retrieval implementation report
 
 Implemented 2026-11-15 in `src/astrology_evidence/corpus` and `retrieval`.
 

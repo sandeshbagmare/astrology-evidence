@@ -10,6 +10,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
 from sqlalchemy import select
+from starlette.concurrency import run_in_threadpool
 
 from astrology_evidence import identity, privacy, profiles
 from astrology_evidence.answers import routes as answers
@@ -188,6 +189,10 @@ def admin_corpus(request: Request):
 async def form_action(request: Request):
     """Translate ordinary forms to the same validated, CSRF-protected API handlers."""
     form = dict(await request.form())
+    return await run_in_threadpool(dispatch_form, request, form)
+
+
+def dispatch_form(request: Request, form: dict[str, Any]):
     scope = dict(request.scope)
     scope["headers"] = [
         (k, v)

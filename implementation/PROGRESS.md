@@ -1,20 +1,54 @@
-﻿# Implementation ledger
+# Application implementation progress
 
-User approved full implementation and testing on 2026-11-15. Work proceeds on implementation/mvp with small reviewed commits. The documentation-only restriction is superseded. No public app deployment or paid infrastructure is implied.
+Implementation began after explicit user approval on November 15, 2026. Source is developed on `implementation/mvp`, with small feature and fix commits and independent agent reviews.
 
-## Decisions
+## Implemented
 
-- Ruling: parallel implementers use disjoint directories; coordinator owns integration and Git commits. This follows the user's explicit parallel-work request over the skill's sequential-worker default. Cost if wrong: integration rework; final combined tests are mandatory.
-- Ruling: use Python 3.12 via `python -m uv`; uv is installed but absent from PATH. Docker is unavailable, so portable local tests use SQLite and embedded Qdrant, while PostgreSQL service tests are supplied and run separately when a service exists. Never equate SQLite passing with PostgreSQL verification.
-- Ruling: local synthetic mode may use explicit Moshier ephemeris mode, never silently labeled Swiss-file calculations. Production requires the reviewed engine/data/license settings and release gates.
-- Rights-cleared real books, domain-review benchmark labels, Google credentials, replacement provider secret and provider privacy review are external release inputs. Build all corresponding interfaces and test fixtures without fabricating approvals.
+- Typed configuration, runtime capability gates, FastAPI, SQLAlchemy and frozen Alembic migration.
+- Google OIDC protocol, browser-bound transactions, opaque sessions, CSRF and explicit synthetic local login.
+- Owned birth profiles and revisions; timezone gaps/folds and uncertain-time handling; versioned chart calculations and accessible fact tables/house diagram.
+- Rights-controlled curated text import, immutable corpus publication, local E5 adapter and actual Qdrant dense/sparse retrieval.
+- Bounded LangGraph reading workflow, explicit provider consent, idempotency, shared quota admission, cancellation/deadline fences and rights-aware history.
+- Conservative exact-source answers: no unreviewed traditional rule is treated as validated applicability. Complete evidence units preserve negations/exceptions.
+- Durable privacy jobs, account/profile deletion, expiring exports, source-withdrawal outbox and physical vector/text cleanup.
+- Server-rendered application pages and working ordinary-form adapters, administrative import/publication, source library and privacy controls.
+- Bounded extraction/OCR adapter, evaluation CLI, synthetic fixtures, Docker/Compose package and PostgreSQL/Qdrant CI tests.
 
-## Phases
+## Verification evidence
 
-1. Foundation/provider/calculation contracts — in progress.
-2. Persistence, Google identity, profile ownership — queued.
-3. Corpus, retrieval, rules and jobs — queued.
-4. Grounded workflow, privacy and application UI — queued.
-5. Integration, browser testing, release packaging and independent review — queued.
+Local integrated Python 3.14 checks: 248 non-native tests passed before final portability/worker-dispatch additions; two service tests skipped locally. Native Python 3.12 calculation suite: 33 passed. Mypy passed across the then-current 29 source modules. Ruff and documentation checks pass. The final counts may grow; see CI for the exact tested revision.
 
-Each phase records actual test commands/results and commit IDs below. Do not mark launch gates passed from synthetic tests.
+Browser: local synthetic login, consented profile creation, native chart calculation through an isolated process, and insufficient-evidence reading completed successfully. Mobile320px has no horizontal overflow in the exercised flow. This is not full screen-reader conformance certification.
+
+First Linux CI on b191526 ran pytest with PostgreSQL 16 and Qdrant 1.20 successfully and Ruff passed; mypy exposed a Windows-only CREATE_NO_WINDOW typing issue, fixed using a portable attribute lookup. CI for the final revision is pending after push.
+
+## Independent reviews and resolved defects
+
+- Chart cache crossed profile revisions: cache key/constraint now includes revision identity.
+- Expired replay remained generating: status reads and replay terminalize expired requests without resending.
+- Partial source quotes removed negation: only complete evidence units are accepted until reviewed excerpt boundaries exist.
+- Withdrawal outbox had no consumer: worker redacts stored text/readings and deletes vector points, retaining pending state on failure.
+- Async ordinary forms blocked the event loop: synchronous service dispatch now runs in a worker thread.
+- Nullable database results and malformed Qdrant shapes now fail closed with targeted regression tests.
+
+## Deliberate decisions
+
+Parallel agents owned separate modules; coordinator integrated and committed. Recent commits include GPT-6.1 Sol in their commit trailers. A premature broad staging operation captured an in-progress validator draft in an intermediate commit; subsequent strict validator commit replaces it, and final CI/review applies to the complete branch. Do not deploy intermediate commits.
+
+Windows Application Control blocks the uv-created launcher and selected new native wheels. The policy was not disabled. A runtime installation attempt was rejected by automatic approval review and was not retried. The existing allowed Python3.14 runs app tests with local locked wheels; the allowed existing Python3.12 runs calculations in a process with a minimal environment. Standard Linux/CI uses one Python3.12 environment. Dependencies were pinned to compatible releases; maintained pysweph exposes the swisseph API.
+
+## Unresolved external release gates
+
+- No real editions licensed or ingested, no domain-reviewed production rules, no150-item expert benchmark labels.
+- No live Google account authorization or third-party generation call; supplied chat credential is not reused or saved. A replacement runtime secret, configured Google client and provider review are needed.
+- No empirically validated predictive claims. Current AI answers are constrained extracts, not full expert astrological synthesis.
+- E5 model weights, actual Sanskrit retrieval quality and host memory/latency still require measured validation.
+- No funded production host, backup/restore drill, full accessibility audit or public real-user deployment.
+- Docker image/Compose execution cannot run on this laptop; service behavior is exercised by CI, but image execution is a distinct check.
+
+The application is a functioning engineering baseline for local synthetic use, not a claim that the entire production/knowledge acquisition program is complete. External gates are enforced or documented rather than fabricated.
+
+
+## Final review addendum
+
+Independent review reproduced event-loop blocking for ordinary forms; the synchronous dispatcher now runs through Starlette threadpool and has a regression test. Chart caching now includes profile revision; expired request status is terminalized on reads/replay; full passage quoting preserves source qualifications; withdrawal outbox cleanup is executable and tested. The operator command `python -m astrology_evidence.manage` lists opaque user IDs, grants curator role locally and imports bounded edition JSON.

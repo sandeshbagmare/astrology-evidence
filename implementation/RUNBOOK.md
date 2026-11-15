@@ -62,3 +62,19 @@ These checks create a unique PostgreSQL schema and Qdrant collection, then remov
 Google sign-in needs runtime `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` and the matching `/auth/google/callback` redirect URL. Real-user deployment additionally needs HTTPS, secure cookies, disabled development login, reviewed ephemeris licensing/files, an operating privacy worker, backups/restoration checks, and review of the actual provider/data transfer. Set `OPENAI_API_KEY` only in the runtime secret store after provider review; no credential is included here. Optional embedding dependencies/models must be installed and pinned separately. Do not enable production merely to bypass these gates.
 
 Docker build/start and live PostgreSQL/Qdrant delivery tests have not been executed on this Windows host because Docker is unavailable. CI is configured to perform the service tests; a workflow file is not evidence of a completed CI run.
+
+## Curator and model setup
+
+After creating your account, a local operator can list opaque account IDs and grant a curator role:
+
+```text
+python -m astrology_evidence.manage users
+python -m astrology_evidence.manage grant-curator USER_ID
+python -m astrology_evidence.manage import-edition examples/synthetic-corpus.json
+```
+
+These commands require direct database access and are not public endpoints. The synthetic edition is original test material, not an astrology reference. Curators can import reviewed edition JSON and publish/withdraw it from `/admin/corpus`.
+
+For semantic retrieval, install `uv sync --extra embeddings`, fetch the model through an approved process and pin its40-character revision in `EMBEDDING_REVISION`. Set `EMBEDDING_ENABLED=true` only after the weights are cached, then publish through the curator page. E5 does not download automatically at application import. `uv sync --extra pdf` enables optional native PDF text extraction. OCR requires separately installed Tesseract and an operator-isolated worker; no books or OCR binaries are bundled.
+
+The optional `CALCULATION_PYTHON` plus `CALCULATION_PYTHONPATH` settings run the native calculator through an explicitly configured local interpreter, with JSON input and a minimal environment that excludes provider/session secrets. This supports the verified Windows two-runtime setup; ordinary Python3.12 deployments need neither setting.
