@@ -113,7 +113,7 @@ class ResponsesProvider:
                     max_retries=0,
                     timeout=min(120, request.timeout_seconds),
                     http_client=client,
-                    max_tokens=request.max_output_tokens,
+                    max_completion_tokens=request.max_output_tokens,
                     store=False,
                 )
                 with tracing_context(enabled=False):

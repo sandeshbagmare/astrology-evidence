@@ -4,6 +4,7 @@ import hashlib
 import secrets
 from dataclasses import dataclass
 from datetime import timedelta
+from typing import Literal, cast
 from urllib.parse import urlparse
 
 import httpx
@@ -14,7 +15,7 @@ from authlib.oidc.core import CodeIDToken
 from fastapi import APIRouter, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
 from joserfc.errors import JoseError
-from sqlalchemy import select, update
+from sqlalchemy import CursorResult, select, update
 
 from astrology_evidence.config import Settings
 from astrology_evidence.db import Database
@@ -48,7 +49,7 @@ def set_cookie(
     *,
     httponly: bool = True,
     max_age: int = 600,
-    samesite: str = "strict",
+    samesite: Literal["lax", "strict", "none"] = "strict",
 ) -> None:
     response.set_cookie(
         name,
@@ -135,6 +136,8 @@ def me(request: Request):
     context = require_user(request)
     with get_db(request).session() as db:
         user = db.get(User, context.user_id)
+        if user is None or user.deleted_at:
+            raise HTTPException(401, "Sign in required")
         return {
             "id": user.id,
             "display_name": user.display_name,
@@ -202,7 +205,7 @@ def consume_transaction(request: Request, state: str, cookie: str) -> OAuthTrans
             .where(OAuthTransaction.id == transaction.id, OAuthTransaction.consumed_at.is_(None))
             .values(consumed_at=now)
         )
-        if result.rowcount != 1:
+        if cast(CursorResult, result).rowcount != 1:
             raise HTTPException(400, "Sign-in transaction already used")
         return transaction
 

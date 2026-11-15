@@ -113,9 +113,19 @@ class QdrantIndex:
                 with_vectors=True,
             )
             for record in records:
-                dense = record.vector.get("dense", [])
-                if len(dense) != 384 or not all(math.isfinite(value) for value in dense):
+                if not isinstance(record.vector, dict):
                     raise ValueError("index dimension verification failed")
+                dense = record.vector.get("dense")
+                if (
+                    not isinstance(dense, list)
+                    or len(dense) != 384
+                    or not all(
+                        isinstance(value, (int, float)) and math.isfinite(value) for value in dense
+                    )
+                ):
+                    raise ValueError("index dimension verification failed")
+                if record.payload is None:
+                    raise ValueError("index ID/hash verification failed")
                 found[str(record.id)] = record.payload.get("text_hash")
             if offset is None:
                 break
@@ -129,7 +139,7 @@ class QdrantIndex:
             return []
         shared_filter = models.Filter(
             must=[
-                models.HasIdCondition(has_id=eligible_ids),
+                models.HasIdCondition(has_id=list(eligible_ids)),
                 models.FieldCondition(key="tradition", match=models.MatchValue(value=tradition)),
             ]
         )
@@ -156,10 +166,11 @@ class QdrantIndex:
                     with_payload=False,
                 ).points
             )
-        scores: Counter[str] = Counter()
+        scores: dict[str, float] = {}
         for branch in branches:
             for rank, point in enumerate(branch, start=1):
-                scores[str(point.id)] += 1 / (60 + rank)
+                identifier = str(point.id)
+                scores[identifier] = scores.get(identifier, 0.0) + 1 / (60 + rank)
         return sorted(scores, key=lambda identifier: (-scores[identifier], identifier))
 
 
@@ -188,7 +199,7 @@ class RetrievalService:
             if active is None:
                 return []
             generation = session.get(CorpusGeneration, active.generation_id)
-            if generation.status != "published":
+            if generation is None or generation.status != "published":
                 return []
             if generation.manifest["encoder_revision"] != self.encoder.revision:
                 raise ValueError("query encoder differs from published generation")
@@ -229,8 +240,10 @@ class RetrievalService:
             # Recheck every permission after index access; an in-flight withdrawal fails closed.
             with self.db.session() as session:
                 edition = session.get(Edition, passage.edition_id)
+                if edition is None:
+                    continue
                 rights = session.get(RightsRecord, edition.rights_id)
-                if not all(
+                if rights is None or not all(
                     permitted(edition, rights, permission)
                     for permission in {"index", "display", action}
                 ):

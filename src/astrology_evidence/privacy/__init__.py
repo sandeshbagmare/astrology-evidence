@@ -377,9 +377,12 @@ class PrivacyService:
 
     def purge_expired_exports(self) -> int:
         with self.db.session() as session:
-            return session.execute(
-                delete(Export).where(Export.expires_at <= database_now(session))
-            ).rowcount
+            deleted = session.scalars(
+                delete(Export)
+                .where(Export.expires_at <= database_now(session))
+                .returning(Export.id)
+            ).all()
+            return len(deleted)
 
     def replay_tombstones(self, journal: list[dict]) -> None:
         """Replay a separately recovered journal before allowing restored traffic."""

@@ -299,7 +299,7 @@ def upgrade():
         ),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("id", "owner_id"),
-        sa.UniqueConstraint("owner_id", "input_hash", "settings_hash"),
+        sa.UniqueConstraint("owner_id", "profile_revision_id", "input_hash", "settings_hash"),
     )
     op.create_index(op.f("ix_charts_owner_id"), "charts", ["owner_id"], unique=False)
     op.create_table(

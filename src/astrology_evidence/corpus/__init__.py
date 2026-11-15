@@ -222,8 +222,10 @@ class CorpusService:
             if passage is None or passage.review_state != "approved":
                 return None
             edition = session.get(Edition, passage.edition_id)
+            if edition is None:
+                return None
             rights = session.get(RightsRecord, edition.rights_id)
-            if not permitted(edition, rights, action):
+            if rights is None or not permitted(edition, rights, action):
                 return None
             active = session.get(ActiveCorpus, 1)
             generation = session.get(
@@ -293,22 +295,28 @@ class CorpusService:
             index.build(collection, indexed, encoder)
             index.verify(collection, {p.id: p.text_hash for p, _ in indexed})
             with self.db.session() as session:
-                generation = session.get(CorpusGeneration, generation_id)
+                current_generation = session.get(CorpusGeneration, generation_id)
+                if current_generation is None:
+                    raise ValueError("corpus generation disappeared during index build")
                 for passage, edition in indexed:
                     current = session.get(Edition, edition.id)
+                    if current is None:
+                        raise ValueError("edition permissions or text changed during index build")
                     rights = session.get(RightsRecord, current.rights_id)
                     current_passage = session.get(Passage, passage.id)
                     if (
-                        not all(
+                        rights is None
+                        or current_passage is None
+                        or not all(
                             permitted(current, rights, action) for action in ("index", "display")
                         )
                         or current_passage.text_hash != passage.text_hash
                         or text_hash(current_passage.exact_text) != passage.text_hash
                     ):
                         raise ValueError("edition permissions or text changed during index build")
-                generation.status = "published"
-                generation.indexed_count = len(indexed)
-                generation.published_at = utcnow()
+                current_generation.status = "published"
+                current_generation.indexed_count = len(indexed)
+                current_generation.published_at = utcnow()
                 active = session.get(ActiveCorpus, 1)
                 if active:
                     active.generation_id = generation_id
@@ -316,6 +324,8 @@ class CorpusService:
                     session.add(ActiveCorpus(id=1, generation_id=generation_id))
         except Exception:
             with self.db.session() as session:
-                session.get(CorpusGeneration, generation_id).status = "failed"
+                failed_generation = session.get(CorpusGeneration, generation_id)
+                if failed_generation is not None:
+                    failed_generation.status = "failed"
             raise
         return generation_id

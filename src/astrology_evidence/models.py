@@ -125,7 +125,7 @@ class Chart(Record, Base):
             ["profile_revisions.id", "profile_revisions.owner_id"],
             ondelete="CASCADE",
         ),
-        UniqueConstraint("owner_id", "input_hash", "settings_hash"),
+        UniqueConstraint("owner_id", "profile_revision_id", "input_hash", "settings_hash"),
         UniqueConstraint("id", "owner_id"),
     )
     owner_id: Mapped[str] = mapped_column(String(36), index=True)

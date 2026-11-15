@@ -1,10 +1,10 @@
 """Owned birth profiles, append-only revisions and chart snapshots."""
 
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, ConfigDict, Field
-from sqlalchemy import select, update
+from sqlalchemy import CursorResult, select, update
 
 from astrology_evidence.calculations import (
     BirthInput,
@@ -57,7 +57,9 @@ def validate_birth(birth: BirthInput) -> None:
         raise HTTPException(422, "Birth time does not exist in the selected timezone") from exc
 
 
-def profile_json(profile: Profile, revision: ProfileRevision) -> dict[str, Any]:
+def profile_json(profile: Profile, revision: ProfileRevision | None) -> dict[str, Any]:
+    if revision is None:
+        raise HTTPException(404, "Profile not found")
     return {
         "id": profile.id,
         "owner_id": profile.owner_id,
@@ -188,7 +190,7 @@ def update_profile(request: Request, profile_id: str, payload: ProfilePatch):
             )
             .values(version=payload.expected_version + 1)
         )
-        if result.rowcount != 1:
+        if cast(CursorResult, result).rowcount != 1:
             raise HTTPException(409, "Profile revision conflict")
         if payload.alias is not None:
             profile.alias = payload.alias
@@ -235,6 +237,7 @@ def create_chart(request: Request, payload: ChartCreate):
         existing = db.scalar(
             select(Chart).where(
                 Chart.owner_id == user.user_id,
+                Chart.profile_revision_id == revision.id,
                 Chart.input_hash == input_hash,
                 Chart.settings_hash == settings_hash,
             )
