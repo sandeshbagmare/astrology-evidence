@@ -20,7 +20,7 @@ Local integrated Python 3.14 checks: 248 non-native tests passed before final po
 
 Browser: local synthetic login, consented profile creation, native chart calculation through an isolated process, and insufficient-evidence reading completed successfully. Mobile320px has no horizontal overflow in the exercised flow. This is not full screen-reader conformance certification.
 
-First Linux CI on b191526 ran pytest with PostgreSQL 16 and Qdrant 1.20 successfully and Ruff passed; mypy exposed a Windows-only CREATE_NO_WINDOW typing issue, fixed using a portable attribute lookup. CI for the final revision is pending after push.
+First Linux CI on b191526 ran pytest with PostgreSQL 16 and Qdrant 1.20 successfully and Ruff passed; mypy exposed a Windows-only CREATE_NO_WINDOW typing issue, fixed using a portable attribute lookup. CI passed on final implementation commit `f85820b05e340dd7a94600c2bafd1b3b9510ab4a` (GitHub Actions run 43774360189): pytest with PostgreSQL 16 and Qdrant 1.20 services, Ruff, and mypy all succeeded. The prior failure on `b191526` is superseded by this passing run.
 
 ## Independent reviews and resolved defects
 
