@@ -6,7 +6,7 @@ Status: research, documentation and public reading site, 2026-11-15. Product nam
 
 Read [context/README.md](context/README.md), [product scope](context/01-product-and-scope.md), [architecture](context/03-architecture.md), [decisions](context/04-decisions.md), and [progress](context/16-progress-and-open-decisions.md). Read the relevant specialist documents before a task. Documents express proposed decisions, not implementation or benchmark results.
 
-The user authorized publishing this research repository and a static GitHub Pages reading guide. Documentation/site assets, their checks, Git commits and Pages deployment are in scope. The astrology application, book ingestion and paid application infrastructure still require a separate implementation request. Existing skills suffice; no additional skills were installed.
+The user authorized publishing this research repository and a static GitHub Pages reading guide. Documentation/site assets, their checks, Git commits and Pages deployment are in scope. The user has now approved application implementation, parallel development, testing and incremental commits. Paid infrastructure, protected book acquisition and public real-user deployment still require their documented gates. Existing skills suffice; no additional skills were installed.
 
 ## Context map
 
