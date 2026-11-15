@@ -16,11 +16,11 @@ Implementation began after explicit user approval on November 15, 2026. Source i
 
 ## Verification evidence
 
-Local integrated Python 3.14 checks: 248 non-native tests passed before final portability/worker-dispatch additions; two service tests skipped locally. Native Python 3.12 calculation suite: 33 passed. Mypy passed across the then-current 29 source modules. Ruff and documentation checks pass. The final counts may grow; see CI for the exact tested revision.
+Local integrated Python 3.14 checks: 250 passed, with two PostgreSQL/Qdrant integration tests skipped because Docker services are unavailable locally. The Python 3.12 native chart suite passed 33 tests. Ruff and mypy pass across the source tree. Documentation validation checks 82 files with no issues.
 
 Browser: local synthetic login, consented profile creation, native chart calculation through an isolated process, and insufficient-evidence reading completed successfully. Mobile320px has no horizontal overflow in the exercised flow. This is not full screen-reader conformance certification.
 
-First Linux CI on b191526 ran pytest with PostgreSQL 16 and Qdrant 1.20 successfully and Ruff passed; mypy exposed a Windows-only CREATE_NO_WINDOW typing issue, fixed using a portable attribute lookup. CI passed on final implementation commit `f85820b05e340dd7a94600c2bafd1b3b9510ab4a` (GitHub Actions run 43774360189): pytest with PostgreSQL 16 and Qdrant 1.20 services, Ruff, and mypy all succeeded. The prior failure on `b191526` is superseded by this passing run.
+First Linux CI on b191526 exposed a Windows-only CREATE_NO_WINDOW typing issue; the portable attribute fix is now in place. CI passed on implementation commit `a366b6ee8f1b6ab03f1f62d579c59d5f4f760dfd` (run 43774602224): pytest with PostgreSQL 16 and Qdrant 1.20, Ruff, and mypy all succeeded. A later documentation-only update to README, report, and Pages still needs its own CI check before merge.
 
 ## Independent reviews and resolved defects
 

@@ -4,7 +4,7 @@
 
 A proposed Python astrology application that shows **the chart calculation, the passage from a book, and the AI interpretation separately**. Users should be able to inspect why an interpretation was produced and where its limits are.
 
-> **Current state: research and design, not a working astrology application.** The plan is sufficient to start a controlled prototype. It is not production-ready, and citations do not establish that astrology predicts future events.
+> **Current state: working local synthetic-data application; not cleared for real-user production.** It implements accounts, charts, rights-gated source search, constrained readings, privacy jobs, and the server-rendered UI. External source, provider, and deployment gates remain open. Citations do not establish that astrology predicts future events.
 
 ## What would the app do?
 
@@ -28,13 +28,13 @@ A proposed Python astrology application that shows **the chart calculation, the 
 
 Python / FastAPI · Jinja2 / HTMX · PostgreSQL · Qdrant · local multilingual embeddings · Swiss Ephemeris (licensing decision pending) · LangChain / bounded LangGraph workflow · Google OIDC.
 
-The initial generation adapter uses a user-reported third-party Responses endpoint. Compatibility, underlying model identity, data handling and reliability remain unverified. Secrets are never part of this repository. LiteLLM is optional after route compatibility testing.
+The generation adapter has offline Responses wire-contract tests but has not been called against the third-party service. Upstream model identity, data handling and reliability remain unverified. AI and embeddings are disabled by default. Secrets are never part of this repository.
 
 ## Is the plan good enough?
 
-**For a scoped prototype: yes. For real users or production: no.** Research covers 42 candidate books, 12 product comparisons, seven hosting options and 20 additional specialist assignments. These are research counts, not books already ingested, benchmark results or implemented features.
+**The local engineering prototype works. Production readiness is not established.** Research covers 42 candidate books, 12 product comparisons, seven hosting options and 20 additional specialist assignments. These are research counts, not ingested books or quality benchmarks.
 
-The next stage must prove provider compatibility, chart correctness, source permissions, retrieval quality and deployment fit. Start with synthetic birth records and 3–5 approved editions, not hundreds of unreviewed books. See the [report](REPORT.md) for the release gates.
+Before real users, acquire and review source editions, validate chart outputs against independent references, review provider data handling, produce expert-labeled quality results, and run production backup and recovery drills. See the [runbook](implementation/RUNBOOK.md) and [implementation ledger](implementation/PROGRESS.md).
 
 ## Small commits, continuous testing
 
@@ -53,7 +53,7 @@ node scripts/check-docs.mjs
 
 GitHub Actions runs these checks on pushes and pull requests. They check local links, credential-shaped text, damaged Unicode and fenced Markdown. They do **not** verify astrology claims, external source rights, provider behavior or application readiness.
 
-The public site is static HTML/CSS in `docs/`, published by GitHub Pages. The actual application and its Python tests have not been implemented. No books or credentials are distributed here.
+The public site is static HTML/CSS in `docs/`, published by GitHub Pages. It explains the working local app and its release gates; Pages does not host the Python application. No real books or credentials are distributed here.
 
 ## Implementation update
 
