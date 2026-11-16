@@ -1,7 +1,7 @@
 import os
 from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
-from threading import Barrier
+from threading import Barrier, Event
 from uuid import uuid4
 
 import pytest
@@ -337,3 +337,60 @@ def test_guest_mutation_with_expired_session_prompts_reopening_instead_of_sign_i
     )
     assert response.status_code == 401
     assert response.json()["detail"] == "Reopen this workspace page to continue"
+
+
+
+def test_cancelled_work_keeps_shared_slot_across_service_instances(quota_database_url):
+    db = create_db(quota_database_url)
+    db.initialize()
+    owners = []
+    with db.session() as session:
+        for index in range(2):
+            user = User(issuer="anonymous-workspace", subject=str(index))
+            session.add(user)
+            session.flush()
+            profile = Profile(owner_id=user.id)
+            session.add(profile)
+            session.flush()
+            revision = ProfileRevision(
+                owner_id=user.id, profile_id=profile.id, revision=1, birth_input={}
+            )
+            session.add(revision)
+            session.flush()
+            session.add(Chart(
+                owner_id=user.id, profile_revision_id=revision.id,
+                input_hash="a" * 64, settings_hash="b" * 64,
+                settings={}, manifest={}, facts=[],
+            ))
+            owners.append((user.id, revision.id))
+    entered, release = Event(), Event()
+
+    class HoldingRetriever:
+        def search(self, *_args, **_kwargs):
+            entered.set()
+            if not release.wait(timeout=15):
+                raise RuntimeError("test retrieval was not released")
+            return []
+
+    settings = Settings(_env_file=None, answer_global_limit=1)
+    first = ReadingService(db, HoldingRetriever(), None, settings)
+    second_db = create_db(quota_database_url)
+    second = ReadingService(second_db, None, None, settings)
+    try:
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            running = pool.submit(first.create, *owners[0], "reflection", "first")
+            try:
+                assert entered.wait(timeout=10)
+                with db.session() as session:
+                    request_id = session.scalar(select(ReadingRequest.id))
+                assert first.cancel(owners[0][0], request_id)["status"] == "cancelled"
+                with pytest.raises(HTTPException) as rejected:
+                    second.create(*owners[1], "reflection", "overlap")
+                assert rejected.value.status_code == 429
+            finally:
+                release.set()
+            assert running.result(timeout=10)["status"] == "cancelled"
+        assert second.create(*owners[1], "reflection", "after-return")["status"] == "succeeded"
+    finally:
+        second_db.engine.dispose()
+        db.engine.dispose()

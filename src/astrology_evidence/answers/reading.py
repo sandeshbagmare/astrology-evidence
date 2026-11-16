@@ -10,7 +10,7 @@ from hashlib import sha256
 from typing import Any
 
 from fastapi import HTTPException
-from sqlalchemy import func, select, update
+from sqlalchemy import delete, func, literal, select, update
 
 from astrology_evidence.answers.contracts import ProviderError
 from astrology_evidence.answers.workflow import run_workflow
@@ -32,6 +32,7 @@ from astrology_evidence.models import (
 )
 
 ACTIVE = ("admitted", "generating")
+INFLIGHT_PREFIX = "reading-inflight:"
 
 
 class ReadingService:
@@ -61,6 +62,23 @@ class ReadingService:
         session.scalar(
             select(QuotaBucket).where(QuotaBucket.id == "reading-admission").with_for_update()
         )
+
+    def _inflight(self, session, now):
+        # Independent leases survive cancellation and privacy cascades until the call returns.
+        session.execute(
+            delete(QuotaBucket).where(
+                QuotaBucket.id.startswith(INFLIGHT_PREFIX), QuotaBucket.resets_at <= now
+            )
+        )
+        leases = select(QuotaBucket.id.label("permit_id")).where(
+            QuotaBucket.id.startswith(INFLIGHT_PREFIX), QuotaBucket.resets_at > now
+        )
+        # Include work admitted by an earlier application version without counting it twice.
+        legacy = select(
+            (literal(INFLIGHT_PREFIX) + ReadingRequest.owner_id + ":" + ReadingRequest.id)
+            .label("permit_id")
+        ).where(ReadingRequest.status.in_(ACTIVE), ReadingRequest.deadline > now)
+        return leases.union(legacy).subquery()
 
     def _owned_chart(self, session, user_id, revision_id, chart_id=None):
         user = session.get(User, user_id)
@@ -187,14 +205,13 @@ class ReadingService:
                 expired.failure_code = "deadline_exceeded"
                 expired.execution_token = None
             session.flush()
-            active = (
-                select(func.count())
-                .select_from(ReadingRequest)
-                .where(ReadingRequest.status.in_(ACTIVE))
-            )
+            inflight = self._inflight(session, now)
+            active = select(func.count()).select_from(inflight)
             if session.scalar(active) >= min(5, self.settings.answer_global_limit):
                 raise HTTPException(429, "Global request limit reached")
-            if session.scalar(active.where(ReadingRequest.owner_id == user_id)) >= 1:
+            if session.scalar(active.where(
+                inflight.c.permit_id.startswith(f"{INFLIGHT_PREFIX}{user_id}:", autoescape=True)
+            )) >= 1:
                 raise HTTPException(429, "An active request already exists")
             day_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
             daily = session.scalar(
@@ -221,6 +238,10 @@ class ReadingService:
             session.add(row)
             session.flush()
             request_id = row.id
+            permit_id = f"{INFLIGHT_PREFIX}{user_id}:{request_id}"
+            session.add(QuotaBucket(
+                id=permit_id, used=1, capacity=1, resets_at=row.deadline
+            ))
         monotonic_deadline = time.monotonic() + self.settings.answer_deadline_seconds
         transmitted = False
 
@@ -270,14 +291,19 @@ class ReadingService:
                 return remaining
 
         try:
-            state = run_workflow(
-                question=question,
-                chart=chart,
-                retriever=self.retriever,
-                provider=self.provider,
-                ai_enabled=self.settings.ai_enabled,
-                guard=guard,
-            )
+            try:
+                state = run_workflow(
+                    question=question,
+                    chart=chart,
+                    retriever=self.retriever,
+                    provider=self.provider,
+                    ai_enabled=self.settings.ai_enabled,
+                    guard=guard,
+                )
+            finally:
+                with self.db.session() as session:
+                    self._lock(session)
+                    session.execute(delete(QuotaBucket).where(QuotaBucket.id == permit_id))
             evidence = [
                 {"id": p.id, "text_hash": p.text_hash, "generation_id": p.generation_id}
                 for p in state["passages"]

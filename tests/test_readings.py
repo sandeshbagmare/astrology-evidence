@@ -21,6 +21,7 @@ from astrology_evidence.models import (
     Passage,
     Profile,
     ProfileRevision,
+    QuotaBucket,
     Reading,
     ReadingRequest,
     RightsRecord,
@@ -442,3 +443,137 @@ def test_question_over_2000_characters_is_rejected_before_provider(env):
         create(env, question="x" * 2001)
     assert exc.value.status_code == 422
     assert not env.provider.calls
+
+
+@pytest.mark.parametrize("global_limit", [1, 5])
+def test_cancelled_generation_holds_concurrency_until_provider_returns(env, global_limit):
+    env.settings.answer_global_limit = global_limit
+
+    def cancel_and_try_again():
+        env.provider.effect = None
+        with env.db.session() as db:
+            request = db.scalar(select(ReadingRequest))
+        assert env.service.cancel(env.ids.user, request.id)["status"] == "cancelled"
+        with pytest.raises(HTTPException) as rejected:
+            create(env, key="while-cancelled-call-runs")
+        assert rejected.value.status_code == 429
+
+    env.provider.effect = cancel_and_try_again
+    assert create(env)["status"] == "cancelled"
+    assert len(env.provider.calls) == 1
+    assert create(env, key="after-call-returns")["status"] == "succeeded"
+    assert len(env.provider.calls) == 2
+
+
+def test_consent_revoke_and_regrant_does_not_free_running_call_slot(env):
+    def revoke_and_try_again():
+        env.provider.effect = None
+        env.service.set_consent(env.ids.user, False, "v1")
+        env.service.set_consent(env.ids.user, True, "v1")
+        with pytest.raises(HTTPException) as rejected:
+            create(env, key="while-revoked-call-runs")
+        assert rejected.value.status_code == 429
+
+    env.provider.effect = revoke_and_try_again
+    assert create(env)["status"] == "cancelled"
+    assert create(env, key="after-call-returns")["status"] == "succeeded"
+
+
+@pytest.mark.parametrize("scope", ["profile", "account"])
+def test_privacy_purge_does_not_free_inflight_global_slot(env, scope):
+    from astrology_evidence.jobs.worker import run_once
+    from astrology_evidence.privacy import PrivacyService
+
+    env.settings.answer_global_limit = 1
+    with env.db.session() as db:
+        profile = Profile(owner_id=env.ids.other)
+        db.add(profile)
+        db.flush()
+        revision = ProfileRevision(
+            profile_id=profile.id, owner_id=env.ids.other, revision=1, birth_input={}
+        )
+        db.add(revision)
+        db.flush()
+        db.add(Chart(
+            owner_id=env.ids.other, profile_revision_id=revision.id,
+            input_hash="c" * 64, settings_hash="d" * 64,
+            settings={}, manifest={}, facts=[],
+        ))
+        other_revision = revision.id
+    second_service = ReadingService(env.db, None, None, env.settings)
+
+    def purge_and_try_again():
+        env.provider.effect = None
+        privacy = PrivacyService(env.db)
+        if scope == "profile":
+            privacy.request_profile_deletion(env.ids.user, env.ids.profile)
+        else:
+            privacy.request_account_deletion(env.ids.user)
+        assert run_once(env.db, "purge-review")
+        with pytest.raises(HTTPException) as rejected:
+            second_service.create(env.ids.other, other_revision, "question", "while-purged")
+        assert rejected.value.status_code == 429
+
+    env.provider.effect = purge_and_try_again
+    with pytest.raises(HTTPException) as removed:
+        create(env)
+    assert removed.value.status_code == 404
+    assert second_service.create(
+        env.ids.other, other_revision, "question", "after-call-returns"
+    )["status"] == "succeeded"
+
+
+@pytest.mark.parametrize("failure", ["unknown", "unexpected"])
+def test_failed_generation_releases_concurrency_after_return(env, failure):
+    env.settings.answer_global_limit = 1
+
+    def fail():
+        if failure == "unknown":
+            raise ProviderError("provider_unknown", unknown=True)
+        raise RuntimeError("synthetic provider failure")
+
+    env.provider.effect = fail
+    assert create(env)["status"] == "unknown"
+    env.provider.effect = None
+    assert create(env, key="after-failure")["status"] == "succeeded"
+
+
+def test_crashed_inflight_lease_expires_without_refunding_daily_budget(env, monkeypatch):
+    import astrology_evidence.answers.reading as reading_module
+
+    now = utcnow()
+    env.settings.answer_global_limit = 1
+    env.settings.answer_global_daily_limit = 3
+    with env.db.session() as db:
+        db.add(QuotaBucket(
+            id=f"reading-inflight:{env.ids.other}:crashed-request",
+            used=1, capacity=1, resets_at=now + timedelta(seconds=20),
+        ))
+        db.add(QuotaBucket(
+            id="global-reading-day", used=1, capacity=3,
+            resets_at=now + timedelta(days=1),
+        ))
+    restarted = ReadingService(env.db, env.retriever, env.provider, env.settings)
+    with pytest.raises(HTTPException) as rejected:
+        restarted.create(env.ids.user, env.ids.revision, "reflection", "before-expiry")
+    assert rejected.value.status_code == 429
+    monkeypatch.setattr(reading_module, "utcnow", lambda: now + timedelta(seconds=21))
+    assert restarted.create(
+        env.ids.user, env.ids.revision, "reflection", "after-expiry"
+    )["status"] == "succeeded"
+    with env.db.session() as db:
+        assert db.scalar(select(QuotaBucket).where(
+            QuotaBucket.id.startswith("reading-inflight:")
+        )) is None
+        assert db.get(QuotaBucket, "global-reading-day").used == 2
+
+
+def test_legacy_active_request_without_permit_still_blocks_admission(env):
+    result = create(env)
+    with env.db.session() as db:
+        request = db.get(ReadingRequest, result["id"])
+        request.status = "generating"
+        request.deadline = utcnow() + timedelta(seconds=30)
+    with pytest.raises(HTTPException) as rejected:
+        create(env, key="while-legacy-call-runs")
+    assert rejected.value.status_code == 429
