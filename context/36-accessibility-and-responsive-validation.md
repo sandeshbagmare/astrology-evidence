@@ -1,6 +1,6 @@
 # Accessibility and responsive validation
 
-Prepared and primary sources inspected: 2026-11-15. Status: proposed requirements and validation protocol; no application, browser, assistive-technology or automated accessibility tests have run. This dossier extends documents 09, 21 and 43 without changing their scope.
+Prepared and primary sources inspected: 2026-11-15. Status: proposed requirements and validation protocol. A synthetic browser journey and 320px overflow check have run, but there is no full browser matrix, assistive-technology audit or WCAG conformance result. This dossier extends documents 09, 21 and 43 without changing their scope.
 
 ## Standard, priorities and release evidence
 

@@ -1,6 +1,6 @@
 # Code standards, testing and release evidence
 
-This document governs future implementation. No package environment or tests have been run for an application in this planning task.
+This document defines code and release standards. The Python application, locked environment, automated test suite and CI now exist; passing checks and remaining release evidence are listed in [implementation progress](../implementation/PROGRESS.md). Standards below remain targets where the implementation has not yet demonstrated compliance.
 
 ## Project layout
 
@@ -66,9 +66,9 @@ For equivalent independently configured reference ephemerides, initial longitude
 
 The central release thresholds are in [product scope](01-product-and-scope.md) and [retrieval](07-ingestion-and-retrieval.md). Overall test coverage target is >=85% of application lines with explicit branch tests for auth, ownership, time ambiguity and citation validation; coverage is a guardrail, not evidence of semantic correctness. A small held-out set establishes only bounded measured performance.
 
-## Future verification commands
+## Verification commands
 
-After the project is implemented and dependencies locked: `uv sync --frozen`, `uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy src`, `uv run pytest`, followed by targeted integration/browser/evaluation commands configured by the relevant task. Run clean migrations and rollback/recovery tests against a disposable database. Scan staged changes for secrets and inspect dependency/license reports. Record actual command, date, exit code and summary in progress; never write PASS from a proposed checklist.
+For a standard calculation-capable environment, pin Python 3.12: `uv sync --frozen --python 3.12`, `uv run ruff check src tests`, `uv run mypy src`, `uv run pytest`, followed by targeted integration/browser/evaluation commands. Run clean migrations and rollback/recovery tests against a disposable database. Scan staged changes for secrets and inspect dependency/license reports. Record actual command, date, exit code and summary in progress; never write PASS from a proposed checklist. The laptop-specific runtime workaround and unavailable Docker services are described in the runbook.
 
 ## Review and change control
 
@@ -77,7 +77,7 @@ Every change states user-visible behavior, changed contracts, test evidence and 
 
 ## Expanded test inventories
 
-Read the specialist inventories before writing tests: [calculation fixtures](22-calculation-algorithms-and-reference-tests.md), [time/place](23-time-place-and-uncertainty.md), [OCR](25-ocr-and-multilingual-quality.md), [claim evidence](26-evidence-validation-and-contradictions.md), [evaluation design](27-evaluation-and-benchmark-design.md), and [security threats](28-security-threat-model.md). These define concrete adverse inputs and independent validation needs; none is evidence that the future application has passed.
+Read the specialist inventories before writing tests: [calculation fixtures](22-calculation-algorithms-and-reference-tests.md), [time/place](23-time-place-and-uncertainty.md), [OCR](25-ocr-and-multilingual-quality.md), [claim evidence](26-evidence-validation-and-contradictions.md), [evaluation design](27-evaluation-and-benchmark-design.md), and [security threats](28-security-threat-model.md). These define concrete adverse inputs and independent validation needs; the inventories themselves are not evidence of a pass. See implementation progress for tests actually run.
 
 ## Expanded delivery and accessibility checks
 

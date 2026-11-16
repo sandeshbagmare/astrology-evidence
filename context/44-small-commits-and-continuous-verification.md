@@ -1,6 +1,6 @@
 # Small commits and continuous verification
 
-Adopted for future work on 2026-11-15 at the user's request. This policy applies to people and coding agents. Publishing this documentation and its reading website is authorized; it does not itself authorize building or launching the astrology application.
+Adopted on 2026-11-15 at the user's request and used during the subsequent application implementation. This policy applies to people and coding agents. Implementation and testing are authorized; public real-user launch remains gated by evidence listed in [implementation progress](../implementation/PROGRESS.md).
 
 ## One coherent change at a time
 
@@ -38,11 +38,11 @@ Run `node scripts/check-docs.mjs` from the repository root before committing doc
 
 For website changes, also inspect the relevant desktop and narrow mobile layouts, keyboard navigation, visible focus, disclosure controls and reading links in a browser. Verify GitHub Pages' deployed response and expected content after publishing. A successful push proves source publication; it does not prove that the Pages build finished or the public site works.
 
-Current CI verifies this documentation/website repository only. It cannot prove Google authentication, chart correctness, provider compatibility, retrieval quality or application deployment because those components are not implemented. Keep the readiness report explicit about that boundary.
+Current CI runs application pytest against PostgreSQL 16 and Qdrant 1.20, Ruff and mypy, as well as documentation checks and Pages deployment. It still cannot prove live Google authentication, independent chart accuracy, provider privacy/compatibility, real-corpus retrieval quality, production capacity or deployment recovery. Keep the readiness report explicit about that boundary.
 
-## Future application checks
+## Application checks and remaining gates
 
-Once implementation is separately authorized and dependencies are locked, add the actual checks from [code standards](14-code-standards-and-testing.md), [implementation plan](15-implementation-plan.md), and [CI/release strategy](37-ci-testing-and-release-strategy.md). The initial candidates are Ruff, mypy, pytest, PostgreSQL/Qdrant integration tests, browser tests and frozen retrieval evaluation. Do not install every future tool merely to make a checklist appear complete.
+The locked application now runs Ruff, mypy, pytest, PostgreSQL/Qdrant integration tests and focused browser tests. Frozen expert retrieval evaluation, live-provider checks, full accessibility validation, independent chart references and recovery drills remain open gates from [code standards](14-code-standards-and-testing.md), [implementation plan](15-implementation-plan.md), and [CI/release strategy](37-ci-testing-and-release-strategy.md). Do not install every proposed tool merely to make a checklist appear complete.
 
 Authentication, tenant isolation, chart calculations, rights withdrawal, provider charging/replay, migrations and citation validation require an independent review before merge. Check adjacent callers and failure handling. Use independent calculation references and rights-cleared fixtures; tests reproducing the implementation's own formula are not independent validation.
 
@@ -50,7 +50,7 @@ Tests should exercise concrete outcomes: another user's ID is denied; an unknown
 
 ## Branch and release discipline
 
-Prefer a short-lived branch and pull request for each coherent change once application work begins. Configure required CI checks and review protection for the default branch where the repository's account/plan supports it. These are required setup tasks for implementation, not claims that remote protection has already been configured. For an initial publication, the coordinator may create a small sequence of locally verified commits and push them together.
+Prefer a short-lived branch and pull request for each coherent change. Configure required CI checks and review protection for the default branch where the repository's account/plan supports it. These are deployment/repository settings, not claims that remote protection has already been configured. For an initial publication, the coordinator may create a small sequence of locally verified commits and push them together.
 
 The final release record names the exact commit, dependency lock, corpus generation, model/provider capability report, calculation data versions, checks run and outstanding limitations. Production readiness additionally requires the [build-readiness gates](41-research-synthesis-and-build-readiness.md): rights, ephemeris licensing, verified provider behavior, expert evidence evaluation, measured hosting capacity, reliable privacy jobs, restore drills and accessibility checks. Passing documentation CI or writing this rule does not satisfy those gates.
 

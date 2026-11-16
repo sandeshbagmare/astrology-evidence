@@ -1,6 +1,6 @@
 # UI, configuration, and user flows
 
-Status: proposed design; no UI has been implemented. Prepared 2026-11-15. These are product decisions, not claims about an existing application.
+Status: product design prepared 2026-11-15; core server-rendered screens are now implemented. This remains the intended interaction contract, not evidence that every flow or accessibility criterion has passed. See [implementation progress](../implementation/PROGRESS.md) for exercised flows and known gaps.
 
 ## Experience and delivery stack
 
@@ -177,4 +177,4 @@ Acceptance scenarios before beta:
 - A changed birth input creates a new chart version and never silently changes an old answer.
 - A user can identify the difference between chart calculation, textual support and AI synthesis in a short comprehension test.
 
-No UI has been built or tested in this documentation phase. The checks above are future release criteria.
+At the end of the documentation-only phase on 2026-11-15, no UI existed. A later implementation added core screens and exercised a synthetic browser journey; the checks above remain release criteria, and a full keyboard/screen-reader audit has not been completed.

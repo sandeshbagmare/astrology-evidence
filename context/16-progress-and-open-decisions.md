@@ -1,6 +1,6 @@
 # Progress, risks and open decisions
 
-Updated 2026-11-15. Status reflects this documentation task, not a running application.
+Updated 2026-11-16. This file began as a planning-phase record; the current milestone table below and [implementation progress](../implementation/PROGRESS.md) supersede its earlier planning-only status statements.
 
 ## Work completed in this task
 
@@ -24,17 +24,17 @@ Three specialist research agents worked alongside the coordinator, within the en
 
 | Milestone | Status | Completion evidence needed |
 |---|---|---|
-| Feasibility and project setup | Not started | Locked stack, route contract tests, measured memory and provider smoke test |
-| Auth and profiles | Not started | OAuth/session/ownership tests, migration evidence |
-| Calculation engine | Not started | Independent reference fixtures and uncertainty tests |
+| Feasibility and project setup | Implemented; local checks and CI pass | Provider smoke, measured host capacity, production artifact and recovery evidence |
+| Auth and profiles | Implemented; offline OIDC/session/ownership tests pass | Live Google client/callback configuration and real OAuth test |
+| Calculation engine | Implemented; 33 native unit/edge tests and CI pass | Independent position references, reviewed near-station tolerance, license decision |
 | Rights-cleared pilot corpus | Not acquired | Edition rights, artifact hashes, editorial review |
-| Retrieval | Not started | Indexed pilot and held-out evaluation |
-| Rule validation | Not started | Reviewed predicates and adversarial citation tests |
-| Answer workflow | Not started | Provider contract and grounding/abstention metrics |
-| UI and privacy | Not started | Browser/accessibility/export/deletion checks |
-| Deployment | Not provisioned | Live host measurements, security and recovery gates |
+| Retrieval | Implemented with synthetic fixtures and CI Qdrant tests | Licensed corpus, held-out retrieval evaluation and model/host measurements |
+| Rule validation | Conservative evidence validation implemented | Expert-reviewed astrological predicates, disagreement set and applicability labels |
+| Answer workflow | Bounded workflow and offline Responses contract tests implemented | Live provider review/smoke and expert grounding/abstention evaluation |
+| UI and privacy | Core screens and privacy jobs implemented; synthetic browser flow exercised | Remaining interaction fixes, full keyboard/screen-reader audit and operational deletion proof |
+| Deployment | Local app and CI services; documentation site is public | Production app host, image/Compose run, restore drill and live operations |
 
-No dependencies or skills were installed. No application code was written. No API request using the user's key was made. No books were downloaded or indexed. No Git repository or public service was created.
+At the end of the initial planning phase on 2026-11-15, no dependencies or skills had been installed and no application code had been written. No request used the credential supplied in chat; no books have been acquired or indexed. Repository and public-site creation happened in a later phase.
 
 ## Decisions proposed for the user to review
 
@@ -70,7 +70,7 @@ These questions do not block producing this documentation. They are decision gat
 
 ## Verification log
 
-Documentation verification and independent review results are appended here after execution. Application test counts remain zero until implementation starts; this is an intentional planning-only deliverable.
+The original documentation-only verification is recorded below. Application and CI evidence is now summarized in [implementation progress](../implementation/PROGRESS.md); the measured checks do not cover live-provider behavior, expert astrology quality, or production operations.
 
 ## Initial independent builder review — 2026-11-15
 
@@ -90,16 +90,16 @@ Twenty additional agents were assigned distinct research topics and ran in waves
 
 The final integration review identified and the coordinator resolved: explicit-submit geocoder behavior, canonical request versus answer statuses, timeout versus explicit cancellation, missing cancellation/job/export/profile/chart endpoint contracts, exact 86-answerable/14-unanswerable held-out allocation, source-layer attribution, physical Qdrant collection authority, conditional application-encryption tests, and consistent calculated/traditional/AI-synthesis labels with empirical validity kept separate.
 
-Research is delivered; implementation, rights acquisition, provider validation, measured hosting fit, book ingestion, expert labels and application tests remain unstarted. This is a detailed build specification with launch gates, not a running product or a claim that all research uncertainties are settled.
+Research was delivered before implementation authorization. The application is now implemented and locally testable, while rights acquisition, live provider validation, measured hosting fit, book ingestion, expert labels, independent ephemeris validation and production operations remain open. This remains a build specification with release gates, not a claim that all research uncertainties are settled.
 
 
 
 
 ## Final documentation verification — 2026-11-15
 
-Checked 46 Markdown files: zero broken local Markdown links, zero credential-pattern findings after token-boundary matching, zero Unicode replacement characters, and zero unbalanced fenced blocks. All project files are Markdown; no application files or dependency artifacts were created. A broad preliminary secret regex matched part of the official NIST risk-management URL; inspection confirmed a false positive, and the final scan used token boundaries. The initial and final independent reviews are recorded above and in dossier 41. External source accessibility and research completeness remain governed by each dossier's source register; local link checking is not a claim that every external URL stays available.
+The planning-phase check covered 46 Markdown files: zero broken local links, credential-pattern findings after token-boundary matching, Unicode replacement characters, or unbalanced fenced blocks. At that time the repository contained no application files or dependency artifacts. A broad preliminary secret regex matched part of the official NIST risk-management URL; inspection confirmed a false positive, and the final scan used token boundaries. External source accessibility and research completeness remain governed by each dossier's source register; local link checking is not a claim that every external URL stays available.
 
 
 ## Publishing phase — November 15, 2026
 
-The user subsequently authorized a public repository and static GitHub Pages guide. README, REPORT, contribution rules, policy44, static assets and documentation CI were added. Earlier no-repository/no-deployment statements describe the original research phase. This publication does not implement or deploy the astrology application. Local documentation tests and an independent review pass; production application gates remain pending.
+The user subsequently authorized a public repository and static GitHub Pages guide. README, REPORT, contribution rules, policy44, static assets and documentation CI were added in that publication phase. The Pages site remains a reading guide, separate from the locally running Python application. Earlier no-repository/no-application statements describe only their dated planning snapshot. Current app checks and production gates are recorded in [implementation progress](../implementation/PROGRESS.md).

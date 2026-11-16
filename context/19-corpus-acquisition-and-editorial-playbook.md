@@ -126,7 +126,7 @@ Use a two-person review for executable rules and a single trained curator plus s
 
 Record reviewer IDs, timestamps, decision, confidence and disagreement. Escalate unresolved disputes to a domain editor. Domain approval does not waive copyright review; rights approval does not establish textual truth.
 
-Release gates are: 100% provenance fields for supporting passages; 100% quote-substring fidelity; no production retrieval from expired/blocked sources; zero silent tradition mixing; no executable rule without reviewer signoff; and measured retrieval targets from the coordinated plan (150 evaluation items, 20 calibration, 30 development, 100 held-out, 86 answerable and 14 unanswerable held-out; Recall@10 target at least 0.90 before top-eight generation). These are acceptance targets pending implementation.
+Release gates are: 100% provenance fields for supporting passages; 100% quote-substring fidelity; no production retrieval from expired/blocked sources; zero silent tradition mixing; no executable rule without reviewer signoff; and measured retrieval targets from the coordinated plan (150 evaluation items, 20 calibration, 30 development, 100 held-out, 86 answerable and 14 unanswerable held-out; Recall@10 target at least 0.90 before top-eight generation). These remain acceptance targets pending licensed corpus acquisition, editorial review and benchmark execution; the application pipeline alone does not satisfy them.
 
 ## 8. Editorial rule-authoring template
 

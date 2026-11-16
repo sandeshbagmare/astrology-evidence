@@ -1,6 +1,6 @@
 # Time, birthplace and uncertainty
 
-Research dossier, 2026-11-15. This extends [domain requirements](05-astrology-domain.md), [contracts](12-data-and-api-contracts.md), and [calculation research](22-calculation-algorithms-and-reference-tests.md). Findings below come from inspected primary documentation; proposed interfaces and test cases have not been implemented. The supported input range remains Gregorian 1900-01-01 through the current date. Accepting a date does not guarantee its local clock history is known accurately.
+Research dossier, 2026-11-15. This extends [domain requirements](05-astrology-domain.md), [contracts](12-data-and-api-contracts.md), and [calculation research](22-calculation-algorithms-and-reference-tests.md). The app implements timezone-aware inputs, unknown-time states and DST gap/fold handling in its calculation service; this dossier's broader place-resolution interfaces and validation matrix are not complete. The supported input range remains Gregorian 1900-01-01 through the current date. Accepting a date does not guarantee its local clock history is known accurately.
 
 ## 1. Three uncertainties that must remain separate
 

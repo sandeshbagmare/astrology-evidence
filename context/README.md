@@ -1,6 +1,6 @@
 # Context index
 
-Prepared 2026-11-15. Read this as a coherent proposed specification. Every implementation milestone is pending; research access and verification limits are tracked separately.
+Prepared 2026-11-15 and updated during implementation. This is the design and research context library; current code and verification status are in [implementation progress](../implementation/PROGRESS.md), and future continuation guidance is in the [GPT-6.1 Sol handoff](../implementation/GPT-6.1-SOL-IMPLEMENTATION-ARTICLE.md). Proposed research targets are not test results.
 
 ## Recommended reading order
 

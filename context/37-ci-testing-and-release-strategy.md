@@ -1,10 +1,12 @@
 # CI, testing and release strategy
 
-Prepared 2026-11-15. Proposed implementation policy only: no workflows, application tests, benchmarks, dependency installs or provider calls were executed. This extends [standards](14-code-standards-and-testing.md), [implementation](15-implementation-plan.md), [calculation references](22-calculation-algorithms-and-reference-tests.md), [evaluation](27-evaluation-and-benchmark-design.md), [threat model](28-security-threat-model.md) and [provider contract](32-responses-provider-compatibility.md). Acceptance targets below are not results.
+Prepared 2026-11-15. The policy below was written before implementation and still defines broader release targets. Current CI runs Python tests with PostgreSQL/Qdrant, Ruff and mypy, plus documentation checks and Pages deployment; exact results are in [implementation progress](../implementation/PROGRESS.md). No expert benchmark, live provider call, SBOM/advisory audit, production recovery drill or full accessibility audit is claimed. This extends [standards](14-code-standards-and-testing.md), [implementation](15-implementation-plan.md), [calculation references](22-calculation-algorithms-and-reference-tests.md), [evaluation](27-evaluation-and-benchmark-design.md), [threat model](28-security-threat-model.md) and [provider contract](32-responses-provider-compatibility.md). Acceptance targets below are not results.
 
 ## Pipeline boundaries
 
 Use three independently visible workflows: unprivileged pull-request verification, trusted release-candidate verification, and manually approved external-service evaluation. A passing PR means the change meets its engineering checks; it does not confer source rights, certify provider privacy, or establish predictive validity.
+
+The following matrix is the target release policy, not a description of jobs currently configured. Current configured CI is summarized in the status paragraph above.
 
 | Trigger / job | Environment and meaningful checks | Required result |
 |---|---|---|

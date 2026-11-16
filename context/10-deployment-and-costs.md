@@ -10,7 +10,7 @@ Status: proposed plan. Official pages were retrieved directly on 2026-11-15; quo
 | Free demonstration | Render web, Neon PostgreSQL, Qdrant Cloud; local administrator ingestion | Invitation-only small curated corpus | Sleeps, quotas; encoder must pass host memory tests |
 | Production | Paid always-on Python app/worker, managed PostgreSQL, Qdrant, durable object storage | Public availability and regular ingestion | Budget based on measured use; no permanent-free promise |
 
-Keep one codebase with environment-specific configuration. Docker packaging is proposed, not created. Use PostgreSQL durable jobs with leases/idempotency; add Redis/Celery only when measured demand warrants. Demo handles bounded answers in its web process; corpus ingestion runs locally. Production adds a worker. A web background task is never treated as durable execution.
+Keep one codebase with environment-specific configuration. A Dockerfile and Compose stack now exist, but the stack has not been built or exercised on the local Windows host. The app uses PostgreSQL-backed durable privacy jobs with leases/idempotency; add Redis/Celery only when measured demand warrants. The bounded reading request currently runs in the web process, corpus curation is operator-driven, and the privacy worker is separate. A web background task is never treated as durable execution.
 
 ## Current free-service facts
 

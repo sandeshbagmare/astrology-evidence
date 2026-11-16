@@ -1,6 +1,6 @@
 # LLM provider, LangChain, and optional LiteLLM gateway
 
-Status: design only. The user reports a successful FreeGG Responses call and HTTP 410 from Chat Completions. This session has not repeated that test, authenticated to FreeGG, or established upstream model identity, terms, quotas or reliability.
+Status: Responses provider and LangChain adapter implemented; offline wire and privacy tests pass. The user's reported FreeGG Responses call has not been repeated, and this project has not authenticated to FreeGG or established upstream model identity, terms, quotas, data retention or reliability. See [provider implementation evidence](../implementation/provider-report.md) and [implementation progress](../implementation/PROGRESS.md).
 
 ## Initial contract
 

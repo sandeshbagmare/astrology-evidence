@@ -1,6 +1,6 @@
 # UI interaction specification
 
-Status: proposed implementation specification, 2026-11-15. Extends [09 UI overview](09-ui-and-user-flows.md) and uses [12 API/data contracts](12-data-and-api-contracts.md) as the canonical schema. English, adult private beta, Vedic D1 natal scope. No screens, accessibility checks or browser tests have been implemented. Numerical limits below are proposed UI/service requirements that must be synchronized with server validation; browser validation alone is insufficient.
+Status: implementation specification prepared 2026-11-15 and partially realized in the current UI. Extends [09 UI overview](09-ui-and-user-flows.md) and uses [12 API/data contracts](12-data-and-api-contracts.md) as the canonical schema. English, adult private beta, Vedic D1 natal scope. A synthetic browser flow has been exercised, but this specification still contains unimplemented interactions and unverified accessibility criteria. Numerical limits below remain requirements that must be synchronized with server validation; browser validation alone is insufficient.
 
 ## Interaction model and invariants
 

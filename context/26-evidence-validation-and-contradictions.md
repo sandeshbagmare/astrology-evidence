@@ -65,7 +65,7 @@ A mock chart supplies A=true, B=true and C=unknown. The ledger links those mock 
 
 ## Meaningful test matrix
 
-These are future tests, not executed results.
+This is the full proposed test matrix, not a claim that every case has been executed. Core quote/hash/span and rights-validation cases have automated coverage; expert applicability judgments and the remaining adversarial cases still require review and evaluation. See [implementation progress](../implementation/PROGRESS.md).
 
 | Case | Required outcome |
 |---|---|

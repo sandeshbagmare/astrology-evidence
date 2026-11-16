@@ -1,6 +1,6 @@
 # Privacy and data lifecycle
 
-Prepared 2026-11-15. Proposed engineering contract, not implemented behavior or legal advice. Read with [authentication](08-authentication-and-security.md), [deployment](10-deployment-and-costs.md), [data contracts](12-data-and-api-contracts.md), and [configuration](43-configuration-reference.md). Jurisdictions, applicable legal bases, transfer requirements and notification duties remain unresolved launch decisions; this document does not invent statutory deadlines.
+Prepared 2026-11-15. This engineering contract is partially implemented through owned sessions, consent, exports, deletion and durable purge jobs; see [implementation progress](../implementation/PROGRESS.md) for evidence and remaining work. It is not legal advice. Read with [authentication](08-authentication-and-security.md), [deployment](10-deployment-and-costs.md), [data contracts](12-data-and-api-contracts.md), and [configuration](43-configuration-reference.md). Jurisdictions, applicable legal bases, transfer requirements and notification duties remain unresolved launch decisions; this document does not invent statutory deadlines.
 
 ## Privacy model and decision boundaries
 

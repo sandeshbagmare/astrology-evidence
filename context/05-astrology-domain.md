@@ -1,6 +1,6 @@
 # Astrology domain and calculation contract
 
-Status: proposed design, 2026-11-15. No calculations or scientific validation have been performed in this planning task.
+Status: domain design drafted 2026-11-15 and partially implemented. The app computes versioned chart facts, but this document's domain recommendations are not all implemented and independent ephemeris/domain validation remains open. Astrology's predictive validity is not established by calculation tests.
 
 ## What the product can establish
 

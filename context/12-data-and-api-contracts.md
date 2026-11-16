@@ -1,6 +1,6 @@
 # Data model and API contracts
 
-Contracts below are design specifications, not implemented interfaces. All resource IDs are opaque UUIDs unless an explicit content hash is specified. All recorded instants use UTC with timezone-aware values; original local birth input remains preserved separately.
+This is the canonical data/API design. The application now implements a tested subset of these contracts; consult source and [implementation progress](../implementation/PROGRESS.md) for actual coverage and deviations. All resource IDs are opaque UUIDs unless an explicit content hash is specified. All recorded instants use UTC with timezone-aware values; original local birth input remains preserved separately.
 
 ## Database model
 

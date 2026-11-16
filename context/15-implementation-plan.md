@@ -1,6 +1,6 @@
 # Astrology Evidence Implementation Plan
 
-> **For agentic workers:** Use the available `subagent-driven-development` or `executing-plans` skill when the user starts implementation. This document does not authorize implementation during the current documentation-only task. Steps use checkboxes to track actual work.
+> **Execution status:** The user approved implementation, and work was completed in `implementation/mvp` then merged to `main`. The checkboxes below describe the original ordered work plan and are not its completion ledger. See [implementation progress](../implementation/PROGRESS.md) and the [GPT-6.1 Sol handoff](../implementation/GPT-6.1-SOL-IMPLEMENTATION-ARTICLE.md) for completed tests, commits, and still-open launch gates. Steps use checkboxes as the original plan record.
 
 **Goal:** Deliver a private-beta Python web application with reproducible Vedic charts and inspectable, source-backed interpretations.
 
@@ -12,7 +12,7 @@
 
 ## Global constraints
 
-- Documentation-only until a separate user implementation request.
+- This was documentation-only until the user separately approved implementation on 2026-11-15; the plan is now an ordered historical execution outline. Current status is in [implementation progress](../implementation/PROGRESS.md).
 - No credentials in source, fixtures, logs, docs or browser responses.
 - Google sign-in and server-derived ownership govern every private resource.
 - Vedic/sidereal/Lahiri/whole-sign/mean-node initial defaults; Gregorian births from 1900-01-01 through current date.

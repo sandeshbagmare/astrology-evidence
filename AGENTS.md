@@ -1,10 +1,10 @@
 # Astrology Evidence — agent instructions
 
-Status: research, documentation and public reading site, 2026-11-15. Product name is provisional.
+Status: research/context library, public reading site and local Python application baseline, updated 2026-11-16. The product name is provisional; real-user production release remains gated.
 
 ## Read first
 
-Read [context/README.md](context/README.md), [product scope](context/01-product-and-scope.md), [architecture](context/03-architecture.md), [decisions](context/04-decisions.md), and [progress](context/16-progress-and-open-decisions.md). Read the relevant specialist documents before a task. Documents express proposed decisions, not implementation or benchmark results.
+Read [context/README.md](context/README.md), [product scope](context/01-product-and-scope.md), [architecture](context/03-architecture.md), [decisions](context/04-decisions.md), and [progress](context/16-progress-and-open-decisions.md). Read the relevant specialist documents before a task. They define requirements and research; use [implementation progress](implementation/PROGRESS.md) and the [context-to-code review](implementation/CONTEXT-CODE-REVIEW.md) for actual implementation and verification evidence.
 
 The user authorized publishing this research repository and a static GitHub Pages reading guide. Documentation/site assets, their checks, Git commits and Pages deployment are in scope. The user has now approved application implementation, parallel development, testing and incremental commits. Paid infrastructure, protected book acquisition and public real-user deployment still require their documented gates. Existing skills suffice; no additional skills were installed.
 
@@ -50,7 +50,7 @@ The user authorized publishing this research repository and a static GitHub Page
 
 Use the smallest testable vertical slice. Python backend and server-rendered UI; no separate SPA or microservices without a demonstrated need. Use the skills available to the executor when relevant: python-best-practices, python-fastapi-development, langchain-architecture, langgraph-fundamentals (for LangGraph code), rag-implementation, python-testing-patterns, systematic-debugging, verification-before-completion. For new features consult brainstorming; for execution use executing-plans or subagent-driven-development according to user instructions. Read each skill before applying it. Do not install duplicate skills speculatively.
 
-Parallel work is authorized for this planning request; this environment supports four active agents including the coordinator. Do not claim that dozens ran concurrently. For implementation, split disjoint ownership and review contracts before parallel edits.
+Parallel work is authorized by the user for implementation and review; this environment supports four active agents including the coordinator. Work therefore runs in waves of at most three workers plus the coordinator. Do not claim that dozens ran concurrently. Split disjoint ownership and review contracts before parallel edits.
 
 ## Expanded specialist context
 
@@ -59,4 +59,4 @@ For detailed research, read [the expanded research program](context/42-expanded-
 
 ## Small commits and continuous verification
 
-Follow [the delivery rules](context/44-small-commits-and-continuous-verification.md) and [CONTRIBUTING.md](CONTRIBUTING.md). Commit one coherent tested change at a time. Run relevant tests during development and before each commit; repair failures before dependent work. Use independent agent review/testing for risky logic with disjoint file ownership, then validate the combined revision. For this repository run both documented Node checks. Future Python checks are required only once those components exist. Never claim that passing documentation CI makes the application production-ready.
+Follow [the delivery rules](context/44-small-commits-and-continuous-verification.md) and [CONTRIBUTING.md](CONTRIBUTING.md). Commit one coherent tested change at a time. Run relevant tests during development and before each commit; repair failures before dependent work. Use independent agent review/testing for risky logic with disjoint file ownership, then validate the combined revision. For documentation changes run both documented Node checks; for application changes run applicable Python and service checks from the runbook. Never claim that passing documentation CI makes the application production-ready.

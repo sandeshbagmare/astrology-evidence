@@ -1,6 +1,6 @@
 # Workflow state and failure design
 
-Prepared 2026-11-15. This document defines the bounded answer workflow for Astrology Evidence. It is a design and research record; no workflow code or execution result is implied.
+Prepared 2026-11-15. This document defines the bounded answer workflow for Astrology Evidence. A LangGraph workflow and offline provider-contract tests now implement part of this design; remaining behavior and external launch gates are tracked in [implementation progress](../implementation/PROGRESS.md). This document remains the target contract, not proof that every transition has been validated.
 
 ## Purpose and boundaries
 
