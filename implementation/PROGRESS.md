@@ -16,11 +16,11 @@ Implementation began after explicit user approval on November 15, 2026. Source i
 
 ## Verification evidence
 
-Local integrated Python 3.14 checks: 250 passed, with two PostgreSQL/Qdrant integration tests skipped because Docker services are unavailable locally. The Python 3.12 native chart suite passed 33 tests. Ruff and mypy pass across the source tree. Documentation validation checks 82 files with no issues. The later management-command test also passes independently.
+Local integrated Python 3.14 checks: 250 passed, with two PostgreSQL/Qdrant integration tests skipped because Docker services are unavailable locally. The Python 3.12 native chart suite passed 33 tests. Ruff and mypy pass across the source tree. Documentation validation checks 83 files with no issues. The local browser verified HTTP readiness on port 18766 and completed the synthetic login/profile/chart/reading flow.
 
 Browser: local synthetic login, consented profile creation, native chart calculation through an isolated process, and insufficient-evidence reading completed successfully. Mobile320px has no horizontal overflow in the exercised flow. This is not full screen-reader conformance certification.
 
-First Linux CI on b191526 exposed a Windows-only CREATE_NO_WINDOW typing issue; the portable attribute fix is now in place. CI passed on implementation commit `a366b6ee8f1b6ab03f1f62d579c59d5f4f760dfd` (run 43774602224) and again after the README/report/Pages update at `bc3e5a0d394c0c0337abb2a537ef5a301531f392` (run 43776294459). Both runs used PostgreSQL 16 and Qdrant 1.20 and passed pytest, Ruff and mypy.
+First Linux CI on b191526 exposed a Windows-only CREATE_NO_WINDOW typing issue; the portable attribute fix is now in place. CI passed on `bc3e5a0d394c0c0337abb2a537ef5a301531f392` (run 43776294459) and the final GPT-6.1 Sol handoff commit `11610bf15f83868e6243f83abe944a4f003fe0b0` (run 43778862647). Both runs used PostgreSQL 16 and Qdrant 1.20 and passed pytest, Ruff and mypy.
 
 ## Independent reviews and resolved defects
 

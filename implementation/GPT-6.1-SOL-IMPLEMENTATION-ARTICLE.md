@@ -4,7 +4,7 @@
 **Repository:** `sandeshbagmare/astrology-evidence`  
 **Integrated branch:** `main`  
 **Development branch:** `implementation/mvp`  
-**Current integrated commit:** `bc3e5a0d394c0c0337abb2a537ef5a301531f392`
+**Current integrated commit:** `11610bf15f83868e6243f83abe944a4f003fe0b0`
 
 This article records the implementation phase completed with GPT-6.1 Sol. It is intended for the owner and for a later coding model that may continue the work. The app is a tested local engineering baseline. It is not represented as fully production-ready: the source corpus, provider review, live identity configuration, expert evaluation, real operating host and recovery drills are still external gates.
 
@@ -65,7 +65,7 @@ No credential from chat was copied into the repository. No authenticated model r
 
 ## Commits and GPT-6.1 Sol attribution
 
-There are **11 implementation-phase commits** between the published planning baseline `dc7ae71` and integrated app commit `bc3e5a0`. Two commits after the attribution instruction explicitly include `[GPT-6.1 Sol]` in their commit messages (`f85820b` and `a366b6e`). The final docs/status correction is the later commit `bc3e5a0`.
+There are **11 implementation-phase commits** between the published planning baseline `dc7ae71` and integrated app/documentation commit `bc3e5a0`, followed by this handoff-article commit `11610bf`. Four commits since the attribution instruction include `[GPT-6.1 Sol]` in their commit messages: `f85820b`, `a366b6e`, `bc3e5a0`, and `11610bf`.
 
 The implementation commits were:
 
@@ -80,14 +80,15 @@ The implementation commits were:
 9. `f85820b` — final integration/readiness rules with GPT-6.1 Sol attribution.
 10. `a366b6e` — record passing integrated CI with GPT-6.1 Sol attribution.
 11. `bc3e5a0` — update README, readiness report and GitHub Pages site for the implemented app.
+12. `11610bf` — write this detailed GPT-6.1 Sol implementation handoff and link it from the guide.
 
 This is a commit count, not a model-token count or generated-lines attribution. Parallel workers owned separate modules and the coordinator integrated/tested the combined tree. The environment allows at most four agents total, so implementation ran in waves rather than 50 simultaneously.
 
 ## Verification record
 
-On the Windows host, the final local application suite passed **250 tests**, with **2 tests skipped** because local Docker/PostgreSQL/Qdrant services were unavailable. The native calculation suite ran separately using the available Python 3.12 runtime and passed **33 tests**. Ruff passed across `src` and `tests`; mypy passed across **30 source modules**; the Markdown checker passed on **82 files**. Its 3 checker unit tests also pass.
+On the Windows host, the final local application suite passed **250 tests**, with **2 tests skipped** because local Docker/PostgreSQL/Qdrant services were unavailable. The native calculation suite ran separately using the available Python 3.12 runtime and passed **33 tests**. Ruff passed across `src` and `tests`; mypy passed across **30 source modules**; the Markdown checker passed on **83 files**. Its 3 checker unit tests also pass.
 
-GitHub Actions passed on implementation commit `a366b6e` and ran pytest with PostgreSQL 16 and Qdrant 1.20, Ruff and mypy. The subsequent public guide change `bc3e5a0` was also checked by Actions. GitHub Pages returned HTTP 200 after deployment and the published page described the local application.
+GitHub Actions passed on `bc3e5a0` and on the final article commit `11610bf`; both ran pytest with PostgreSQL 16 and Qdrant 1.20, Ruff and mypy. GitHub Pages returned HTTP 200 after deployment and the published page described the local application and links to this article.
 
 Known warnings include Authlib's deprecated legacy JOSE API and a LangSmith asyncio deprecation. They are non-failing warnings, but should be reviewed during dependency upgrades. CI uses no production secrets and no provider call.
 

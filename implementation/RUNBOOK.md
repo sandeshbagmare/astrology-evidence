@@ -1,4 +1,4 @@
-# Local development runbook
+﻿# Local development runbook
 
 This package is for local synthetic-data development. The Compose configuration binds services to loopback, uses PostgreSQL 16 and Qdrant 1.20.0, runs migrations before the web process and privacy worker, and preserves service data in named volumes. AI and embeddings remain disabled by default. Readiness means the database can answer a query; it does not certify source rights, Google login, AI, or retrieval availability.
 
@@ -68,13 +68,14 @@ Docker build/start and live PostgreSQL/Qdrant delivery tests have not been execu
 After creating your account, a local operator can list opaque account IDs and grant a curator role:
 
 ```text
-python -m astrology_evidence.manage users
-python -m astrology_evidence.manage grant-curator USER_ID
-python -m astrology_evidence.manage import-edition examples/synthetic-corpus.json
+./.venv/Scripts/python.exe -m astrology_evidence.manage users
+./.venv/Scripts/python.exe -m astrology_evidence.manage grant-curator USER_ID
+./.venv/Scripts/python.exe -m astrology_evidence.manage import-edition examples/synthetic-corpus.json
 ```
 
 These commands require direct database access and are not public endpoints. The synthetic edition is original test material, not an astrology reference. Curators can import reviewed edition JSON and publish/withdraw it from `/admin/corpus`.
 
-For semantic retrieval, install `uv sync --extra embeddings`, fetch the model through an approved process and pin its40-character revision in `EMBEDDING_REVISION`. Set `EMBEDDING_ENABLED=true` only after the weights are cached, then publish through the curator page. E5 does not download automatically at application import. `uv sync --extra pdf` enables optional native PDF text extraction. OCR requires separately installed Tesseract and an operator-isolated worker; no books or OCR binaries are bundled.
+For semantic retrieval, install `uv sync --extra embeddings`, fetch the model through an approved process and pin its 40-character revision in `EMBEDDING_REVISION`. Set `EMBEDDING_ENABLED=true` only after the weights are cached, then publish through the curator page. E5 does not download automatically at application import. `uv sync --extra pdf` enables optional native PDF text extraction. OCR requires separately installed Tesseract and an operator-isolated worker; no books or OCR binaries are bundled.
 
 The optional `CALCULATION_PYTHON` plus `CALCULATION_PYTHONPATH` settings run the native calculator through an explicitly configured local interpreter, with JSON input and a minimal environment that excludes provider/session secrets. This supports the verified Windows two-runtime setup; ordinary Python3.12 deployments need neither setting.
+
