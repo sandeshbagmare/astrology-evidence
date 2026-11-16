@@ -62,6 +62,12 @@ def test_exact_utc():
     assert resolved.candidates == (datetime(2000, 1, 1, 6, 30, tzinfo=UTC),)
 
 
+@pytest.mark.parametrize("fold", [0, 1])
+def test_explicit_fold_rejected_for_unambiguous_exact_time(fold):
+    with pytest.raises(ValueError, match="fold.*ambiguous"):
+        resolve_birth_time(birth(fold=fold))
+
+
 def test_gap_rejected():
     with pytest.raises(ValueError, match="nonexistent"):
         resolve_birth_time(
@@ -74,6 +80,7 @@ def test_fold_keeps_two_candidates_and_explicit_choice():
     result = resolve_birth_time(birth(**fields))
     assert len(result.candidates) == 2
     assert result.candidates[1] - result.candidates[0] == timedelta(hours=1)
+    assert resolve_birth_time(birth(**fields, fold=0)).candidates == (result.candidates[0],)
     assert resolve_birth_time(birth(**fields, fold=1)).candidates == (result.candidates[1],)
     assert calculate_chart(birth(**fields)).facts == ()
 

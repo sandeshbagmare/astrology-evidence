@@ -195,7 +195,11 @@ def resolve_birth_time(birth: BirthInput) -> ResolvedBirthTime:
         if not candidates:
             raise ValueError("Birth time is nonexistent in the selected timezone")
         if birth.fold is not None:
+            if len(candidates) != 2:
+                raise ValueError("fold selection is only valid for ambiguous local times")
             selected = local.replace(tzinfo=zone, fold=birth.fold).astimezone(UTC)
+            if selected not in candidates:
+                raise ValueError("fold selection is invalid for this local time")
             candidates = (selected,)
         return ResolvedBirthTime(candidates=candidates)
     if birth.time_precision == "unknown":

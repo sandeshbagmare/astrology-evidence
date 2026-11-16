@@ -1,5 +1,6 @@
 import asyncio
 
+import pytest
 from fastapi.testclient import TestClient
 
 from astrology_evidence.config import Settings
@@ -75,6 +76,40 @@ def test_chunked_oversize_body_is_rejected_before_downstream_parsing():
         [
             {"type": "http.request", "body": b"123456", "more_body": True},
             {"type": "http.request", "body": b"78901", "more_body": True},
+        ],
+    )
+    assert sent[0]["status"] == 413
+    assert not downstream.called
+
+
+def test_form_action_rejects_declared_oversize_before_form_parsing(tmp_path):
+    app = create_app(
+        Settings(database_url=f"sqlite:///{tmp_path}/db", app_env="test", _env_file=None)
+    )
+    with TestClient(app) as client:
+        response = client.post(
+            "/web/action",
+            content=b"action=import&edition=not-json",
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Content-Length": str(MAX_EDITION_IMPORT_BYTES + 1),
+            },
+        )
+    assert response.status_code == 413
+
+
+@pytest.mark.parametrize("declared_length", [None, b"1"])
+def test_form_action_rejects_streamed_oversize_before_downstream_parsing(declared_length):
+    downstream = CaptureApp()
+    headers = [(b"content-type", b"application/x-www-form-urlencoded")]
+    if declared_length is not None:
+        headers.append((b"content-length", declared_length))
+    sent = run_asgi(
+        RequestBodyLimitMiddleware(downstream, max_bytes=10),
+        request_scope(path="/web/action", headers=headers),
+        [
+            {"type": "http.request", "body": b"action=import", "more_body": True},
+            {"type": "http.request", "body": b"&edition={}", "more_body": False},
         ],
     )
     assert sent[0]["status"] == 413

@@ -23,11 +23,11 @@ from astrology_evidence.web import router as web_router
 from astrology_evidence.web.app import STATIC_DIR
 
 MAX_EDITION_IMPORT_BYTES = 25 * 1024 * 1024
-EDITION_IMPORT_PATH = "/api/admin/editions"
+LIMITED_BODY_PATHS = {"/api/admin/editions", "/web/action"}
 
 
 class RequestBodyLimitMiddleware:
-    """Bound curator JSON imports before FastAPI buffers or parses the request body."""
+    """Bound curator JSON and form imports before the framework parses their bodies."""
 
     def __init__(self, app: ASGIApp, *, max_bytes: int) -> None:
         self.app = app
@@ -37,7 +37,7 @@ class RequestBodyLimitMiddleware:
         if (
             scope["type"] != "http"
             or scope["method"] != "POST"
-            or scope["path"] != EDITION_IMPORT_PATH
+            or scope["path"] not in LIMITED_BODY_PATHS
         ):
             await self.app(scope, receive, send)
             return
