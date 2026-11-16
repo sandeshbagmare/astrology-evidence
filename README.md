@@ -20,6 +20,7 @@ A proposed Python astrology application that shows **the chart calculation, the 
 |---|---|---|
 | 5 minutes | [Pages overview](https://sandeshbagmare.github.io/astrology-evidence/) | What we are building, how it works and current readiness |
 | 10 minutes | [Readiness report](REPORT.md) | What is complete, what is unproven and what happens next |
+| 20 minutes | [GPT-6.1 Sol implementation handoff](implementation/GPT-6.1-SOL-IMPLEMENTATION-ARTICLE.md) | Detailed implementation record, commit list, tests and continuation guide |
 | 20 minutes | [Product scope](context/01-product-and-scope.md) and [architecture](context/03-architecture.md) | MVP, boundaries, technology and diagrams |
 | Before coding | [Implementation plan](context/15-implementation-plan.md) and [contribution rules](CONTRIBUTING.md) | Small work units, tests, review and release gates |
 | A specific question | [Full context index](context/README.md) and [research map](context/42-expanded-research-program.md) | Find the relevant specialist dossier without reading everything |

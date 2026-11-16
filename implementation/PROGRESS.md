@@ -16,11 +16,11 @@ Implementation began after explicit user approval on November 15, 2026. Source i
 
 ## Verification evidence
 
-Local integrated Python 3.14 checks: 250 passed, with two PostgreSQL/Qdrant integration tests skipped because Docker services are unavailable locally. The Python 3.12 native chart suite passed 33 tests. Ruff and mypy pass across the source tree. Documentation validation checks 82 files with no issues.
+Local integrated Python 3.14 checks: 250 passed, with two PostgreSQL/Qdrant integration tests skipped because Docker services are unavailable locally. The Python 3.12 native chart suite passed 33 tests. Ruff and mypy pass across the source tree. Documentation validation checks 82 files with no issues. The later management-command test also passes independently.
 
 Browser: local synthetic login, consented profile creation, native chart calculation through an isolated process, and insufficient-evidence reading completed successfully. Mobile320px has no horizontal overflow in the exercised flow. This is not full screen-reader conformance certification.
 
-First Linux CI on b191526 exposed a Windows-only CREATE_NO_WINDOW typing issue; the portable attribute fix is now in place. CI passed on implementation commit `a366b6ee8f1b6ab03f1f62d579c59d5f4f760dfd` (run 43774602224): pytest with PostgreSQL 16 and Qdrant 1.20, Ruff, and mypy all succeeded. A later documentation-only update to README, report, and Pages still needs its own CI check before merge.
+First Linux CI on b191526 exposed a Windows-only CREATE_NO_WINDOW typing issue; the portable attribute fix is now in place. CI passed on implementation commit `a366b6ee8f1b6ab03f1f62d579c59d5f4f760dfd` (run 43774602224) and again after the README/report/Pages update at `bc3e5a0d394c0c0337abb2a537ef5a301531f392` (run 43776294459). Both runs used PostgreSQL 16 and Qdrant 1.20 and passed pytest, Ruff and mypy.
 
 ## Independent reviews and resolved defects
 
@@ -52,3 +52,7 @@ The application is a functioning engineering baseline for local synthetic use, n
 ## Final review addendum
 
 Independent review reproduced event-loop blocking for ordinary forms; the synchronous dispatcher now runs through Starlette threadpool and has a regression test. Chart caching now includes profile revision; expired request status is terminalized on reads/replay; full passage quoting preserves source qualifications; withdrawal outbox cleanup is executable and tested. The operator command `python -m astrology_evidence.manage` lists opaque user IDs, grants curator role locally and imports bounded edition JSON.
+
+## Handoff article
+
+See [GPT-6.1 Sol implementation handoff](GPT-6.1-SOL-IMPLEMENTATION-ARTICLE.md) for detailed work summary, commit inventory, test evidence, release gates and safe continuation points.
