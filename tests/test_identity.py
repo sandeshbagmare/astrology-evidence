@@ -21,6 +21,7 @@ def client():
     app.state.db.initialize()
     app.state.settings = Settings(
         _env_file=None,
+        authentication_enabled=True,
         app_env="test",
         dev_login_enabled=True,
         app_public_origin="http://testserver",

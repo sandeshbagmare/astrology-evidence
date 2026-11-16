@@ -153,7 +153,11 @@ def env():
     retriever = SimpleNamespace(search=lambda *a, **k: [corpus.source(ids.passage)])
     provider = FakeProvider()
     settings = Settings(
-        app_env="test", ai_enabled=True, provider_reviewed=True, openai_api_key="synthetic"
+        app_env="test",
+        authentication_enabled=True,
+        ai_enabled=True,
+        provider_reviewed=True,
+        openai_api_key="synthetic",
     )
     service = ReadingService(db, retriever, provider, settings)
     yield SimpleNamespace(

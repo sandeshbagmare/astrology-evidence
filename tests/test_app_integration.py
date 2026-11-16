@@ -6,7 +6,12 @@ from astrology_evidence.main import create_app
 
 def test_corpus_endpoints_require_authentication(tmp_path):
     app = create_app(
-        Settings(database_url=f"sqlite:///{tmp_path}/db", app_env="test", _env_file=None)
+        Settings(
+            database_url=f"sqlite:///{tmp_path}/db",
+            app_env="test",
+            authentication_enabled=True,
+            _env_file=None,
+        )
     )
     with TestClient(app) as client:
         assert client.get("/api/sources/missing").status_code == 401

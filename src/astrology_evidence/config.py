@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     ai_model: str = "gpt-6.1-sol"
     google_client_id: str = ""
     google_client_secret: SecretStr | None = None
+    authentication_enabled: bool = False
     dev_login_enabled: bool = False
     session_cookie: str = "ae_session"
     secure_cookies: bool = False
@@ -36,6 +37,8 @@ class Settings(BaseSettings):
     answer_deadline_seconds: int = 150
     answer_daily_limit: int = 10
     answer_global_limit: int = 5
+    answer_global_daily_limit: int = 100
+    guest_workspace_global_limit_per_minute: int = 60
 
     @model_validator(mode="after")
     def validate_gates(self) -> "Settings":
@@ -43,6 +46,10 @@ class Settings(BaseSettings):
             raise ValueError("Unsupported provider configuration")
         if not 1 <= self.answer_deadline_seconds <= 150:
             raise ValueError("Answer deadline must be at most 150 seconds")
+        if not 1 <= self.answer_global_daily_limit <= 100_000:
+            raise ValueError("Global daily reading limit must be between 1 and 100000")
+        if not 1 <= self.guest_workspace_global_limit_per_minute <= 100_000:
+            raise ValueError("Guest workspace limit must be between 1 and 100000")
         if self.ai_enabled and not (self.openai_api_key and self.provider_reviewed):
             raise ValueError("AI requires a runtime credential and provider review")
         if self.embedding_enabled and not self.embedding_revision:
@@ -54,7 +61,9 @@ class Settings(BaseSettings):
                 raise ValueError("Production requires HTTPS")
             if not self.database_url.startswith("postgresql"):
                 raise ValueError("Production requires PostgreSQL")
-            if not (self.google_client_id and self.google_client_secret):
+            if self.authentication_enabled and not (
+                self.google_client_id and self.google_client_secret
+            ):
                 raise ValueError("Production requires Google identity configuration")
             if not (self.privacy_executor_ready and self.ephemeris_license_reviewed):
                 raise ValueError("Production privacy and license gates are unresolved")

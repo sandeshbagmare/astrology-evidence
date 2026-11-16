@@ -82,6 +82,30 @@ class ReadingService:
             raise HTTPException(422, "clarification_required")
         return chart
 
+    def _reserve_global_daily(self, session, now):
+        """Count accepted requests independently of owners and deleted reading rows."""
+        # The admission row is already locked, including SQLite's transaction write lock.
+        bucket = session.get(QuotaBucket, "global-reading-day")
+        reset = now.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
+        capacity = self.settings.answer_global_daily_limit
+        if bucket is None:
+            bucket = QuotaBucket(
+                id="global-reading-day", used=0, capacity=capacity, resets_at=reset
+            )
+            session.add(bucket)
+        elif bucket.resets_at <= now:
+            bucket.used = 0
+            bucket.capacity = capacity
+            bucket.resets_at = reset
+        if bucket.used >= capacity:
+            retry_after = max(1, int((bucket.resets_at - now).total_seconds()) + 1)
+            raise HTTPException(
+                429,
+                "Global daily reading limit reached",
+                headers={"Retry-After": str(retry_after)},
+            )
+        bucket.used += 1
+
     def _evidence_live(self, session, evidence, model=False):
         for item in evidence:
             p = session.get(Passage, item["id"])
@@ -180,6 +204,7 @@ class ReadingService:
             )
             if daily >= min(10, self.settings.answer_daily_limit):
                 raise HTTPException(429, "Daily request limit reached")
+            self._reserve_global_daily(session, now)
             chart = self._owned_chart(session, user_id, profile_revision_id, chart_id)
             token = secrets.token_hex(32)
             row = ReadingRequest(

@@ -1,4 +1,4 @@
-"""Opaque sessions, browser-bound OAuth and explicit local demo identity."""
+"""Isolated browser workspaces, opaque sessions and optional future authentication."""
 
 import hashlib
 import secrets
@@ -23,6 +23,7 @@ from astrology_evidence.models import OAuthTransaction, Session, User, utcnow
 
 router = APIRouter()
 GOOGLE_ISSUER = "https://accounts.google.com"
+GUEST_ISSUER = "anonymous-workspace"
 
 
 def digest(value: str) -> str:
@@ -75,6 +76,11 @@ def require_origin(request: Request) -> None:
 
 def require_user(request: Request) -> UserContext:
     token = request.cookies.get(get_settings(request).session_cookie, "")
+    missing = (
+        "Sign in required"
+        if get_settings(request).authentication_enabled
+        else "Reopen this workspace page to continue"
+    )
     now = utcnow()
     with get_db(request).session() as db:
         row = db.scalar(select(Session).where(Session.token_hash == digest(token)))
@@ -84,10 +90,12 @@ def require_user(request: Request) -> UserContext:
             or row.expires_at <= now
             or row.last_seen_at <= now - timedelta(hours=24)
         ):
-            raise HTTPException(401, "Sign in required")
+            raise HTTPException(401, missing)
         user = db.get(User, row.user_id)
         if user is None or user.deleted_at:
-            raise HTTPException(401, "Sign in required")
+            raise HTTPException(401, missing)
+        if (user.issuer == GUEST_ISSUER) == get_settings(request).authentication_enabled:
+            raise HTTPException(401, "Workspace unavailable")
         row.last_seen_at = now
         return UserContext(user.id, user.is_admin)
 
@@ -106,7 +114,7 @@ def require_csrf(request: Request) -> UserContext:
 
 def issue_login(
     db: Database, settings: Settings, user_id: str, response: Response, old_token: str | None = None
-) -> None:
+) -> tuple[str, str]:
     token, csrf = secrets.token_urlsafe(32), secrets.token_urlsafe(32)
     now = utcnow()
     with db.session() as session:
@@ -129,6 +137,7 @@ def issue_login(
     set_cookie(
         response, settings, cookie_name(settings, "csrf"), csrf, httponly=False, max_age=604800
     )
+    return token, csrf
 
 
 @router.get("/api/me")
@@ -142,12 +151,15 @@ def me(request: Request):
             "id": user.id,
             "display_name": user.display_name,
             "is_admin": user.is_admin,
+            "guest": user.issuer == GUEST_ISSUER,
+            "authentication_enabled": get_settings(request).authentication_enabled,
             "csrf_token": request.cookies.get(cookie_name(get_settings(request), "csrf"), ""),
         }
 
 
 @router.post("/auth/logout", status_code=204)
 def logout(request: Request):
+    require_authentication(request)
     require_csrf(request)
     settings = get_settings(request)
     with get_db(request).session() as db:
@@ -165,11 +177,17 @@ def logout(request: Request):
 def require_dev(request: Request) -> None:
     settings = get_settings(request)
     if (
-        not settings.dev_login_enabled
+        not settings.authentication_enabled
+        or not settings.dev_login_enabled
         or settings.app_env == "production"
         or urlparse(settings.app_public_origin).hostname
         not in {"localhost", "127.0.0.1", "::1", "testserver"}
     ):
+        raise HTTPException(404, "Not found")
+
+
+def require_authentication(request: Request) -> None:
+    if not get_settings(request).authentication_enabled:
         raise HTTPException(404, "Not found")
 
 
@@ -259,6 +277,7 @@ def oauth_client(settings: Settings) -> OAuth2Client:
 
 @router.get("/auth/google/start")
 def google_start(request: Request):
+    require_authentication(request)
     settings = get_settings(request)
     with oauth_client(settings) as client:
         state, browser, transaction = new_transaction(request)
@@ -308,6 +327,7 @@ def exchange_google(request: Request, code: str, transaction: OAuthTransaction) 
 
 @router.get("/auth/google/callback")
 def google_callback(request: Request, state: str = "", code: str = "", error: str = ""):
+    require_authentication(request)
     settings = get_settings(request)
     transaction = consume_transaction(request, state, cookie_name(settings, "oauth"))
     if error or not code:

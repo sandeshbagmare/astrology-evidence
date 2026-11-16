@@ -31,6 +31,7 @@ def client():
     app.state.settings = Settings(
         _env_file=None,
         app_env="test",
+        authentication_enabled=True,
         dev_login_enabled=True,
         app_public_origin="http://testserver",
     )

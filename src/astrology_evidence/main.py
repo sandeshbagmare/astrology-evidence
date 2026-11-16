@@ -17,6 +17,7 @@ from astrology_evidence.config import Settings
 from astrology_evidence.corpus.routes import router as corpus_router
 from astrology_evidence.db import create_db
 from astrology_evidence.identity import router as identity_router
+from astrology_evidence.identity.guest import GuestWorkspaceMiddleware
 from astrology_evidence.privacy import router as privacy_router
 from astrology_evidence.profiles import router as profiles_router
 from astrology_evidence.web import router as web_router
@@ -105,6 +106,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         database.engine.dispose()
 
     app = FastAPI(title="Astrology Evidence", lifespan=lifespan)
+    app.add_middleware(GuestWorkspaceMiddleware)
     app.add_middleware(RequestBodyLimitMiddleware, max_bytes=MAX_EDITION_IMPORT_BYTES)
     app.state.settings = settings
     app.state.db = database

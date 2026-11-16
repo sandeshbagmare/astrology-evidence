@@ -40,7 +40,8 @@ services:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-astrology}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in your shell or .env}@postgres:5432/${POSTGRES_DB:-astrology}
       QDRANT_URL: http://qdrant:6333
       APP_PUBLIC_ORIGIN: http://127.0.0.1:8000
-      DEV_LOGIN_ENABLED: "true"
+      AUTHENTICATION_ENABLED: "false"
+      DEV_LOGIN_ENABLED: "false"
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
