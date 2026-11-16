@@ -18,7 +18,9 @@ Updated November 16, 2026. This report describes the implementation and its test
 
 ## Verification
 
-Latest sign-in-free refresh through `ca3556f`: **342 application tests passed, 5 external-service checks skipped locally**, **35 native chart tests passed**, Ruff/mypy clean (31 modules), eight Node tests and 90-file documentation validation passed. Independent security validation passed 15 adversarial checks and both independent reviews cleared their findings. Browser testing covered 24 screen/width combinations, separate-browser isolation, JavaScript-disabled input, exact-chart readings, export completion and deletion. Shared issuance/daily reading limits are database-backed. Current remote CI/build/Pages results will be recorded after this publication.
+Latest sign-in-free refresh through `ca3556f`: **342 application tests passed, 5 external-service checks skipped locally**, **35 native chart tests passed**, Ruff/mypy clean (31 modules), eight Node tests and 90-file documentation validation passed. Independent security validation passed 15 adversarial checks and both reviews cleared their findings. Browser testing covered 24 screen/width combinations, separate-browser isolation, JavaScript-disabled input, exact-chart readings, export completion and deletion. Shared issuance/daily reading limits are database-backed.
+
+Publication `d9c1846` passed [Python CI with **382 tests, none skipped**](https://github.com/sandeshbagmare/astrology-evidence/actions/runs/43817226635), including real PostgreSQL/Qdrant and concurrency variants, lint/types, wheel build and packaged assets. Documentation/UI JavaScript checks and Pages deployment passed too. The public guide/image and 1440/768/320px layouts were verified. Docker execution, inactive-workspace purge, production recovery/capacity, licensed books and expert/domain validation remain launch work.
 
 Historical pre-refresh evidence follows; current scope and counts above supersede it.
 
