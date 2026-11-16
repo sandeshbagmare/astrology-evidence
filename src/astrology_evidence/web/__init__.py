@@ -532,6 +532,10 @@ def dispatch_form(request: Request, form: dict[str, Any]):
             answers.delete(adapted, str(form["reading_id"]))
             target = "/readings"
         elif action == "delete_profile":
+            if form.get("confirm_delete") != "DELETE":
+                raise HTTPException(
+                    422, "Type DELETE to confirm removal of this profile and its readings"
+                )
             privacy.delete_profile(adapted, str(form["profile_id"]))
         elif action == "consent":
             answers.consent(

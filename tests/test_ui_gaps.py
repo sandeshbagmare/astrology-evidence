@@ -347,3 +347,32 @@ def test_saved_reading_delete_requires_confirmation_and_preserves_reading():
     )
     assert confirmed.status_code == 303
     assert value.get(f"/readings/{reading_id}").status_code == 404
+
+
+def test_profile_delete_requires_confirmation_before_revoking_linked_data():
+    value = client(signed_in=True)
+    passage_id, generation_id, text_hash = source_fixture(value)
+    reading_id = reading_fixture(value, passage_id, generation_id, text_hash)
+    profile = value.get("/api/profiles").json()[0]
+    chart_id = value.get(f"/api/readings/{reading_id}").json()["chart_id"]
+    resources = [
+        f"/api/profiles/{profile['id']}",
+        f"/api/charts/{chart_id}",
+        f"/api/readings/{reading_id}",
+    ]
+    assert [value.get(path).status_code for path in resources] == [200, 200, 200]
+
+    for confirmation in ({}, {"confirm_delete": ""}, {"confirm_delete": "delete"}):
+        rejected = post_form(
+            value, action="delete_profile", profile_id=profile["id"], **confirmation
+        )
+        assert rejected.status_code == 422
+        assert [value.get(path).status_code for path in resources] == [200, 200, 200]
+
+    page = value.get(f"/profiles/{profile['id']}/edit")
+    assert 'name="confirm_delete"' in page.text
+    confirmed = post_form(
+        value, action="delete_profile", profile_id=profile["id"], confirm_delete="DELETE"
+    )
+    assert confirmed.status_code == 303
+    assert [value.get(path).status_code for path in resources] == [404, 404, 404]
