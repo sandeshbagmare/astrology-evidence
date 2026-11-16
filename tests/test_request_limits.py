@@ -134,3 +134,84 @@ def test_under_limit_and_unprotected_routes_are_forwarded():
         sent = run_asgi(RequestBodyLimitMiddleware(downstream, max_bytes=10), scope, chunks)
         assert sent[0]["status"] == 200
         assert downstream.called
+        assert downstream.body == b"".join(chunk["body"] for chunk in chunks)
+
+
+@pytest.mark.parametrize("method", ["POST", "PUT", "PATCH", "DELETE"])
+def test_mutations_reject_default_declared_oversize_before_parsing(tmp_path, method):
+    app = create_app(
+        Settings(database_url=f"sqlite:///{tmp_path}/db", app_env="test", _env_file=None)
+    )
+    with TestClient(app) as client:
+        response = client.request(
+            method,
+            "/api/profiles",
+            content=b"not-json",
+            headers={
+                "Content-Type": "application/json",
+                "Content-Length": str(1024 * 1024 + 1),
+            },
+        )
+    assert response.status_code == 413
+    assert "1048576" in response.json()["detail"]
+
+
+@pytest.mark.parametrize("method", ["POST", "PUT", "PATCH", "DELETE"])
+@pytest.mark.parametrize("declared_length", [None, b"1"])
+def test_mutations_reject_default_streamed_oversize_before_downstream(method, declared_length):
+    downstream = CaptureApp()
+    headers = [(b"content-type", b"application/json")]
+    if declared_length is not None:
+        headers.append((b"content-length", declared_length))
+    sent = run_asgi(
+        RequestBodyLimitMiddleware(downstream, max_bytes=MAX_EDITION_IMPORT_BYTES),
+        request_scope(path="/api/profiles", method=method, headers=headers),
+        [
+            {"type": "http.request", "body": b"x" * (1024 * 1024), "more_body": True},
+            {"type": "http.request", "body": b"x", "more_body": False},
+        ],
+    )
+    assert sent[0]["status"] == 413
+    assert b"1048576" in sent[1]["body"]
+    assert not downstream.called
+
+
+def test_default_boundary_body_is_replayed_exactly():
+    downstream = CaptureApp()
+    body = b"\xc3\xa9" * (1024 * 1024 // 2)
+    sent = run_asgi(
+        RequestBodyLimitMiddleware(downstream, max_bytes=MAX_EDITION_IMPORT_BYTES),
+        request_scope(path="/api/profiles"),
+        [
+            {"type": "http.request", "body": body[:12345], "more_body": True},
+            {"type": "http.request", "body": body[12345:], "more_body": False},
+        ],
+    )
+    assert sent[0]["status"] == 200
+    assert downstream.body == body
+
+
+@pytest.mark.parametrize("method", ["GET", "HEAD"])
+def test_get_and_head_keep_the_original_body_without_mutation_limit(method):
+    downstream = CaptureApp()
+    body = b"x" * (1024 * 1024 + 1)
+    sent = run_asgi(
+        RequestBodyLimitMiddleware(downstream, max_bytes=10),
+        request_scope(method=method, headers=[(b"content-length", str(len(body)).encode())]),
+        [{"type": "http.request", "body": body, "more_body": False}],
+    )
+    assert sent[0]["status"] == 200
+    assert downstream.body == body
+
+
+@pytest.mark.parametrize("path", ["/api/admin/editions", "/web/action"])
+def test_import_paths_keep_the_larger_body_limit(path):
+    downstream = CaptureApp()
+    body = b"x" * (1024 * 1024 + 1)
+    sent = run_asgi(
+        RequestBodyLimitMiddleware(downstream, max_bytes=MAX_EDITION_IMPORT_BYTES),
+        request_scope(path=path),
+        [{"type": "http.request", "body": body, "more_body": False}],
+    )
+    assert sent[0]["status"] == 200
+    assert downstream.body == body

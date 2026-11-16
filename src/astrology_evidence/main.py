@@ -23,11 +23,12 @@ from astrology_evidence.web import router as web_router
 from astrology_evidence.web.app import STATIC_DIR
 
 MAX_EDITION_IMPORT_BYTES = 25 * 1024 * 1024
+MAX_MUTATION_BODY_BYTES = 1024 * 1024
 LIMITED_BODY_PATHS = {"/api/admin/editions", "/web/action"}
 
 
 class RequestBodyLimitMiddleware:
-    """Bound curator JSON and form imports before the framework parses their bodies."""
+    """Cap mutations at 1 MiB, allowing 25 MiB for curated JSON/form imports."""
 
     def __init__(self, app: ASGIApp, *, max_bytes: int) -> None:
         self.app = app
@@ -36,12 +37,15 @@ class RequestBodyLimitMiddleware:
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if (
             scope["type"] != "http"
-            or scope["method"] != "POST"
-            or scope["path"] not in LIMITED_BODY_PATHS
+            or scope["method"] not in {"POST", "PUT", "PATCH", "DELETE"}
         ):
             await self.app(scope, receive, send)
             return
 
+        limit = self.max_bytes if scope["path"] in LIMITED_BODY_PATHS else MAX_MUTATION_BODY_BYTES
+        too_large = JSONResponse(
+            {"detail": f"Request body exceeds the {limit} byte limit"}, status_code=413
+        )
         content_length = next(
             (value for key, value in scope.get("headers", []) if key.lower() == b"content-length"),
             None,
@@ -51,10 +55,8 @@ class RequestBodyLimitMiddleware:
                 declared_length = int(content_length)
             except ValueError:
                 declared_length = None
-            if declared_length is not None and declared_length > self.max_bytes:
-                await JSONResponse(
-                    {"detail": "Edition import body exceeds the 25 MiB limit"}, status_code=413
-                )(scope, receive, send)
+            if declared_length is not None and declared_length > limit:
+                await too_large(scope, receive, send)
                 return
 
         body = bytearray()
@@ -65,10 +67,8 @@ class RequestBodyLimitMiddleware:
             if message["type"] != "http.request":
                 continue
             chunk = message.get("body", b"")
-            if len(body) + len(chunk) > self.max_bytes:
-                await JSONResponse(
-                    {"detail": "Edition import body exceeds the 25 MiB limit"}, status_code=413
-                )(scope, receive, send)
+            if len(body) + len(chunk) > limit:
+                await too_large(scope, receive, send)
                 return
             body.extend(chunk)
             if not message.get("more_body", False):
