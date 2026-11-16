@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
+from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from astrology_evidence.answers.provider import ResponsesProvider
 from astrology_evidence.answers.routes import router as answers_router
@@ -20,6 +21,70 @@ from astrology_evidence.privacy import router as privacy_router
 from astrology_evidence.profiles import router as profiles_router
 from astrology_evidence.web import router as web_router
 from astrology_evidence.web.app import STATIC_DIR
+
+MAX_EDITION_IMPORT_BYTES = 25 * 1024 * 1024
+EDITION_IMPORT_PATH = "/api/admin/editions"
+
+
+class RequestBodyLimitMiddleware:
+    """Bound curator JSON imports before FastAPI buffers or parses the request body."""
+
+    def __init__(self, app: ASGIApp, *, max_bytes: int) -> None:
+        self.app = app
+        self.max_bytes = max_bytes
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if (
+            scope["type"] != "http"
+            or scope["method"] != "POST"
+            or scope["path"] != EDITION_IMPORT_PATH
+        ):
+            await self.app(scope, receive, send)
+            return
+
+        content_length = next(
+            (value for key, value in scope.get("headers", []) if key.lower() == b"content-length"),
+            None,
+        )
+        if content_length is not None:
+            try:
+                declared_length = int(content_length)
+            except ValueError:
+                declared_length = None
+            if declared_length is not None and declared_length > self.max_bytes:
+                await JSONResponse(
+                    {"detail": "Edition import body exceeds the 25 MiB limit"}, status_code=413
+                )(scope, receive, send)
+                return
+
+        body = bytearray()
+        while True:
+            message = await receive()
+            if message["type"] == "http.disconnect":
+                return
+            if message["type"] != "http.request":
+                continue
+            chunk = message.get("body", b"")
+            if len(body) + len(chunk) > self.max_bytes:
+                await JSONResponse(
+                    {"detail": "Edition import body exceeds the 25 MiB limit"}, status_code=413
+                )(scope, receive, send)
+                return
+            body.extend(chunk)
+            if not message.get("more_body", False):
+                break
+
+        buffered_body = bytes(body)
+        body_delivered = False
+
+        async def replay_receive() -> Message:
+            nonlocal body_delivered
+            if not body_delivered:
+                body_delivered = True
+                return {"type": "http.request", "body": buffered_body, "more_body": False}
+            return await receive()
+
+        await self.app(scope, replay_receive, send)
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -40,6 +105,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         database.engine.dispose()
 
     app = FastAPI(title="Astrology Evidence", lifespan=lifespan)
+    app.add_middleware(RequestBodyLimitMiddleware, max_bytes=MAX_EDITION_IMPORT_BYTES)
     app.state.settings = settings
     app.state.db = database
     app.state.retriever = None
