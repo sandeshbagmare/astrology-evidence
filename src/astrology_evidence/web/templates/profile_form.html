@@ -1,16 +1,23 @@
 {% extends "base.html" %}
 {% block title %}Birth profile{% endblock %}
 {% block content %}
-<section class="narrow">
+<div class="page-heading"><div><p class="eyebrow">THE START OF YOUR EXPLORATION</p>
   <h1>{% if profile %}Edit birth profile{% else %}New birth profile{% endif %}</h1>
-  <p class="muted">Manual coordinates and a named timezone are supported. No fake geocoder is used.</p>
+  <p class="lede">Start with what you know. The chart will reflect the precision of your inputs.</p></div></div>
+<div class="form-layout"><section class="panel">
   <form data-profile-form data-api="/api/profiles{% if profile %}/{{ profile.id }}{% endif %}" data-method="{{ 'PATCH' if profile else 'POST' }}" data-success="/dashboard" method="post" action="/web/action">
     <input type="hidden" name="csrf_token" value="{{ csrf }}">
     <input type="hidden" name="action" value="profile">
-    <label>Alias<input name="alias" maxlength="80" value="{{ profile.alias if profile else draft_alias|default('') }}"></label>
+    <fieldset class="form-section"><legend><span class="section-number">01</span>Birth details</legend><p class="field-hint">Use an invented profile while exploring this development app. Dates use the Gregorian calendar.</p>
+    <label>Alias<input name="alias" maxlength="80" placeholder="A name for this profile" value="{{ profile.alias if profile else draft_alias|default('') }}"></label><div class="form-fields">
     <label>Birth date<input name="birth_date" type="date" required value="{{ revision.birth_input.birth_date if revision else '' }}"></label>
     <label>Local time<input name="local_time" type="time" value="{{ revision.birth_input.local_time if revision else '' }}"></label>
-    <label>Time certainty<select name="time_precision"><option value="exact" {% if revision and revision.birth_input.time_precision == 'exact' %}selected{% endif %}>Exact</option><option value="approximate" {% if revision and revision.birth_input.time_precision == 'approximate' %}selected{% endif %}>Approximate</option><option value="unknown" {% if revision and revision.birth_input.time_precision == 'unknown' %}selected{% endif %}>I do not know</option></select></label>
+    </div><label>Time certainty<select name="time_precision"><option value="exact" {% if revision and revision.birth_input.time_precision == 'exact' %}selected{% endif %}>Exact</option><option value="approximate" {% if revision and revision.birth_input.time_precision == 'approximate' %}selected{% endif %}>Approximate</option><option value="unknown" {% if revision and revision.birth_input.time_precision == 'unknown' %}selected{% endif %}>I do not know</option></select></label><p class="field-hint">Unknown time withholds houses and other precise time-dependent facts. No guessed noon is substituted.</p></fieldset>
+    <fieldset class="form-section"><legend><span class="section-number">02</span>Location & timezone</legend><p class="field-hint">Enter coordinates and confirm the IANA timezone manually. No location is sent to an external geocoder.</p>
+    <div class="form-fields"><label>Latitude<input name="latitude" type="number" step="any" min="-90" max="90" required placeholder="e.g. 28.6139" value="{{ revision.birth_input.latitude if revision else '' }}"></label>
+    <label>Longitude<input name="longitude" type="number" step="any" min="-180" max="180" required placeholder="e.g. 77.2090" value="{{ revision.birth_input.longitude if revision else '' }}"></label></div>
+    <label>Time zone<input name="timezone" required placeholder="Asia/Kolkata" value="{{ revision.birth_input.timezone if revision else '' }}"></label>
+    <label>Historical timezone confidence<select name="timezone_history"><option value="uncertain" {% if not revision or revision.birth_input.timezone_history != 'confirmed' %}selected{% endif %}>Uncertain</option><option value="confirmed" {% if revision and revision.birth_input.timezone_history == 'confirmed' %}selected{% endif %}>Confirmed independently</option></select></label>
     <label>Occurrence when the local time repeats<select name="fold">
       {% if fold_options|default([])|length == 1 %}
         <option value="">{{ fold_options[0].offset }} (only valid occurrence)</option>
@@ -23,18 +30,17 @@
     <p class="muted">Daylight-saving clock changes can make a local birth time happen twice. Saving checks the time and asks you to review its UTC offsets when needed. Changing the date, time or zone requires a new choice.</p>
     {% if time_error %}<p role="alert" class="notice">{{ time_error }}</p>{% endif %}
     <p data-time-status role="status" class="muted"></p>
-    <label>Latitude<input name="latitude" type="number" step="any" min="-90" max="90" required value="{{ revision.birth_input.latitude if revision else '' }}"></label>
-    <label>Longitude<input name="longitude" type="number" step="any" min="-180" max="180" required value="{{ revision.birth_input.longitude if revision else '' }}"></label>
-    <label>Time zone<input name="timezone" required placeholder="Asia/Kolkata" value="{{ revision.birth_input.timezone if revision else '' }}"></label>
-    <label>Historical timezone confidence<select name="timezone_history"><option value="uncertain" {% if not revision or revision.birth_input.timezone_history != 'confirmed' %}selected{% endif %}>Uncertain</option><option value="confirmed" {% if revision and revision.birth_input.timezone_history == 'confirmed' %}selected{% endif %}>Confirmed independently</option></select></label>
+    </fieldset><fieldset class="form-section"><legend><span class="section-number">03</span>Approximate times</legend><p class="field-hint">Only fill these fields when time certainty is Approximate. Enter the earliest and latest possible local date/time.</p><div class="form-fields">
     <label>Approximate interval start<input name="earliest_local" type="datetime-local" value="{{ revision.birth_input.earliest_local or '' if revision else '' }}"></label>
     <label>Approximate interval end<input name="latest_local" type="datetime-local" value="{{ revision.birth_input.latest_local or '' if revision else '' }}"></label>
+    </div></fieldset>
     {% if profile %}<input type="hidden" name="profile_id" value="{{ profile.id }}"><input type="hidden" name="expected_version" value="{{ profile.version }}">{% endif %}
-    <label><input type="checkbox" name="storage_consent" value="true" required {% if storage_consent %}checked{% endif %}> I consent to storing this profile for my account.</label>
+    <label class="consent-label"><input type="checkbox" name="storage_consent" value="true" required {% if storage_consent %}checked{% endif %}> I consent to storing this profile for {{ 'this browser workspace' if guest_mode else 'my account' }}.</label>
+    {% if guest_mode %}<p class="field-hint">Stored on this app's server. Browser access expires after 24 hours idle or seven days at most; clearing cookies can end access sooner and does not delete records. <a href="/settings">Export or delete data</a> before losing access.</p>{% endif %}
     <input type="hidden" name="notice_version" value="privacy-1">
     <p role="alert" class="notice"></p>
-    <div class="actions"><button type="submit">Save profile</button><a class="button secondary" href="/dashboard">Cancel</a></div>
+    <div class="actions"><button type="submit">Save profile</button><a class="button secondary" href="/profiles">Cancel</a></div>
   </form>
-  {% if profile %}<h2>Delete profile</h2><p>Deletion revokes access to its charts and readings immediately.</p><form action="/web/action" method="post"><input name="csrf_token" type="hidden" value="{{ csrf }}"><input type="hidden" name="action" value="delete_profile"><input type="hidden" name="profile_id" value="{{ profile.id }}"><button>Delete profile and its readings</button></form>{% endif %}
-</section>
+  {% if profile %}<div class="panel danger-section"><h2>Delete profile</h2><p>Deletion revokes access to its charts and readings immediately.</p><form action="/web/action" method="post"><input name="csrf_token" type="hidden" value="{{ csrf }}"><input type="hidden" name="action" value="delete_profile"><input type="hidden" name="profile_id" value="{{ profile.id }}"><button>Delete profile and its readings</button></form></div>{% endif %}
+</section><aside class="method-note"><p class="eyebrow">THE CALCULATION METHOD</p><h2>Your method,<br>made visible.</h2><ul class="method-list"><li><span>Tradition</span><b>Jyotish</b></li><li><span>Zodiac</span><b>Sidereal</b></li><li><span>Ayanamsha</span><b>Lahiri</b></li><li><span>Houses</span><b>Whole sign</b></li><li><span>Lunar nodes</span><b>Mean</b></li></ul><p>These settings stay attached to the chart. Changing a profile creates a new revision; previous chart snapshots retain their original inputs.</p><p>Precise calculations do not establish that an interpretation predicts real events.</p></aside></div>
 {% endblock %}

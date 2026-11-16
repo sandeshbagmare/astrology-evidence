@@ -1,34 +1,12 @@
-{% extends "base.html" %}
-{% from "facts.html" import fact_table %}
-{% block content %}
-{% set answer=reading.answer %}
-<h1>Reading</h1>
-<p>{{ answer.concise_summary }}</p>
-<p class="notice">{{ {"insufficient_evidence":"Insufficient evidence to answer", "supported":"Source evidence available; applicability is not established", "partial":"Only part of this question has source support"}.get(answer.status, "Reading unavailable") }}</p>
-<h2>Calculated facts</h2>
-<a href="/charts/{{ reading.chart_id }}">Inspect chart snapshot and method</a>
-{{ fact_table(answer.computed_facts) }}
-<h2>Traditional interpretation</h2>
-{% for claim in answer.traditional_claims %}<article class="card"><p>{{ claim.text }}</p><p>{{ claim.scope_note }}</p><p>Applicability: {{ claim.applicability_status|replace("_", " ")|capitalize }}</p><p>Citations: {{ claim.citation_ids|join(', ') }}</p></article>{% else %}<p>No supported traditional claims.</p>{% endfor %}
-<h2>AI synthesis</h2>
-{% for item in answer.interpretation %}<p>{{ item }}</p>{% else %}<p>No model synthesis is available.</p>{% endfor %}
-<h2>Limitations and disagreements</h2>
-<ul>{% for item in answer.limitations + answer.disagreements %}<li>{{ item }}</li>{% endfor %}</ul>
-<h2>Sources</h2>
-{% for citation in answer.evidence_manifest %}
-<article class="card">
-  <h3>{{ citation.citation_id }}</h3>
-  <blockquote>{{ citation.quoted_text }}</blockquote>
-  <dl>{% for key,value in citation.locators.items() %}<dt>{{ key|replace("_", " ")|capitalize }}</dt><dd>{{ value }}</dd>{% endfor %}</dl>
-  <a href="/library/sources/{{ citation.passage_id }}?reading_id={{ reading.id }}">Inspect permitted source</a>
-</article>
-{% else %}<p>No approved passages support this response.</p>{% endfor %}
-<details><summary>Reading provenance and identifiers</summary><p>Reading: {{ reading.id }} · Chart: {{ reading.chart_id }}</p><dl>{% for key,value in reading.versions.items() %}<dt>{{ key|capitalize }}</dt><dd>{{ value }}</dd>{% endfor %}</dl><ul>{% for fact in answer.computed_facts %}<li>{{ fact.body|title }}: {{ fact.fact_id }}</li>{% endfor %}</ul></details>
-<form method="post" action="/web/action">
-  <input type="hidden" name="csrf_token" value="{{ csrf }}">
-  <input type="hidden" name="action" value="delete_reading">
-  <input type="hidden" name="reading_id" value="{{ reading.id }}">
-  <label>Type DELETE to remove this reading: <input name="confirm_delete" required pattern="DELETE" autocomplete="off"></label>
-  <button>Delete reading</button>
-</form>
+{% extends "base.html" %}{% from "facts.html" import fact_table %}{% block title %}Reading{% endblock %}{% block content %}{% set answer=reading.answer %}
+<p class="breadcrumb"><a href="/readings">Readings</a> / Your evidence trail</p><div class="page-heading"><div><p class="eyebrow">LOOK CLOSER, WITH CONTEXT</p><h1>Reading</h1></div><a class="button secondary" href="/readings/new">Ask another question →</a></div>
+<div class="reading-intro"><span class="badge gold">{{ answer.status|replace('_',' ')|capitalize }}</span><p>{{ answer.concise_summary }}</p><p class="notice">{{ {"insufficient_evidence":"Insufficient evidence to answer", "supported":"Source evidence available; applicability is not established", "partial":"Only part of this question has source support"}.get(answer.status, "Reading unavailable") }}</p></div>
+<nav class="reading-navigation" aria-label="Reading sections"><a href="#calculated">Calculated facts</a><a href="#traditional">Traditional sources</a><a href="#synthesis">AI synthesis</a><a href="#limitations">Limitations</a><a href="#sources">Sources</a></nav>
+<div class="reading-sections"><section class="reading-section" id="calculated"><p class="eyebrow">01 / THE CALCULATION</p><h2>Calculated facts</h2><a href="/charts/{{ reading.chart_id }}">Inspect chart snapshot and method</a>{{ fact_table(answer.computed_facts) }}</section>
+<section class="reading-section" id="traditional"><p class="eyebrow">02 / THE TRADITIONAL TEXT</p><h2>Traditional interpretation</h2>{% for claim in answer.traditional_claims %}<article class="card"><p>{{ claim.text }}</p><p>{{ claim.scope_note }}</p><p>Applicability: {{ claim.applicability_status|replace('_', ' ')|capitalize }}</p><p>Citations: {{ claim.citation_ids|join(', ') }}</p></article>{% else %}<p>No supported traditional claims.</p>{% endfor %}</section>
+<section class="reading-section" id="synthesis"><p class="eyebrow">03 / THE INTERPRETATION</p><h2>AI synthesis</h2>{% for item in answer.interpretation %}<p>{{ item }}</p>{% else %}<p>No model synthesis is available.</p>{% endfor %}</section>
+<section class="reading-section" id="limitations"><p class="eyebrow">04 / WHAT REMAINS UNCERTAIN</p><h2>Limitations and disagreements</h2><ul>{% for item in answer.limitations + answer.disagreements %}<li>{{ item }}</li>{% endfor %}</ul></section>
+<section class="reading-section" id="sources"><p class="eyebrow">05 / FOLLOW THE EVIDENCE</p><h2>Sources</h2>{% for citation in answer.evidence_manifest %}<article class="card"><h3>{{ citation.citation_id }}</h3><blockquote>{{ citation.quoted_text }}</blockquote><dl>{% for key,value in citation.locators.items() %}<dt>{{ key|replace('_', ' ')|capitalize }}</dt><dd>{{ value }}</dd>{% endfor %}</dl><a href="/library/sources/{{ citation.passage_id }}?reading_id={{ reading.id }}">Inspect permitted source</a></article>{% else %}<p>No approved passages support this response.</p><a class="text-link" href="/library">See the source library →</a>{% endfor %}</section></div>
+<details class="panel"><summary>Reading provenance and identifiers</summary><p>Reading: {{ reading.id }} · Chart: {{ reading.chart_id }}</p><dl>{% for key,value in reading.versions.items() %}<dt>{{ key|capitalize }}</dt><dd>{{ value }}</dd>{% endfor %}</dl><ul>{% for fact in answer.computed_facts %}<li>{{ fact.body|title }}: {{ fact.fact_id }}</li>{% endfor %}</ul></details>
+<section class="panel danger-section"><h2>Remove this reading</h2><p>Deletion removes the saved answer and evidence manifest from your history.</p><form method="post" action="/web/action"><input type="hidden" name="csrf_token" value="{{ csrf }}"><input type="hidden" name="action" value="delete_reading"><input type="hidden" name="reading_id" value="{{ reading.id }}"><label>Type DELETE to remove this reading: <input name="confirm_delete" required pattern="DELETE" autocomplete="off"></label><div class="actions"><button>Delete reading</button></div></form></section>
 {% endblock %}

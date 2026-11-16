@@ -22,6 +22,7 @@ def client(*, signed_in: bool = False) -> TestClient:
     app = create_app(
         Settings(
             _env_file=None,
+            authentication_enabled=True,
             app_env="test",
             database_url="sqlite://",
             dev_login_enabled=True,

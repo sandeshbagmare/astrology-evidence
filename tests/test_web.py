@@ -8,6 +8,7 @@ def client():
     app = create_app(
         Settings(
             _env_file=None,
+            authentication_enabled=True,
             app_env="test",
             database_url="sqlite://",
             dev_login_enabled=True,
@@ -303,3 +304,145 @@ def test_form_dispatch_uses_worker_thread(client=None):
     ) as runner:
         assert asyncio.run(form_action(request)) is sentinel
         runner.assert_awaited_once()
+
+
+def test_profile_and_chart_sections_have_actionable_empty_states():
+    c = signed_client()
+    profiles_page = c.get("/profiles")
+    assert profiles_page.status_code == 200
+    assert 'href="/profiles/new"' in profiles_page.text
+    assert "No birth profiles yet" in profiles_page.text
+    charts_page = c.get("/charts")
+    assert charts_page.status_code == 200
+    assert "Your first chart starts with birth details" in charts_page.text
+
+
+def test_profile_section_lists_only_the_owned_saved_profiles():
+    owner, other = signed_client(), signed_client()
+    assert post_form(owner, **profile_form()).status_code == 303
+    profile = owner.get("/api/profiles").json()[0]
+    page = owner.get("/profiles")
+    assert "No JS profile" in page.text
+    assert f'/profiles/{profile["id"]}/edit' in page.text
+    # The local login fixture is shared, so use an unknown profile ID for selection denial.
+    response = other.get("/readings/new?profile_id=not-an-owned-profile")
+    assert response.status_code == 404
+
+
+def test_reading_form_preselects_an_owned_profile_and_links_back_to_details():
+    c = signed_client()
+    assert post_form(c, **profile_form()).status_code == 303
+    profile = c.get("/api/profiles").json()[0]
+    response = c.get("/readings/new", params={"profile_id": profile["id"]})
+    assert response.status_code == 200
+    assert "Calculate a chart before asking" in response.text
+    assert f'name="profile_id" value="{profile["id"]}"' in response.text
+    assert "Submit question" not in response.text
+    assert f'href="/profiles/{profile["id"]}/edit"' in response.text
+
+
+def test_reading_workspace_does_not_offer_questions_until_a_current_chart_exists():
+    c = signed_client()
+    assert post_form(c, **profile_form()).status_code == 303
+    page = c.get("/readings/new")
+    assert page.status_code == 200
+    assert "Calculate a chart before asking" in page.text
+    assert 'value="chart"' in page.text
+    assert "Submit question" not in page.text
+
+
+def test_new_reading_without_profiles_offers_birth_details_instead_of_empty_submission():
+    response = signed_client().get("/readings/new")
+    assert response.status_code == 200
+    assert "Add birth details first" in response.text
+    assert "Submit question" not in response.text
+
+
+def test_guest_workbench_sections_open_without_authentication_links():
+    app = create_app(Settings(_env_file=None, app_env="test", database_url="sqlite://",
+                             app_public_origin="http://testserver"))
+    app.state.db.initialize()
+    with TestClient(app) as c:
+        for path in ("/", "/dashboard", "/profiles", "/profiles/new", "/charts",
+                     "/readings", "/readings/new", "/library", "/settings"):
+            page = c.get(path)
+            assert page.status_code == 200, path
+            assert 'href="/login"' not in page.text
+            assert 'value="logout"' not in page.text
+            assert "Continue with Google" not in page.text
+            assert "Sign out" not in page.text
+            for section in ("/profiles", "/charts", "/readings", "/library", "/settings"):
+                assert f'href="{section}"' in page.text
+        response = c.get("/login", follow_redirects=False)
+        assert response.status_code == 303
+        assert response.headers["location"] == "/"
+        settings = c.get("/settings").text
+        assert "24 hours without activity or seven days at most" in settings
+        assert "Clearing cookies does not delete server records" in settings
+
+
+def test_guest_ordinary_form_error_export_and_deletion_use_workbench_shell():
+    app = create_app(Settings(_env_file=None, app_env="test", database_url="sqlite://",
+                             app_public_origin="http://testserver"))
+    app.state.db.initialize()
+    with TestClient(app) as c:
+        c.get("/")
+        invalid = post_form(c, **(profile_form() | {"latitude": "invalid"}))
+        assert invalid.status_code == 422
+        assert "Invalid input" in invalid.text
+        export = post_form(c, action="export")
+        assert export.status_code == 200
+        assert "Export queued" in export.text
+        deleted = post_form(c, action="delete_account", confirm="DELETE")
+        assert deleted.status_code == 200
+        assert "Start a fresh workspace" in deleted.text
+        assert "Sign out" not in deleted.text
+        assert c.get("/").status_code == 200
+
+
+def test_chart_reading_keeps_the_original_revision_after_profile_edit():
+    from astrology_evidence.models import Chart
+
+    c = signed_client()
+    assert post_form(c, **profile_form()).status_code == 303
+    original = c.get("/api/profiles").json()[0]
+    with c.app.state.db.session() as db:
+        chart = Chart(owner_id=original["owner_id"],
+                      profile_revision_id=original["profile_revision_id"],
+                      input_hash="f" * 64, settings_hash="e" * 64,
+                      settings={}, manifest={}, facts=[])
+        db.add(chart)
+        db.flush()
+        chart_id = chart.id
+    assert post_form(c, **(profile_form() | {"profile_id": original["id"],
+                     "expected_version":"1", "birth_date":"2001-01-01"})).status_code == 303
+    page = c.get(f"/readings/new?chart_id={chart_id}")
+    assert page.status_code == 200
+    assert f'name="chart_id" value="{chart_id}"' in page.text
+    assert f'name="profile_revision_id" value="{original["profile_revision_id"]}"' in page.text
+    assert "2000-01-01" in page.text
+    assert "Profile revision 1" in page.text
+    assert f'/readings/new?chart_id={chart_id}' in c.get(f"/charts/{chart_id}").text
+    assert c.get(f"/readings/new?chart_id={chart_id}&profile_id=other").status_code == 422
+
+
+def test_chart_reading_rejects_a_different_owners_snapshot():
+    from astrology_evidence.models import Chart
+
+    app = create_app(Settings(_env_file=None, app_env="test", database_url="sqlite://",
+                             app_public_origin="http://testserver"))
+    app.state.db.initialize()
+    with TestClient(app) as owner, TestClient(app) as other:
+        owner.get("/")
+        assert post_form(owner, **profile_form()).status_code == 303
+        profile = owner.get("/api/profiles").json()[0]
+        with app.state.db.session() as db:
+            chart = Chart(owner_id=profile["owner_id"],
+                          profile_revision_id=profile["profile_revision_id"],
+                          input_hash="f" * 64, settings_hash="e" * 64,
+                          settings={}, manifest={}, facts=[])
+            db.add(chart)
+            db.flush()
+            chart_id = chart.id
+        response = other.get(f"/readings/new?chart_id={chart_id}")
+        assert response.status_code == 404

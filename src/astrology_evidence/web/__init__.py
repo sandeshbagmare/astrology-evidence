@@ -80,6 +80,9 @@ def time_signature(request: Request, birth: profiles.BirthInput) -> str:
 def render(request: Request, name: str, **context: Any):
     context.setdefault("settings", get_settings(request))
     context.setdefault("request", request)
+    context.setdefault("path", request.url.path)
+    context.setdefault("guest_mode", not get_settings(request).authentication_enabled)
+    context.setdefault("user", None)
     context.setdefault(
         "csrf", request.cookies.get(identity.cookie_name(get_settings(request), "csrf"), "")
     )
@@ -99,6 +102,8 @@ def page_user(request: Request):
 def common(request: Request, user=None):
     return {
         "user": user,
+        "guest_mode": not get_settings(request).authentication_enabled,
+        "path": request.url.path,
         "ai_enabled": bool(
             get_settings(request).ai_enabled and get_settings(request).provider_reviewed
         ),
@@ -107,11 +112,15 @@ def common(request: Request, user=None):
 
 @router.get("/", response_class=HTMLResponse, name="home")
 def home(request: Request):
+    if not get_settings(request).authentication_enabled:
+        return dashboard(request)
     return render(request, "home.html", **common(request))
 
 
 @router.get("/login", response_class=HTMLResponse)
 def login(request: Request):
+    if not get_settings(request).authentication_enabled:
+        return RedirectResponse("/", status_code=303)
     response = Response()
     state = ""
     try:
@@ -128,16 +137,43 @@ def login(request: Request):
 @router.get("/dashboard", response_class=HTMLResponse)
 def dashboard(request: Request):
     user = page_user(request)
-    with get_db(request).session() as db:
-        profiles = db.scalars(
-            select(Profile).where(Profile.owner_id == user.user_id, Profile.deleted_at.is_(None))
-        ).all()
-        charts = db.scalars(
-            select(Chart).where(Chart.owner_id == user.user_id).order_by(Chart.created_at.desc())
-        ).all()
+    saved_profiles = profiles.list_profiles(request)
+    charts = owned_charts(request, user.user_id)
+    readings = answers.list_readings(request)
     return render(
-        request, "dashboard.html", **common(request, user), profiles=profiles, charts=charts
+        request, "dashboard.html", **common(request, user), profiles=saved_profiles,
+        charts=charts, readings=readings,
     )
+
+
+def owned_charts(request: Request, user_id: str):
+    with get_db(request).session() as db:
+        rows = db.execute(
+            select(Chart, Profile.alias)
+            .join(ProfileRevision, Chart.profile_revision_id == ProfileRevision.id)
+            .join(Profile, ProfileRevision.profile_id == Profile.id)
+            .where(Chart.owner_id == user_id, Profile.owner_id == user_id,
+                   Profile.deleted_at.is_(None))
+            .order_by(Chart.created_at.desc())
+        ).all()
+    return [{"id": chart.id, "created_at": chart.created_at, "alias": alias,
+             "settings": chart.settings, "fact_count": len(chart.facts)}
+            for chart, alias in rows]
+
+
+@router.get("/profiles", response_class=HTMLResponse)
+def profile_index(request: Request):
+    user = page_user(request)
+    return render(
+        request, "profiles.html", **common(request, user), profiles=profiles.list_profiles(request)
+    )
+
+
+@router.get("/charts", response_class=HTMLResponse)
+def chart_index(request: Request):
+    user = page_user(request)
+    return render(request, "charts.html", **common(request, user),
+                  charts=owned_charts(request, user.user_id))
 
 
 @router.get("/profiles/new", response_class=HTMLResponse)
@@ -207,12 +243,37 @@ def chart_page(request: Request, chart_id: str):
 
 
 @router.get("/readings/new", response_class=HTMLResponse)
-def reading_new(request: Request):
+def reading_new(request: Request, profile_id: str | None = None, chart_id: str | None = None):
     user = page_user(request)
     from astrology_evidence.profiles import list_profiles
 
-    profiles = list_profiles(request)
-    return render(request, "reading_new.html", **common(request, user), profiles=profiles)
+    saved_profiles = list_profiles(request)
+    snapshot = None
+    if chart_id is not None:
+        if profile_id is not None:
+            raise HTTPException(422, "Choose a chart snapshot or a profile, not both")
+        chart = profiles.get_chart(request, chart_id)
+        revision = profiles.owned_revision(request, user, chart["profile_revision_id"])
+        with get_db(request).session() as db:
+            profile = db.get(Profile, revision.profile_id)
+            if profile is None:
+                raise HTTPException(404, "Profile not found")
+            snapshot = {"chart_id": chart_id, "profile_revision_id": revision.id,
+                        "revision": revision.revision, "birth_input": revision.birth_input,
+                        "alias": profile.alias}
+    selected = next((p for p in saved_profiles if p["id"] == profile_id), None)
+    if profile_id is not None and selected is None:
+        raise HTTPException(404, "Profile not found")
+    with get_db(request).session() as db:
+        charted_revisions = set(db.scalars(
+            select(Chart.profile_revision_id).where(Chart.owner_id == user.user_id)
+        ))
+    candidates = [selected] if selected else saved_profiles
+    ready_profiles = [p for p in candidates if p["profile_revision_id"] in charted_revisions]
+    needs_chart = [p for p in candidates if p["profile_revision_id"] not in charted_revisions]
+    return render(request, "reading_new.html", **common(request, user),
+                  profiles=ready_profiles, selected_profile=selected, snapshot=snapshot,
+                  needs_chart=[] if snapshot else needs_chart)
 
 
 @router.get("/readings", response_class=HTMLResponse)
@@ -458,6 +519,7 @@ def dispatch_form(request: Request, form: dict[str, Any]):
                 answers.ReadingCreate(
                     profile_revision_id=str(form.get("profile_revision_id", "")),
                     question=str(form.get("question", "")),
+                    chart_id=str(form["chart_id"]) if form.get("chart_id") else None,
                 ),
                 Response(),
             )

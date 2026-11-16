@@ -1,1 +1,30 @@
-<!doctype html><html lang="en" data-csrf-cookie="{{ '__Host-csrf' if settings.secure_cookies else 'ae_csrf' }}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{% block title %}Astrology Evidence{% endblock %}</title><link rel="stylesheet" href="/static/app.css"></head><body><a class="skip" href="#main">Skip to content</a><header><nav class="nav" aria-label="Primary"><strong><a href="/">Astrology Evidence</a></strong>{% if user %}<a href="/dashboard">Dashboard</a><a href="/readings">Readings</a><a href="/library">Library</a><a href="/settings">Settings</a><form action="/web/action" method="post"><input type="hidden" name="csrf_token" value="{{ csrf }}"><input type="hidden" name="action" value="logout"><button class="secondary">Sign out</button></form>{% else %}<a href="/library">Library</a><a href="/login">Sign in</a>{% endif %}</nav></header><main id="main">{% block content %}{% endblock %}</main><script src="/static/app.js" defer></script></body></html>
+<!doctype html>
+<html lang="en" data-csrf-cookie="{{ '__Host-csrf' if settings.secure_cookies else 'ae_csrf' }}">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Astrology Evidence{% endblock %} · Astrology Evidence</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="app-layout">
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="Astrology Evidence overview"><span class="brand-mark" aria-hidden="true">✧</span><span>Astrology<br><b>Evidence</b></span></a>
+    <p class="nav-label">YOUR EXPLORATION</p>
+    <nav class="nav" aria-label="Primary">
+      {% for href,label,number in [('/dashboard','Overview','01'),('/profiles','Birth profiles','02'),('/charts','Chart explorer','03'),('/readings','Readings','04'),('/library','Source library','05'),('/settings','Data & settings','06')] %}
+      <a href="{{ href }}" {% if path == href or (href == '/dashboard' and path == '/') or (href != '/dashboard' and path.startswith(href + '/')) %}aria-current="page"{% endif %}><span class="nav-number" aria-hidden="true">{{ number }}</span>{{ label }}</a>
+      {% endfor %}
+      {% if user and user.is_admin %}<a href="/admin/corpus"><span class="nav-number" aria-hidden="true">↗</span>Corpus curation</a>{% endif %}
+    </nav>
+    <div class="sidebar-note"><span class="tiny-star" aria-hidden="true">✦</span><p>Curiosity, with context.</p><small>Calculated facts. Visible sources.<br>Room for uncertainty.</small></div>
+    {% if not guest_mode and user %}<form action="/web/action" method="post"><input type="hidden" name="csrf_token" value="{{ csrf }}"><input type="hidden" name="action" value="logout"><button class="text-button">Sign out</button></form>{% endif %}
+  </aside>
+  <div class="workspace">
+    <header class="workspace-bar"><span class="workspace-label">A thoughtful space to explore</span><span class="workspace-status"><span class="status-dot" aria-hidden="true"></span>{{ 'Your browser workspace' if guest_mode else 'Your workspace' }}</span></header>
+    <main id="main" tabindex="-1">{% block content %}{% endblock %}</main>
+    <footer class="app-footer"><span>Astrology Evidence</span><span>Chart calculations and cited texts do not establish predictions of future events.</span></footer>
+  </div>
+</div>
+<script src="/static/app.js" defer></script>
+</body></html>

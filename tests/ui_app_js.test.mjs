@@ -3,6 +3,41 @@ import { readFileSync } from "node:fs";
 import { runInNewContext } from "node:vm";
 import test from "node:test";
 
+test("a pending form submits once and restores its button after an error", async () => {
+  let submit, release;
+  let requests = 0;
+  const button = {disabled:false, textContent:"Submit question", dataset:{pendingLabel:"Exploring…"}};
+  const alert = {textContent:""};
+  const form = {
+    dataset:{api:"/api/readings", success:"/readings"},
+    addEventListener(name, handler) { if (name === "submit") submit = handler; },
+    querySelector() { return alert; },
+    querySelectorAll() { return [button]; },
+    setAttribute() {},
+    removeAttribute() {},
+  };
+  runInNewContext(readFileSync("src/astrology_evidence/web/static/app.js", "utf8"), {
+    document:{documentElement:{dataset:{}}, cookie:"ae_csrf=cookie",
+      querySelectorAll(selector) { return selector === "form[data-api]" ? [form] : []; },
+      querySelector() { return null; }},
+    location:{origin:"http://testserver",href:""},
+    FormData:class { [Symbol.iterator]() { return Object.entries({
+      profile_revision_id:"synthetic-profile", question:"A synthetic question", request_key:"one-key"
+    })[Symbol.iterator](); }},
+    fetch:async () => { requests++; return await new Promise(resolve => {release=resolve;}); },
+  });
+  const first = submit({preventDefault(){}});
+  const duplicate = submit({preventDefault(){}});
+  assert.equal(requests, 1);
+  assert.equal(button.disabled, true);
+  assert.equal(button.textContent, "Exploring…");
+  release({ok:false,json:async()=>({detail:"Consent is required"})});
+  await Promise.all([first,duplicate]);
+  assert.equal(button.disabled, false);
+  assert.equal(button.textContent, "Submit question");
+  assert.equal(alert.textContent, "Consent is required");
+});
+
 test("profile submission sends the selected daylight-saving occurrence", async () => {
   const handlers = {};
   const values = {

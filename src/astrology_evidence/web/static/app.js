@@ -7,8 +7,15 @@
   document.querySelectorAll('form[data-api]').forEach(function (form) {
     form.addEventListener('submit', async function (event) {
       event.preventDefault();
+      if (form.dataset.submitting === 'true') return;
+      form.dataset.submitting = 'true';
+      const buttons = Array.from(form.querySelectorAll?.('button[type="submit"]') || []);
+      const buttonLabels = buttons.map(button => button.textContent);
+      form.setAttribute?.('aria-busy', 'true');
+      buttons.forEach(button => {button.disabled = true; button.textContent = button.dataset.pendingLabel || 'Working…';});
       const values = Object.fromEntries(new FormData(form));
       const body = values.birth_date ? {alias:values.alias || '', storage_consent:values.storage_consent === 'true', notice_version:values.notice_version, birth_input:{birth_date:values.birth_date, local_time:values.local_time || null, time_precision:values.time_precision, latitude:Number(values.latitude), longitude:Number(values.longitude), timezone:values.timezone, timezone_history:values.timezone_history}} : {profile_revision_id:values.profile_revision_id,question:values.question};
+      if (values.chart_id) body.chart_id = values.chart_id;
       if (body.birth_input) {
         if (values.expected_version) body.expected_version = Number(values.expected_version);
         if (values.time_precision !== 'exact') body.birth_input.local_time = null;
@@ -28,6 +35,11 @@
       if (response.ok) {const data = await response.json(); location.href = data.reading_id ? '/readings/' + data.reading_id : form.dataset.success || '/dashboard';}
       else { const alert = form.querySelector('[role=alert]'); const data = await response.json(); if (alert) alert.textContent = typeof data.detail === 'string' ? data.detail : data.detail?.message || 'Unable to submit. Check the entered values and try again.'; }
       } catch (error) {form.querySelector('[role=alert]').textContent=error.message || 'Connection failed. Your inputs are preserved; please retry.';}
+      finally {
+        delete form.dataset.submitting;
+        form.removeAttribute?.('aria-busy');
+        buttons.forEach((button,index) => {button.disabled = false; button.textContent = buttonLabels[index];});
+      }
     });
   });
   document.querySelectorAll('[data-profile-form]').forEach(function (form) {

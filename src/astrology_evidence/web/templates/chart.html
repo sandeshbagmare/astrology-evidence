@@ -2,10 +2,9 @@
 {% from "facts.html" import fact_table, house_diagram %}
 {% block title %}Chart{% endblock %}
 {% block content %}
-<h1>Chart snapshot</h1>
-<p class="muted">Method: {{ chart.settings.tradition|default('Jyotish')|capitalize }} / {{ chart.settings.zodiac|default('sidereal')|capitalize }} / {{ chart.settings.ayanamsha|default('Lahiri')|capitalize }}</p>
-{{ house_diagram(chart.facts) }}
-<h2>Calculated facts</h2>{{ fact_table(chart.facts) }}
+<p class="breadcrumb"><a href="/charts">Chart explorer</a> / Your snapshot</p><div class="page-heading"><div><p class="eyebrow">A RECORD OF THE SKY, UNDER A DECLARED METHOD</p><h1>Chart snapshot</h1><p class="lede">Explore the placements alongside their calculation context. Every value below comes from the chart engine.</p></div><a class="button secondary" href="/readings/new?chart_id={{ chart.id }}">Ask about this chart →</a></div>
+<div class="chart-method"><span class="badge">{{ chart.settings.tradition|default('Jyotish')|capitalize }}</span><span class="badge">{{ chart.settings.zodiac|default('sidereal')|capitalize }}</span><span class="badge">{{ chart.settings.ayanamsha|default('Lahiri')|capitalize }}</span><span class="badge">Whole-sign houses</span><span class="badge">Mean lunar nodes</span></div>
+<div class="chart-layout"><section class="panel"><p class="eyebrow">THE HOUSE OVERVIEW</p><h2>Placements at a glance</h2>{{ house_diagram(chart.facts) }}</section><section class="panel"><p class="eyebrow">COMPUTED BY THE CHART ENGINE</p><h2>Calculated facts</h2>{{ fact_table(chart.facts) }}</section></div>
 {% if chart.unavailable_facts %}<section class="notice"><h2>Unavailable calculations</h2><ul>{% for kind,reason in chart.unavailable_facts.items() %}<li>{{ kind|replace('_',' ')|capitalize }}: {{ reason|replace('_',' ') }}</li>{% endfor %}</ul></section>{% endif %}
-<details><summary>Calculation provenance and identifiers</summary><dl>{% for key,value in chart.manifest.items() %}<dt>{{ key|replace('_',' ')|capitalize }}</dt><dd>{{ value }}</dd>{% endfor %}</dl><ul>{% for fact in chart.facts %}<li>{{ fact.body|title }} / {{ fact.kind|replace('_',' ') }}: {{ fact.fact_id }}</li>{% endfor %}</ul></details>
+<details class="panel"><summary>Calculation provenance and identifiers</summary><p class="muted">Inspect the exact inputs, engine and method versions behind this snapshot.</p><dl>{% for key,value in chart.manifest.items() %}<dt>{{ key|replace('_',' ')|capitalize }}</dt><dd>{{ value }}</dd>{% endfor %}</dl><ul>{% for fact in chart.facts %}<li>{{ fact.body|title }} / {{ fact.kind|replace('_',' ') }}: {{ fact.fact_id }}</li>{% endfor %}</ul></details><p class="page-footnote">Independent ephemeris reference validation is pending. Chart calculations and traditional interpretation are different kinds of evidence.</p>
 {% endblock %}
