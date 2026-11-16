@@ -4,11 +4,13 @@
 **Repository:** `sandeshbagmare/astrology-evidence`  
 **Integrated branch:** `main`  
 **Development branch:** `implementation/mvp`  
-**Audited application code:** `fb8ae33` (later documentation/CI commits continue on `main`)
+**Current reviewed application code:** `ca3556f` (sign-in-free UI refresh; later evidence commits continue on `main`)
 
-This article records the implementation phase completed with GPT-6.1 Sol. It is intended for the owner and for a later coding model that may continue the work. The app is a tested local engineering baseline. It is not represented as fully production-ready: the source corpus, provider review, live identity configuration, expert evaluation, real operating host and recovery drills are still external gates.
+This article records the implementation and subsequent reviews completed with GPT-6.1 Sol. It is intended for the owner and a later coding model. The current app is a tested sign-in-free local engineering baseline. Authentication is future scope, and live Google configuration is not required now. It is not fully production-ready: licensed sources, provider review, expert/domain validation, inactive-workspace retention/purge, a real operating host and recovery drills remain gates.
 
 ## Executive account
+
+The latest user-directed change removes sign-in and replaces it with isolated anonymous browser workspaces, while preserving ownership/CSRF/privacy boundaries. The calm light UI now has Overview, Birth profiles, Chart explorer, Readings, Source library and Data & settings. The original Google/OIDC implementation described below is retained behind a disabled future mode. Current scope is governed by [the guest/UI plan](../context/46-anonymous-workspace-and-ui-plan.md).
 
 The approved design was translated into a Python application with a FastAPI modular monolith, server-rendered Jinja UI with a small fetch enhancement and application CSS, SQLAlchemy/Alembic persistence, PostgreSQL deployment configuration, Qdrant hybrid retrieval, a Swiss Ephemeris-compatible calculation boundary, Google OIDC integration and a bounded LangGraph workflow using LangChain's Responses API adapter. The original HTMX/Tailwind proposal was superseded by this simpler implemented UI in ADR-02.
 
@@ -17,6 +19,20 @@ The local demo uses synthetic data, explicit local login and Moshier engine mode
 No credential from chat was copied into the repository. No authenticated model request was made. No real books were acquired, OCRed, indexed or published. These are deliberate evidence boundaries, not omitted test results.
 
 ## Work completed
+
+### Sign-in-free refresh and independent validation
+
+The owner asked for competitor research and a stronger UI/functionality pass, then explicitly asked to review the agents' work and test broadly. Eight official public sites were compared in [45 UI research](../context/45-ui-refresh-research.md), with exact URLs and access limits; no paid/private app was represented as inspected and no proprietary artwork/text was copied. The resulting design uses warm light surfaces, teal/ink, a restrained celestial motif built in CSS, readable grouped screens, responsive navigation and actionable empty states. The original Python/Jinja/fetch stack remains; no new frontend framework was installed.
+
+Research commit `65dd33a` changed current scope and context. Guest implementation `f2fe708` creates distinct random workspace owners/sessions automatically, blocks old authentication endpoints, preserves server ownership and CSRF, and keeps old account cookies from being promoted into guest access. Shared database limits admit 60 new workspaces per 60-second window and 100 accepted reading requests per UTC day by default. Restart, deleted readings and cleared cookies do not refund the global reading budget; at most two model attempts per accepted reading still apply. PostgreSQL and SQLite race regressions accompany these controls without a schema migration.
+
+Workbench commit `ca3556f` adds six sections, profile/chart indexes, grouped time/location/consent/method controls, chart/provenance panels, readable source and reading screens, clearer data controls, loading and duplicate-submit protection. A chart's reading link now binds its exact historical revision/snapshot; a profile without a current chart receives a calculation step before question submission. Ordinary forms and explicit DST-offset confirmation still work without JavaScript. Access limits—24 hours idle, seven days maximum, possible cookie loss and no recovery—are disclosed near storage and data controls.
+
+Independent reviewers found and verified corrections beyond the implementers' own tests: operation/error/export pages lacked shared render context; source/reading actions needed exact chart context; informational text contrast needed correction; short-height navigation clipped links; and a no-chart reading action led to an opaque failure. The guest security reviewer reproduced unbounded Session creation during CSRF repair, absolute-expiry extension, and stuck stale cookies after revocation/expiry/deletion. Session repair now updates in place with conditional fencing, keeps the original expiry, caps cookie lifetime at remaining expiry, and treats the session ID portion only as a concurrency hint—full secret-token hash remains required for authorization. All findings were cleared in scoped re-review.
+
+Final local evidence: **342 non-native Python tests passed, 5 service-dependent tests skipped**, **35 native calculation tests passed**, Ruff passed, mypy passed on **31 modules**, **8 Node tests passed**, and **90-file documentation validation passed**. The security reviewer independently passed **15 adversarial tests**, including cross-workspace reads/mutations/exports, swapped CSRF, invalid sessions, secure cookies and all three reproduced recovery defects. Coordinator Edge checks covered **24 screen/width combinations**, guest isolation and chart/readings, JavaScript-disabled DST entry/export/deletion, plus a completed worker export with 200/no-store owner access and 404 from another browser. Keyboard focus reaches lower sidebar links at 720×450. This remains a focused browser test, not a formal accessibility certification.
+
+The research, implementation and two fresh validation assignments ran in waves, at most three workers plus the coordinator. A temporary service 503 interrupted worker turns; the coordinator inspected partial files, resumed workers and verified the combined result. Git commit counts are reproducible; model-call/token totals were not logged and are not invented. Current release evidence is in [implementation progress](PROGRESS.md). Earlier counts and account-specific descriptions below are historical snapshots.
 
 ### Runtime and persistence
 

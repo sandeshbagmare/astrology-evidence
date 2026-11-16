@@ -1,5 +1,23 @@
 # Application implementation progress
 
+## Latest: sign-in-free workbench — November 16, 2026
+
+The user deferred authentication and requested public-site research, UI/function improvements, parallel review and rigorous testing. The current app opens directly into a separate browser workspace. Opaque session ownership, CSRF, consent, exports, deletion and curator authorization remain enforced; no global shared guest account is used. Google/OIDC is retained disabled as future scope. The work is recorded in [45 UI research](../context/45-ui-refresh-research.md) and [46 Guest/UI plan](../context/46-anonymous-workspace-and-ui-plan.md).
+
+- `65dd33a`: research/scope update, eight official-site comparisons and revised authentication requirements.
+- `f2fe708`: isolated automatic guest access, disabled auth routes, bounded session recovery and shared issuance/reading quotas.
+- `ca3556f`: six-section workbench, responsive styling, grouped forms, profile/chart lists, exact chart-to-reading binding, loading guards, chart prerequisites and zoom-reachable navigation.
+
+Fresh final local verification on that code: **342 Python tests passed, 5 skipped**, **35 native calculation tests passed**, Ruff clean, mypy clean across **31 source modules**, **8 Node tests passed**, and documentation validation passed on **90 files**. Skips are local PostgreSQL/Qdrant delivery and quota/repair concurrency variants; CI supplies those services. No live provider call or credential was used. Existing Authlib/LangSmith deprecation warnings remain non-failing.
+
+Coordinator browser checks exercised eight screens at 1440px, 768px and 320px (**24 layout checks**), plus direct guest entry, DST offset selection, profile save, native chart (65 facts for the synthetic case), snapshot-bound abstention, confirmed reading deletion, a separate browser's 404 ownership denials/403 curator denial, JavaScript-disabled form entry, export queue and workspace deletion. No horizontal page overflow or JavaScript page errors occurred in the exercised flow. A running privacy worker also completed an export: owner download 200/no-store, another browser 404. At 720×450, focusing the final sidebar link scrolls it fully into view. This is focused browser/accessibility evidence, not a full screen-reader/WCAG certification.
+
+Independent research review found missing render context on operation/error/export pages, stale account wording, low-contrast small text and a chart-link mismatch. Independent UI review found short-height navigation clipping and an unusable reading path before chart calculation. Independent security review reproduced session-row growth, renewed absolute expiry and stale historical-cookie recovery. All were fixed and cleared; the security reviewer independently passed **15 adversarial checks**. Implementers and reviewers worked in waves within the four-active-agent limit.
+
+Current defaults bound new workspace issuance to 60 per shared 60-second window and accepted readings to 100 per UTC day in the database. Idempotent replay is free; failure/deletion/restart cannot refund global allowance, and each reading remains capped at two generation attempts. Session repair rotates in place, preserves original expiry and cookie lifetime, and fences concurrent repair. Access ends after 24 hours idle or seven days maximum, possibly sooner if cookies are cleared; this does not erase stored records. Export/deletion and loss-of-access limits are disclosed in the UI. Automated inactive-workspace purge, production ingress/load measurements and recovery proof remain launch work.
+
+The local app is a developer process at `http://127.0.0.1:18766`; the public Pages guide is separate and now includes an empty-workspace screenshot. Exact new remote CI/build/Pages evidence is recorded after publication. Historical results below describe earlier revisions and do not supersede this section.
+
 Implementation began after explicit user approval on November 15, 2026. The integrated source is on `main`, developed on `implementation/mvp`, with small feature and fix commits and independent agent reviews. The November 16 context review and application fixes are integrated through `fb8ae33`; accompanying CI/documentation publication follows in its own commit.
 
 ## Implemented

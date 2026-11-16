@@ -59,6 +59,8 @@ The public site is static HTML/CSS in `docs/`, published by GitHub Pages. It exp
 
 ## Implementation update
 
+The refreshed workbench has six sections and opens without sign-in. Research compares eight official astrology sites; see [the UI research](context/45-ui-refresh-research.md). Local verification passed 342 application tests, 35 native chart tests and eight Node tests, with five service checks awaiting the CI environment. [Implementation progress](implementation/PROGRESS.md) records the independent reviews, browser checks, exact commits and remaining launch gates.
+
 A functioning local application baseline exists. Start with [the runbook](implementation/RUNBOOK.md) and [actual implementation progress](implementation/PROGRESS.md). Current code supports accounts/profiles, chart calculations, source retrieval, bounded readings and privacy jobs. Production knowledge, provider and operating gates remain unresolved.
 
 Standard development: `uv sync --frozen --python 3.12`, then `uv run uvicorn astrology_evidence.main:create_app --factory`. Python 3.12 is the verified baseline; Python 3.12 or 3.13 is required for the native chart engine. No sign-in is required: `AUTHENTICATION_ENABLED=false` is the default. Browser cookies hold workspace access; clearing them or session expiry loses access, and there is no cross-device recovery yet. See the runbook for Docker, worker/curator setup and this laptop's runtime. Use synthetic data only.

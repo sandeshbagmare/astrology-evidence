@@ -89,6 +89,7 @@ h1,h2{letter-spacing:-1px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}
 }
+.app-preview{margin:28px 0 36px}.app-preview img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:12px}.app-preview figcaption{margin-top:12px;font-size:13px;color:var(--muted)}
 @media print{body{background:white;color:black}
 header nav,.actions,.next .button,.skip{display:none}
 section:not(.hero){padding:20px 0}
