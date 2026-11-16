@@ -18,7 +18,7 @@ Updated November 16, 2026. This report describes the implementation and its test
 
 ## Verification
 
-Latest quality pass, application revision `1994158`: [409 Python tests passed with no skips, plus lint/types, wheel/assets and the complete Chromium browser journey](https://github.com/sandeshbagmare/astrology-evidence/actions/runs/43888917993). Nine Node tests pass. The browser exercised 24 layouts, native charts, guest isolation, profile/reading/workspace deletion, JavaScript-disabled forms and a worker-completed private export. The pass fixed cancellation concurrency, runtime-aware chart caching, strict evidence types, profile-deletion confirmation and tablet form overflow. [Implementation progress](implementation/PROGRESS.md) records the failed intermediate runs, fixes and final evidence.
+Latest quality pass, application revision `1994158`: [409 Python tests passed with no skips, plus lint/types, wheel/assets and the complete Chromium browser journey](https://github.com/sandeshbagmare/astrology-evidence/actions/runs/43888917993). Nine Node tests pass. The browser exercised 24 layouts, native charts, guest isolation, profile/reading/workspace deletion, JavaScript-disabled keyboard forms and a worker-completed private export. The pass fixed cancellation concurrency, runtime-aware chart caching, strict evidence types, profile-deletion confirmation and tablet form overflow. [Implementation progress](implementation/PROGRESS.md) records the failed intermediate runs, fixes and final evidence.
 
 Earlier refresh evidence follows:
 
