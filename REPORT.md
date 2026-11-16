@@ -4,7 +4,7 @@ Updated November 16, 2026. This report describes the implementation and its test
 
 ## Verdict
 
-**A local application is implemented. It is not cleared for real-user production.** The latest user-directed refresh removes sign-in and uses separate anonymous browser workspaces, with a calmer six-section UI. Birth profiles, deterministic charts, rights-controlled Qdrant sources, bounded readings and privacy jobs remain. Authentication is future scope; external content, provider, accuracy and operating gates remain open. Refresh verification is recorded in implementation progress when complete.
+**A local application is implemented. It is not cleared for real-user production.** The latest user-directed refresh removes sign-in and uses separate anonymous browser workspaces, with a calmer six-section UI. Birth profiles, deterministic charts, rights-controlled Qdrant sources, bounded readings and privacy jobs remain. Authentication is future scope; external content, provider, accuracy and operating gates remain open. Exact verification is recorded in implementation progress.
 
 ## Implemented
 
@@ -18,7 +18,11 @@ Updated November 16, 2026. This report describes the implementation and its test
 
 ## Verification
 
-Latest sign-in-free refresh through `ca3556f`: **342 application tests passed, 5 external-service checks skipped locally**, **35 native chart tests passed**, Ruff/mypy clean (31 modules), eight Node tests and 90-file documentation validation passed. Independent security validation passed 15 adversarial checks and both reviews cleared their findings. Browser testing covered 24 screen/width combinations, separate-browser isolation, JavaScript-disabled input, exact-chart readings, export completion and deletion. Shared issuance/daily reading limits are database-backed.
+Latest quality pass, application revision `1994158`: [409 Python tests passed with no skips, plus lint/types, wheel/assets and the complete Chromium browser journey](https://github.com/sandeshbagmare/astrology-evidence/actions/runs/43888917993). Nine Node tests pass. The browser exercised 24 layouts, native charts, guest isolation, profile/reading/workspace deletion, JavaScript-disabled forms and a worker-completed private export. The pass fixed cancellation concurrency, runtime-aware chart caching, strict evidence types, profile-deletion confirmation and tablet form overflow. [Implementation progress](implementation/PROGRESS.md) records the failed intermediate runs, fixes and final evidence.
+
+Earlier refresh evidence follows:
+
+Earlier sign-in-free refresh through `ca3556f`: **342 application tests passed, 5 external-service checks skipped locally**, **35 native chart tests passed**, Ruff/mypy clean (31 modules), eight Node tests and 90-file documentation validation passed. Independent security validation passed 15 adversarial checks and both reviews cleared their findings. Browser testing covered 24 screen/width combinations, separate-browser isolation, JavaScript-disabled input, exact-chart readings, export completion and deletion. Shared issuance/daily reading limits are database-backed.
 
 Publication `d9c1846` passed [Python CI with **382 tests, none skipped**](https://github.com/sandeshbagmare/astrology-evidence/actions/runs/43817226635), including real PostgreSQL/Qdrant and concurrency variants, lint/types, wheel build and packaged assets. Documentation/UI JavaScript checks and Pages deployment passed too. The public guide/image and 1440/768/320px layouts were verified. Docker execution, inactive-workspace purge, production recovery/capacity, licensed books and expert/domain validation remain launch work.
 

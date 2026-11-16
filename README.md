@@ -60,7 +60,7 @@ The public site is static HTML/CSS in `docs/`, published by GitHub Pages. It exp
 
 ## Implementation update
 
-The refreshed workbench has six sections and opens without sign-in. Research compares eight official astrology sites; see [the UI research](context/45-ui-refresh-research.md). [CI passed all 382 Python tests](https://github.com/sandeshbagmare/astrology-evidence/actions/runs/43832094881) with PostgreSQL/Qdrant, including the five checks unavailable locally, plus lint/types and wheel/asset checks. Eight Node tests and the browser checks pass. [Implementation progress](implementation/PROGRESS.md) records exact commits, reviews and remaining launch gates.
+The refreshed workbench has six sections and opens without sign-in. Research compares eight official astrology sites; see [the UI research](context/45-ui-refresh-research.md). [CI passed all 409 Python tests](https://github.com/sandeshbagmare/astrology-evidence/actions/runs/43888917993) with PostgreSQL/Qdrant and no skips, plus lint/types, wheel/assets and the complete Linux Chromium journey. Nine Node tests pass. The browser checks cover 24 layouts, workspace isolation, deletion confirmation and completed owner-only exports. [Implementation progress](implementation/PROGRESS.md) records exact commits, reviews and remaining launch gates.
 
 A functioning local application baseline exists. Start with [the runbook](implementation/RUNBOOK.md) and [actual implementation progress](implementation/PROGRESS.md). Current code supports accounts/profiles, chart calculations, source retrieval, bounded readings and privacy jobs. Production knowledge, provider and operating gates remain unresolved.
 

@@ -26,7 +26,7 @@ Three specialist research agents worked alongside the coordinator, within the en
 |---|---|---|
 | Feasibility and project setup | Implemented; local checks and CI pass | Provider smoke, measured host capacity, production artifact and recovery evidence |
 | Browser access and profiles | Sign-in removed by user direction; anonymous session ownership in current refresh; OIDC retained disabled | Final guest isolation/browser tests and anonymous deployment abuse/privacy review; Google is future scope |
-| Calculation engine | Implemented; 33 native unit/edge tests and CI pass | Independent position references, reviewed near-station tolerance, license decision |
+| Calculation engine | Implemented; 35 native unit/edge tests and CI pass | Independent position references, reviewed near-station tolerance, license decision |
 | Rights-cleared pilot corpus | Not acquired | Edition rights, artifact hashes, editorial review |
 | Retrieval | Implemented with synthetic fixtures and CI Qdrant tests | Licensed corpus, held-out retrieval evaluation and model/host measurements |
 | Rule validation | Conservative evidence validation implemented | Expert-reviewed astrological predicates, disagreement set and applicability labels |

@@ -4,7 +4,9 @@ Updated November 16, 2026. This index maps all 44 numbered context documents to 
 
 Latest scope override: authentication is future work; default direct access uses isolated anonymous browser workspaces. [45 UI research](../context/45-ui-refresh-research.md) and [46 Guest/UI plan](../context/46-anonymous-workspace-and-ui-plan.md) extend this historical 44-document map. Current verified code through `ca3556f` passed 342 non-native tests with five service skips, 35 native tests, Ruff/mypy on 31 modules, eight Node tests and 90-file doc validation. Independent security review passed 15 adversarial checks; browser tests covered 24 layouts and completed guest/data flows. Earlier per-document account/OIDC descriptions apply to the retained disabled future mode.
 
-## Current evidence boundary
+Latest regression follow-up: `1994158` passed 409 Python tests with no skips, nine Node checks and the Linux Chromium journey, including 24 layouts and completed owner-only exports. The pass corrected runtime cache invalidation, typed evidence equality, cancellation permits, profile-deletion confirmation and tablet form sizing. See [current progress](PROGRESS.md) for exact CI links; historical counts below identify their own revisions.
+
+## Historical audit evidence boundary
 
 The local app and public Pages guide respond with HTTP 200. The app supports a synthetic local workflow, not real-user production. The final audit code through `fb8ae33` passed 284 non-native Python tests with 2 local PostgreSQL/Qdrant service skips and 35 native calculation tests using the existing approved Python 3.12 interpreter. Ruff, mypy, 86-file documentation validation and 7 Node tests pass. A real Edge browser exercised JavaScript and no-JavaScript repeated-time entry, chart calculation, abstention, confirmed deletion and library search at 320px. All three workflows passed on audit publication commit `cf36edd`, including service-backed pytest, wheel build and packaged-web-asset validation; exact run links are in [implementation progress](PROGRESS.md).
 

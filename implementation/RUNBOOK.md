@@ -43,7 +43,7 @@ Keep that password available for later Compose commands; named volumes retain th
 ./scripts/test-calculations.ps1
 node scripts/check-docs.mjs
 node --test scripts/check-docs.test.mjs
-node --test tests/ui_app_js.test.mjs
+node --test tests/ui_app_js.test.mjs tests/browser_cleanup.test.mjs
 ```
 
 CI installs the frozen uv lock with Python 3.12 and supplies disposable PostgreSQL/Qdrant services. To exercise the same delivery checks locally, start those services and set the test URLs:
@@ -55,6 +55,12 @@ $env:TEST_QDRANT_URL = 'http://127.0.0.1:6333'
 ```
 
 These checks create a unique PostgreSQL schema and Qdrant collection, then remove only those test resources. Use a disposable test database. Without the URLs they are explicitly skipped. The migration check compares the upgraded PostgreSQL schema to application models; the Qdrant check builds and queries an actual remote dense/sparse index using a synthetic encoder.
+
+## Automated browser journey
+
+The Python CI job pins Ubuntu 24.04 and Playwright 1.58.2, installs Chromium outside the checkout, starts a disposable synthetic SQLite app and privacy worker, then executes `scripts/run-browser-check.mjs`. It reuses `tests/browser/verify-app.js`: 24 screen/width combinations, separate-workspace denials, DST input, native chart, chart-bound abstention, confirmed reading/profile deletion, JavaScript-disabled forms, completed owner-only export and workspace deletion. The runner closes Chromium and the workflow stops both Python processes. No provider credentials or real source material are used.
+
+Locally, start the app and worker above, then open its actual port in Playwright CLI and run `tests/browser/verify-app.js`. A failed browser action is not a passing smoke test; the cleanup harness preserves its original error. This laptop's Edge stopped delivering animation frames during the later quality pass; Linux CI supplies the fresh browser evidence rather than using forced clicks. See [the verification report](E2E-AND-DEMO-REPORT.md) for tested commits and outcomes.
 
 ## Source and launch gates
 
