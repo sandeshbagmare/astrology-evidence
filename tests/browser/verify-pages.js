@@ -4,8 +4,11 @@ async page => {
   const context = await page.context().browser().newContext();
   const guide = await context.newPage();
   const failures = [];
+  const failedRequests = [];
   guide.on('pageerror', error => failures.push(error.message));
-  guide.on('requestfailed', request => failures.push('Request failed: ' + request.url()));
+  guide.on('requestfailed', request => failedRequests.push({
+    url: request.url(), type: request.resourceType(), error: request.failure()?.errorText,
+  }));
   const check = (condition, message) => { if (!condition) throw new Error(message); };
   try {
     const response = await guide.goto(base);
@@ -40,17 +43,26 @@ async page => {
     }
     const repositoryResults = [];
     if (new URL(base).hostname.endsWith('github.io')) {
-      for (let index = 0; index < targets.repository.length; index += 3) {
-        const group = await Promise.all(targets.repository.slice(index, index + 3).map(async url => {
-          let result = await context.request.get(url, {timeout: 30000});
-          if (result.status() === 429 || result.status() >= 500) {
-            await guide.waitForTimeout(1500);
-            result = await context.request.get(url, {timeout: 30000});
-          }
-          return {url, status: result.status()};
-        }));
-        for (const result of group) check(result.status === 200, 'Repository link failed: ' + result.url + ' ' + result.status);
-        repositoryResults.push(...group);
+      // GitHub HTML pages rate-limit bursts separately from Pages assets.
+      for (const url of targets.repository) {
+        await guide.waitForTimeout(4000);
+        let status;
+        let attempts = 0;
+        while (attempts < 3) {
+          attempts += 1;
+          const response = await context.request.get(url, {timeout: 30000});
+          status = response.status();
+          const retryAfter = response.headers()['retry-after'];
+          await response.dispose();
+          if (!(status === 429 || status >= 500) || attempts === 3) break;
+          const seconds = retryAfter ? Number(retryAfter) : NaN;
+          const requestedWait = Number.isFinite(seconds) ? seconds * 1000 : Date.parse(retryAfter || '') - Date.now();
+          const delay = Math.max(15000 * attempts, Number.isFinite(requestedWait) ? requestedWait : 0);
+          check(delay <= 45000, 'Repository requested a longer cooldown; rerun later: ' + url);
+          await guide.waitForTimeout(delay);
+        }
+        check(status === 200, 'Repository link failed: ' + url + ' ' + status);
+        repositoryResults.push({url, status, attempts});
       }
     }
     const layouts = [];
@@ -74,6 +86,7 @@ async page => {
         await completed;
         const cues = [...(video.textTracks[0]?.cues || [])];
         const data = {
+          source: video.currentSrc,
           duration: video.duration,
           width: video.videoWidth,
           height: video.videoHeight,
@@ -91,8 +104,14 @@ async page => {
       check(result.captionTracks === 1 && result.captionCues > 0 && result.captionsWithinDuration && !result.error, 'Video captions or playback error');
     }
     check(media.length === 3, 'Expected three playable demos');
+    // Native media loading can cancel redundant transfers. Permit ERR_ABORTED
+    // only for the exact video sources whose complete playback just passed.
+    const completedSources = new Set(media.map(result => result.source));
+    const abortedMedia = failedRequests.filter(request => request.type === 'media' && request.error === 'net::ERR_ABORTED' && completedSources.has(request.url));
+    const unexpectedRequests = failedRequests.filter(request => !abortedMedia.includes(request));
+    failures.push(...unexpectedRequests.map(request => 'Request failed: ' + request.url + ' (' + request.error + ')'));
     check(failures.length === 0, 'Browser failures: ' + failures.join('; '));
-    return {status: 'PASS', base, anchors: targets.anchors.length, assets: assetResults, repositoryLinks: repositoryResults.length, layouts, media, browserErrors: failures};
+    return {status: 'PASS', base, anchors: targets.anchors.length, assets: assetResults, repositoryLinks: repositoryResults.length, layouts, media, abortedMediaRequests: abortedMedia.length, browserErrors: failures};
   } finally {
     await context.close();
   }
