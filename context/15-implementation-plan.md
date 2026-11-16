@@ -1,12 +1,12 @@
 # Astrology Evidence Implementation Plan
 
-> **Execution status:** The user approved implementation, and work was completed in `implementation/mvp` then merged to `main`. The checkboxes below describe the original ordered work plan and are not its completion ledger. See [implementation progress](../implementation/PROGRESS.md) and the [GPT-6.1 Sol handoff](../implementation/GPT-6.1-SOL-IMPLEMENTATION-ARTICLE.md) for completed tests, commits, and still-open launch gates. Steps use checkboxes as the original plan record.
+> **Execution status:** The user approved implementation, and a local application baseline was developed in `implementation/mvp` then merged to `main`. The checkboxes below describe the original ordered work plan and are not its completion ledger. See [implementation progress](../implementation/PROGRESS.md) and the [GPT-6.1 Sol handoff](../implementation/GPT-6.1-SOL-IMPLEMENTATION-ARTICLE.md) for completed tests, commits, and still-open launch gates. Steps use checkboxes as the original plan record.
 
 **Goal:** Deliver a private-beta Python web application with reproducible Vedic charts and inspectable, source-backed interpretations.
 
 **Architecture:** FastAPI modular monolith with server-rendered UI, PostgreSQL transactional storage/jobs, Qdrant retrieval and an offline ingestion worker. A bounded LangGraph workflow supplies verified facts and licensed excerpts to LangChain's Responses API adapter; LiteLLM remains optional.
 
-**Tech Stack:** Python 3.12 baseline, uv, FastAPI, Jinja2, HTMX, Tailwind, PostgreSQL, SQLAlchemy/Alembic, Google OIDC/Authlib, Swiss Ephemeris adapter, Qdrant, multilingual-e5-small candidate, LangChain, LangGraph, pytest/Ruff/mypy.
+**Tech Stack:** Python 3.12 baseline, uv, FastAPI, Jinja2, small fetch enhancement/application CSS (ADR-02 supersedes proposed HTMX/Tailwind), PostgreSQL, SQLAlchemy/Alembic, Google OIDC/Authlib, Swiss Ephemeris adapter, Qdrant, multilingual-e5-small candidate, LangChain, LangGraph, pytest/Ruff/mypy.
 
 **Spec:** [Product](01-product-and-scope.md), [architecture](03-architecture.md), [contracts](12-data-and-api-contracts.md). Read specialist documents referenced by each task. Proposed file layout is in [standards](14-code-standards-and-testing.md).
 

@@ -60,3 +60,5 @@ For detailed research, read [the expanded research program](context/42-expanded-
 ## Small commits and continuous verification
 
 Follow [the delivery rules](context/44-small-commits-and-continuous-verification.md) and [CONTRIBUTING.md](CONTRIBUTING.md). Commit one coherent tested change at a time. Run relevant tests during development and before each commit; repair failures before dependent work. Use independent agent review/testing for risky logic with disjoint file ownership, then validate the combined revision. For documentation changes run both documented Node checks; for application changes run applicable Python and service checks from the runbook. Never claim that passing documentation CI makes the application production-ready.
+
+Commit subjects include `[GPT-6.1 Sol]` as requested by the user. Keep model-call/token counts unknown unless reliable telemetry supplies them; commit counts are reproducible from Git.

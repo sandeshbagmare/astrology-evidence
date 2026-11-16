@@ -2,7 +2,7 @@
 
 ## Chosen shape
 
-A modular Python application, one background worker using the same package, PostgreSQL for transactional state and job leasing, Qdrant for public licensed source retrieval, and private object storage for source artifacts. The UI is server-rendered FastAPI/Jinja2 with HTMX for incremental updates and a compiled Tailwind stylesheet. Small chart interactions use ordinary JavaScript and accessible SVG; calculation remains server-side.
+A modular Python application, one background worker using the same package, PostgreSQL for transactional state and job leasing, and Qdrant for public licensed source retrieval. Private object storage for real source artifacts remains a deployment requirement. The implemented UI is server-rendered FastAPI/Jinja2 with a small fetch enhancement and application CSS; HTMX/Tailwind from the original design were not added. Small chart interactions use ordinary JavaScript and accessible SVG; calculation remains server-side. See ADR-02 for this implementation decision.
 
 LangChain adapts the model API. LangGraph expresses a bounded, inspectable workflow. This is not a team of autonomous agents in production. Research agents used to prepare this plan do not imply the deployed application needs dozens of agents.
 
@@ -10,7 +10,7 @@ LangChain adapts the model API. LangGraph expresses a bounded, inspectable workf
 
 ```mermaid
 flowchart LR
-    Browser[Browser: HTML / HTMX / chart SVG] -->|HTTPS and session cookie| Web[FastAPI web and API]
+    Browser[Browser: HTML / fetch / chart SVG] -->|HTTPS and session cookie| Web[FastAPI web and API]
     Google[Google OIDC] -->|Validated login callback| Web
     Web --> DB[(PostgreSQL: accounts, profiles, jobs, readings)]
     Web --> Calc[Chart calculation module]

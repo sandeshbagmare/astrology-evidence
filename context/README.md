@@ -2,6 +2,8 @@
 
 Prepared 2026-11-15 and updated during implementation. This is the design and research context library; current code and verification status are in [implementation progress](../implementation/PROGRESS.md), and future continuation guidance is in the [GPT-6.1 Sol handoff](../implementation/GPT-6.1-SOL-IMPLEMENTATION-ARTICLE.md). Proposed research targets are not test results.
 
+For a quick audit of which requirements have code, tests, or open release gates, use the [44-document context-to-code review](../implementation/CONTEXT-CODE-REVIEW.md).
+
 ## Recommended reading order
 
 1. [Product and scope](01-product-and-scope.md)

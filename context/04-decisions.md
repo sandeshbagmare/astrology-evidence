@@ -1,11 +1,11 @@
 # Architecture decisions
 
-All entries proposed on 2026-11-15. Change them with evidence and update affected contracts, tests and progress.
+Initial entries proposed on 2026-11-15; implemented deviations are recorded below. Change them with evidence and update affected contracts, tests and progress.
 
 | ID | Decision | Reason | Alternative / trigger to reconsider |
 |---|---|---|---|
 | ADR-01 | Python 3.12 baseline, FastAPI modular monolith | User's Python requirement, typed HTTP boundaries, manageable operations | Move baseline when pinned library compatibility and hosting tests support it |
-| ADR-02 | Jinja2 + HTMX + compiled Tailwind | Full web app with Python-owned auth and one deployable unit | React/Next.js if client state or collaborative editing demonstrably demands it; Streamlit for internal experiments only |
+| ADR-02 | Jinja2 + small fetch enhancement + application CSS (implemented; supersedes HTMX/Tailwind proposal) | Current forms, pages and accessible charts need no extra UI dependency or asset build; ordinary server-rendered forms remain available | Add HTMX or a CSS build only for a demonstrated interaction/maintenance need; React/Next.js only when richer client state warrants another deployment boundary |
 | ADR-03 | PostgreSQL for metadata, sessions, jobs; Qdrant for retrieval | Clear transactional authority and user-requested vector DB | pgvector would reduce service count but departs from Qdrant request |
 | ADR-04 | LangChain ChatOpenAI with Responses API; direct provider first | User reports chat completions returned 410, Responses worked | Gateway only after exact route tested; no silent chat fallback |
 | ADR-05 | Optional LiteLLM, disabled initially | Useful later for policy, accounting and multiple providers, unnecessary initial hop | Enable when native Responses compatibility and data-handling controls pass |

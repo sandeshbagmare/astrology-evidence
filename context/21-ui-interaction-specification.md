@@ -4,7 +4,7 @@ Status: implementation specification prepared 2026-11-15 and partially realized 
 
 ## Interaction model and invariants
 
-Render pages with FastAPI/Jinja2, enhance fragments with HTMX, compile Tailwind assets, and keep normal navigation/forms usable. The server owns authentication, resource permissions, input normalization, job state and citation verification. The browser never computes authoritative planetary placements or decides that a passage supports a claim. Small client scripts may manage focus, disclosure panels and chart presentation; they cannot substitute for service validation.
+Render pages with FastAPI/Jinja2, enhance forms with a small fetch script, use application CSS, and keep normal navigation/forms usable, matching implemented ADR-02. The server owns authentication, resource permissions, input normalization, job state and citation verification. The browser never computes authoritative planetary placements or decides that a passage supports a claim. Small client scripts may manage focus, disclosure panels and chart presentation; they cannot substitute for service validation.
 
 MVP requires an explicitly consented saved birth profile before a personalized chart. A session-only profile is deferred because it needs separate lifecycle and storage contracts. Declining external-model processing still allows authorized chart and library use. A synthetic public demonstration has no real profile submission. Free hosting must not promise real-user deletion schedules without a reliable job executor; the deployment document decides when a real-user beta is enabled.
 

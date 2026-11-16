@@ -43,6 +43,7 @@ Keep that password available for later Compose commands; named volumes retain th
 ./scripts/test-calculations.ps1
 node scripts/check-docs.mjs
 node --test scripts/check-docs.test.mjs
+node --test tests/ui_app_js.test.mjs
 ```
 
 CI installs the frozen uv lock with Python 3.12 and supplies disposable PostgreSQL/Qdrant services. To exercise the same delivery checks locally, start those services and set the test URLs:

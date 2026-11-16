@@ -4,7 +4,7 @@ Status: product design prepared 2026-11-15; core server-rendered screens are now
 
 ## Experience and delivery stack
 
-Use FastAPI with Jinja2 server-rendered HTML, HTMX for partial updates, and compiled Tailwind CSS. Keep meaningful URLs and ordinary form submissions so chart and library pages remain usable without client-side enhancement. Build chart graphics as escaped, application-owned SVG with an adjacent accessible data table. Do not render model-generated HTML or SVG.
+Use FastAPI with Jinja2 server-rendered HTML, a small fetch enhancement and application CSS, matching implemented ADR-02. The original HTMX/Tailwind proposal is superseded. Keep meaningful URLs and ordinary form submissions so chart and library pages remain usable without client-side enhancement. Build chart graphics as escaped, application-owned SVG with an adjacent accessible data table. Do not render model-generated HTML or SVG.
 
 This keeps the main stack Python and the first deployment small. A small asset compilation step is acceptable; it does not require a separate Node production service. Defer a React SPA and native mobile apps until a demonstrated interaction requirement justifies the extra deployment and state management. FastAPI documents template integration, and HTMX documents progressive enhancement; these sources establish capability, not performance guarantees. [FastAPI templates](https://fastapi.tiangolo.com/advanced/templates/) · [HTMX documentation](https://htmx.org/docs/)
 

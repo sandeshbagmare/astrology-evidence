@@ -18,7 +18,7 @@ Updated November 16, 2026. This report describes the implementation and its test
 
 ## Verification
 
-The latest local integrated run passed 250 Python tests with two external-service checks skipped because Docker is unavailable locally. The native chart suite passed 33 tests under Python 3.12. Ruff and mypy pass. GitHub Actions passed on commit `a366b6ee8f1b6ab03f1f62d579c59d5f4f760dfd`, running the Python suite with PostgreSQL and Qdrant, plus Ruff and mypy. Browser testing covered synthetic login, saved birth profile, chart rendering, insufficient-evidence reading and a 320px viewport without horizontal overflow.
+The final local audit code through `fb8ae33` passed **284 Python tests**, with **2 external-service skips** because Docker is unavailable locally, and **35 native chart tests** under Python 3.12. Ruff and mypy pass. All 7 Node tests pass, including delayed-response DST regressions. Browser testing covered synthetic login, offset-labelled repeated-time selection with and without JavaScript, profile save, native chart, insufficient-evidence reading, confirmed deletion and library search at 320px without overflow. Previous Actions passed on `5c6b530`; the newly added wheel/asset check still needs a green run on the audit publication commit.
 
 The app runs locally at `http://127.0.0.1:18766` in the current development session. Use [the runbook](implementation/RUNBOOK.md) to start it independently. The GitHub Pages site is a reading guide, not the Python backend.
 
@@ -40,4 +40,4 @@ AI and embeddings remain disabled by default. The local demo uses invented input
 
 ## Start here
 
-Read [the Pages guide](https://sandeshbagmare.github.io/astrology-evidence/), then [the runbook](implementation/RUNBOOK.md) and [implementation progress](implementation/PROGRESS.md). The [full context index](context/README.md) holds the detailed design and research.
+Read [the Pages guide](https://sandeshbagmare.github.io/astrology-evidence/), then [the runbook](implementation/RUNBOOK.md) and [implementation progress](implementation/PROGRESS.md). The [44-document context-to-code review](implementation/CONTEXT-CODE-REVIEW.md) shows implementation coverage and gaps; the [full context index](context/README.md) holds the detailed design and research.

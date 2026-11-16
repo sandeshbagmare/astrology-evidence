@@ -4,13 +4,13 @@
 **Repository:** `sandeshbagmare/astrology-evidence`  
 **Integrated branch:** `main`  
 **Development branch:** `implementation/mvp`  
-**Current integrated commit:** `11610bf15f83868e6243f83abe944a4f003fe0b0`
+**Audited application code:** `fb8ae33` (later documentation/CI commits continue on `main`)
 
 This article records the implementation phase completed with GPT-6.1 Sol. It is intended for the owner and for a later coding model that may continue the work. The app is a tested local engineering baseline. It is not represented as fully production-ready: the source corpus, provider review, live identity configuration, expert evaluation, real operating host and recovery drills are still external gates.
 
 ## Executive account
 
-The approved design was translated into a Python application with a FastAPI modular monolith, server-rendered Jinja/HTMX UI, SQLAlchemy/Alembic persistence, PostgreSQL deployment configuration, Qdrant hybrid retrieval, a Swiss Ephemeris-compatible calculation boundary, Google OIDC integration and a bounded LangGraph workflow using LangChain's Responses API adapter.
+The approved design was translated into a Python application with a FastAPI modular monolith, server-rendered Jinja UI with a small fetch enhancement and application CSS, SQLAlchemy/Alembic persistence, PostgreSQL deployment configuration, Qdrant hybrid retrieval, a Swiss Ephemeris-compatible calculation boundary, Google OIDC integration and a bounded LangGraph workflow using LangChain's Responses API adapter. The original HTMX/Tailwind proposal was superseded by this simpler implemented UI in ADR-02.
 
 The local demo uses synthetic data, explicit local login and Moshier engine mode. AI and embeddings default off. The reading workflow returns an honest insufficient-evidence result if there is no published rights-approved corpus or no reviewed material for the question. When generation is configured, the current implementation limits output to whole retrieved passages with exact source references; it does not infer chart applicability from an unreviewed rule.
 
@@ -38,7 +38,7 @@ No credential from chat was copied into the repository. No authenticated model r
 - Implemented exact, approximate and unknown time handling, timezone gaps/folds and conservative unavailable facts.
 - Implemented settings/version manifests for Jyotish, sidereal Lahiri, whole-sign houses, mean node and explicit Moshier/Swiss engine selection.
 - Isolated native engine work in a subprocess option with a narrow JSON protocol, timeout, explicit interpreter path and environment allowlist. This was needed because Windows Application Control blocked some uv-created/native runtime files.
-- Added chart facts and an accessible table/house overview. Independent ephemeris parity is not asserted: this phase ran 33 unit/edge tests, not an independently reviewed chart benchmark.
+- Added chart facts and an accessible table/house overview. Independent ephemeris parity is not asserted: the current suite runs 35 unit/edge tests, not an independently reviewed chart benchmark. The near-station tolerance is still awaiting a domain decision.
 
 ### Corpus and retrieval
 
@@ -65,7 +65,7 @@ No credential from chat was copied into the repository. No authenticated model r
 
 ## Commits and GPT-6.1 Sol attribution
 
-There are **11 implementation-phase commits** between the published planning baseline `dc7ae71` and integrated app/documentation commit `bc3e5a0`, followed by this handoff-article commit `11610bf`. Four commits since the attribution instruction include `[GPT-6.1 Sol]` in their commit messages: `f85820b`, `a366b6e`, `bc3e5a0`, and `11610bf`.
+There are **18 commits** after the published planning baseline `dc7ae71` through audited application commit `fb8ae33`: 11 in the initial implementation phase and 7 later handoff/audit/fix commits. Ten commit subjects in that range contain `GPT-6.1 Sol`, beginning at the user's attribution instruction. Later documentation/CI publication commits are excluded from this dated count. Reproduce the live count with `git rev-list --count dc7ae71..HEAD`; do not treat this as a model-token or model-call count, which was not recorded.
 
 The implementation commits were:
 
@@ -81,16 +81,41 @@ The implementation commits were:
 10. `a366b6e` — record passing integrated CI with GPT-6.1 Sol attribution.
 11. `bc3e5a0` — update README, readiness report and GitHub Pages site for the implemented app.
 12. `11610bf` — write this detailed GPT-6.1 Sol implementation handoff and link it from the guide.
+13. `5c6b530` — reconcile handoff and startup instructions.
+14. `9771456` — reconcile all context status records and add the context-to-code map.
+15. `7c06c69` — bound curator edition JSON bodies before parsing.
+16. `e865f3d` — validate meaningful fold choices and close the ordinary-form import bypass.
+17. `ddad60c` — implement source search/detail, delete confirmation and complete offset-review UI, including stale-response and no-JavaScript fixes.
+18. `fb8ae33` — cap all raw mutation bodies at 1 MiB with 25 MiB curator import/form allowance.
 
 This is a commit count, not a model-token count or generated-lines attribution. Parallel workers owned separate modules and the coordinator integrated/tested the combined tree. The environment allows at most four agents total, so implementation ran in waves rather than 50 simultaneously.
 
 ## Verification record
 
-On the Windows host, the final local application suite passed **250 tests**, with **2 tests skipped** because local Docker/PostgreSQL/Qdrant services were unavailable. The native calculation suite ran separately using the available Python 3.12 runtime and passed **33 tests**. Ruff passed across `src` and `tests`; mypy passed across **30 source modules**; the Markdown checker passed on **83 files**. Its 3 checker unit tests also pass.
+On the Windows host, the final audit code passed **284 non-native Python tests**, with **2 tests skipped** because local Docker/PostgreSQL/Qdrant services were unavailable. The native calculation suite ran separately using the existing approved Python 3.12 interpreter and passed **35 tests**. Ruff passed across `src` and `tests`; mypy passed across **30 source modules**. The Markdown checker passed on **86 files**; its 3 unit tests and 4 UI JavaScript regressions also pass. Separate runtimes are a laptop policy constraint; all calculation tests were still executed.
 
-GitHub Actions passed on `bc3e5a0` and on the final article commit `11610bf`; both ran pytest with PostgreSQL 16 and Qdrant 1.20, Ruff and mypy. GitHub Pages returned HTTP 200 after deployment and the published page described the local application and links to this article.
+GitHub Actions passed on `bc3e5a0`, `11610bf` and `5c6b530`, each running pytest with PostgreSQL 16 and Qdrant 1.20, Ruff and mypy. The audit adds a wheel build, required packaged-web-asset validation and the 4 UI JavaScript regressions to CI. Those new jobs require a green run on the exact pushed audit publication commit; local lint/unit success alone does not prove the wheel or container build. Pages returned HTTP 200 after its prior deployment.
 
 Known warnings include Authlib's deprecated legacy JOSE API and a LangSmith asyncio deprecation. They are non-failing warnings, but should be reviewed during dependency upgrades. CI uses no production secrets and no provider call.
+
+## November 16 review and development work
+
+The user reported that the app was inaccessible and asked for a full context/code audit with parallel reviews. Independent specialists checked identity/privacy, calculations/corpus, UI/accessibility, deployment/operations and security/tests. A fresh reviewer inspected the resulting code rather than relying on implementer self-review. The environment permits four active agents including the coordinator, so the work ran in waves of at most three workers. No claim is made that 50 agents ran at once.
+
+The app was confirmed listening on loopback port 18766. One probe used the unsupported `/health` path and returned 404; the actual `/health/live` and `/health/ready` both returned 200, as did `/` and `/login`. The process was restarted with the final code, synthetic local login, disabled AI/embeddings and a narrow native-calculation interpreter configuration. This is a temporary developer process, not a public persistent service. The public Pages guide is a separate static site.
+
+The review found and corrected several gaps:
+
+- **Context drift:** numerous design files still said no app/tests existed or implementation was unauthorized. Updated the status language without marking unexecuted domain/release targets complete. Added [a map of all 44 numbered documents](CONTEXT-CODE-REVIEW.md). Pinned Python 3.12 in setup guidance and recorded the delivered Jinja/fetch/CSS UI in ADR-02.
+- **Repeated-time input:** added offset-labelled alternatives using the calculation service's pinned timezone candidates. JavaScript clears a prior choice on changed input; both the JavaScript and ordinary-form paths require an explicit choice. No-JavaScript forms preserve draft values and bind confirmation to the reviewed time fields/session. A delayed old JSON response was reproduced restoring an obsolete fold; a post-parse sequence check now prevents that race. Fresh review cleared both findings.
+- **Source usability:** added independent library search using display-authorized retrieval, contextual permitted-source pages, and owner-checked links/back navigation from saved readings. The source service still rechecks current rights, corpus generation and text hashes. Search shows a clear unavailable state while embeddings are disabled.
+- **Deletion guard:** deleting a saved reading now requires typing DELETE, with enforcement server-side as well as in the form.
+- **Resource bounds:** added declared/streamed raw-body accounting before framework parsing. Mutations default to 1 MiB; curator JSON and ordinary import/form paths allow 25 MiB. Tests cover understated/missing Content-Length, all mutation methods, the exact boundary, UTF-8 chunk replay, and unaffected GET/HEAD behavior. The fresh reviewer found no new high/medium issue in this follow-up.
+- **Native semantics:** explicit fold values are rejected when a local time has no repeated occurrence, while both valid repeated-time choices work. An initial suspicion that ordinary unambiguous fold=1 shifted UTC was not reproduced; this is a meaningful-input policy, not a claimed fix for an observed hour shift.
+
+Final local commands were `./scripts/dev.ps1 -m pytest --ignore=tests/test_calculations.py`, the native calculation pytest command under the existing approved Python 3.12 interpreter, `./scripts/dev.ps1 -m ruff check src tests`, `./scripts/dev.ps1 -m mypy src`, `node --test scripts/check-docs.test.mjs tests/ui_app_js.test.mjs`, and `node scripts/check-docs.mjs`. The non-native result was 284 passed/2 skipped in 31.16s; the native result was 35 passed. A real Edge browser completed synthetic profile/DST/chart/abstention/deletion/library flows and a separate JavaScript-disabled repeated-time profile flow at 320px without horizontal overflow or JavaScript page errors. A test locator initially timed out on the profile selector; selecting it by its accessible combobox role resolved that harness issue.
+
+This review did not turn the missing licensed corpus, expert rule registry, independent ephemeris references, expert evaluation set, live provider/Google configuration or production operating evidence into completed work. Those remain concrete gates below. Full display preferences and the broader optional place-search design are also not implemented; the current app uses manual coordinates/timezone entry.
 
 ## Release gates that remain open
 

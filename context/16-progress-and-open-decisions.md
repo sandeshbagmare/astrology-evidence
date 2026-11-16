@@ -31,7 +31,7 @@ Three specialist research agents worked alongside the coordinator, within the en
 | Retrieval | Implemented with synthetic fixtures and CI Qdrant tests | Licensed corpus, held-out retrieval evaluation and model/host measurements |
 | Rule validation | Conservative evidence validation implemented | Expert-reviewed astrological predicates, disagreement set and applicability labels |
 | Answer workflow | Bounded workflow and offline Responses contract tests implemented | Live provider review/smoke and expert grounding/abstention evaluation |
-| UI and privacy | Core screens and privacy jobs implemented; synthetic browser flow exercised | Remaining interaction fixes, full keyboard/screen-reader audit and operational deletion proof |
+| UI and privacy | Core screens and privacy jobs implemented; audited interaction gaps fixed and synthetic JavaScript/no-JavaScript flow exercised | Full keyboard/screen-reader audit, minor display controls and operational deletion proof |
 | Deployment | Local app and CI services; documentation site is public | Production app host, image/Compose run, restore drill and live operations |
 
 At the end of the initial planning phase on 2026-11-15, no dependencies or skills had been installed and no application code had been written. No request used the credential supplied in chat; no books have been acquired or indexed. Repository and public-site creation happened in a later phase.
