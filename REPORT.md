@@ -18,7 +18,7 @@ Updated November 16, 2026. This report describes the implementation and its test
 
 ## Verification
 
-The final local audit code through `fb8ae33` passed **284 Python tests**, with **2 external-service skips** because Docker is unavailable locally, and **35 native chart tests** under Python 3.12. Ruff and mypy pass. All 7 Node tests pass, including delayed-response DST regressions. Browser testing covered synthetic login, offset-labelled repeated-time selection with and without JavaScript, profile save, native chart, insufficient-evidence reading, confirmed deletion and library search at 320px without overflow. Previous Actions passed on `5c6b530`; the newly added wheel/asset check still needs a green run on the audit publication commit.
+The final local audit code through `fb8ae33` passed **284 Python tests**, with **2 external-service skips** because Docker is unavailable locally, and **35 native chart tests** under Python 3.12. Ruff and mypy pass. All 7 Node tests pass, including delayed-response DST regressions. Browser testing covered synthetic login, offset-labelled repeated-time selection with and without JavaScript, profile save, native chart, insufficient-evidence reading, confirmed deletion and library search at 320px without overflow. All workflows passed on `cf36edd`, including [service-backed Python tests and the new wheel/asset build checks](https://github.com/sandeshbagmare/astrology-evidence/actions/runs/43793711956), documentation/UI JavaScript checks and Pages deployment.
 
 The app runs locally at `http://127.0.0.1:18766` in the current development session. Use [the runbook](implementation/RUNBOOK.md) to start it independently. The GitHub Pages site is a reading guide, not the Python backend.
 
