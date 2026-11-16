@@ -8,6 +8,17 @@ async page => {
   const contexts = [context];
   const deletedContexts = new Set();
   let primaryFailure;
+  async function keyboardActivate(control, key = 'Enter') {
+    await control.waitFor({state:'visible'});
+    if (!(await control.isEnabled())) throw new Error('Keyboard control is disabled');
+    await control.focus();
+    await control.press(key);
+  }
+  async function keyboardConsent(actor) {
+    const consent = actor.locator('input[name="storage_consent"]');
+    if (!(await consent.isChecked())) await keyboardActivate(consent, 'Space');
+    if (!(await consent.isChecked())) throw new Error('Keyboard consent did not become checked');
+  }
   try {
   const owner = await context.newPage();
   const pageErrors = [];
@@ -99,7 +110,8 @@ async page => {
     const removed = await context.request.get(origin + resource);
     if (removed.status() !== 404) throw new Error('Confirmed profile deletion did not revoke ' + resource);
   }
-  const nojs = await browser.newContext({javaScriptEnabled:false,viewport:{width:320,height:740}});
+  // Exercise native keyboard activation in the no-JavaScript fallback journey.
+  const nojs = await browser.newContext({javaScriptEnabled:false,viewport:{width:320,height:740},reducedMotion:'reduce'});
   contexts.push(nojs);
   const fallback = await nojs.newPage();
   await fallback.goto(origin + '/profiles/new');
@@ -110,15 +122,15 @@ async page => {
   await fallback.getByLabel('Longitude',{exact:true}).fill('-74.0');
   await fallback.getByLabel('Time zone',{exact:true}).fill('America/New_York');
   await fallback.getByLabel('Historical timezone confidence').selectOption('confirmed');
-  await fallback.locator('input[name="storage_consent"]').check();
-  await fallback.getByRole('button',{name:'Save profile',exact:true}).click();
+  await keyboardConsent(fallback);
+  await keyboardActivate(fallback.getByRole('button',{name:'Save profile',exact:true}));
   await fallback.getByRole('option',{name:'Second occurrence (UTC-05:00)',exact:true}).waitFor({state:'attached'});
   await fallback.getByLabel('Occurrence when the local time repeats').selectOption('1');
-  await fallback.locator('input[name="storage_consent"]').check();
-  await fallback.getByRole('button',{name:'Save profile',exact:true}).click();
+  await keyboardConsent(fallback);
+  await keyboardActivate(fallback.getByRole('button',{name:'Save profile',exact:true}));
   await fallback.waitForURL('**/dashboard');
   await fallback.goto(origin + '/settings');
-  await fallback.getByRole('button',{name:'Request export',exact:true}).click();
+  await keyboardActivate(fallback.getByRole('button',{name:'Request export',exact:true}));
   await fallback.getByRole('heading',{name:'Export queued',exact:true}).waitFor();
   const download = fallback.getByRole('link', {name:'Download export',exact:true});
   const exportDeadline = Date.now() + 15000;
@@ -126,7 +138,7 @@ async page => {
     await fallback.waitForTimeout(Math.max(0, Math.min(500, exportDeadline - Date.now())));
     const remaining = exportDeadline - Date.now();
     if (remaining <= 0) break;
-    await fallback.getByRole('link', {name:'Refresh export status',exact:true}).click({timeout:remaining});
+    await fallback.getByRole('link', {name:'Refresh export status',exact:true}).press('Enter', {timeout:remaining});
   }
   if (!(await download.count())) throw new Error('Privacy worker did not finish the export within 15 seconds');
   const exportUrl = new URL(await download.getAttribute('href'), origin).href;
@@ -138,11 +150,11 @@ async page => {
   await forbiddenExport.dispose();
   await fallback.goto(origin + '/settings');
   await fallback.getByLabel('Type DELETE to confirm',{exact:true}).fill('DELETE');
-  await fallback.getByRole('button',{name:'Delete workspace data',exact:true}).click();
+  await keyboardActivate(fallback.getByRole('button',{name:'Delete workspace data',exact:true}));
   await fallback.getByRole('link',{name:'Start a fresh workspace',exact:true}).waitFor();
   deletedContexts.add(nojs);
   if (pageErrors.length) throw new Error('Page errors ' + JSON.stringify(pageErrors));
-  return {status:'PASS',layouts:layouts.length,guestIsolation:denied,chartFacts:chart.facts.length,jsErrors:pageErrors.length,profileDeletion:true,exportCompleted:true,exportOwnerOnly:true,flow:'guest/DST/chart/reading/delete/noJS/export/delete-workspace'};
+  return {status:'PASS',layouts:layouts.length,guestIsolation:denied,chartFacts:chart.facts.length,jsErrors:pageErrors.length,profileDeletion:true,noJsKeyboard:true,exportCompleted:true,exportOwnerOnly:true,flow:'guest/DST/chart/reading/delete/noJS/export/delete-workspace'};
   } catch (error) {
     primaryFailure = error;
     throw error;
@@ -156,7 +168,7 @@ async page => {
         const remove = cleanup.getByRole('button', {name: 'Delete workspace data', exact: true});
         if (await remove.count()) {
           await cleanup.getByLabel('Type DELETE to confirm', {exact: true}).fill('DELETE');
-          await remove.click();
+          await keyboardActivate(remove);
           await cleanup.getByRole('link', {name: 'Start a fresh workspace', exact: true}).waitFor();
         }
       } catch (error) {
