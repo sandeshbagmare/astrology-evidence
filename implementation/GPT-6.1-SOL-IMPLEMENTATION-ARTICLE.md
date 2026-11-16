@@ -4,7 +4,7 @@
 **Repository:** `sandeshbagmare/astrology-evidence`  
 **Integrated branch:** `main`  
 **Development branch:** `implementation/mvp`  
-**Current reviewed application code:** `ca3556f` (sign-in-free UI refresh; later evidence commits continue on `main`)
+**Reviewed application baseline:** `91812d1` (sign-in-free UI and subsequent reviewed security fixes); see the end-to-end report for later demo/publication verification.
 
 This article records the implementation and subsequent reviews completed with GPT-6.1 Sol. It is intended for the owner and a later coding model. The current app is a tested sign-in-free local engineering baseline. Authentication is future scope, and live Google configuration is not required now. It is not fully production-ready: licensed sources, provider review, expert/domain validation, inactive-workspace retention/purge, a real operating host and recovery drills remain gates.
 
@@ -14,7 +14,7 @@ The latest user-directed change removes sign-in and replaces it with isolated an
 
 The approved design was translated into a Python application with a FastAPI modular monolith, server-rendered Jinja UI with a small fetch enhancement and application CSS, SQLAlchemy/Alembic persistence, PostgreSQL deployment configuration, Qdrant hybrid retrieval, a Swiss Ephemeris-compatible calculation boundary, Google OIDC integration and a bounded LangGraph workflow using LangChain's Responses API adapter. The original HTMX/Tailwind proposal was superseded by this simpler implemented UI in ADR-02.
 
-The local demo uses synthetic data, explicit local login and Moshier engine mode. AI and embeddings default off. The reading workflow returns an honest insufficient-evidence result if there is no published rights-approved corpus or no reviewed material for the question. When generation is configured, the current implementation limits output to whole retrieved passages with exact source references; it does not infer chart applicability from an unreviewed rule.
+The current local demo uses synthetic data, separate anonymous browser workspaces and Moshier engine mode. AI and embeddings default off. The reading workflow returns an honest insufficient-evidence result if there is no published rights-approved corpus or no reviewed material for the question. When generation is configured, the current implementation limits output to whole retrieved passages with exact source references; it does not infer chart applicability from an unreviewed rule.
 
 No credential from chat was copied into the repository. No authenticated model request was made. No real books were acquired, OCRed, indexed or published. These are deliberate evidence boundaries, not omitted test results.
 
@@ -140,7 +140,7 @@ This review did not turn the missing licensed corpus, expert rule registry, inde
 - Acquire and record action-specific rights for 3–5 real editions before indexing or showing text. The synthetic corpus is not a source of astrology knowledge.
 - Have qualified reviewers create the reviewed rule registry and label the 150-item benchmark (20 calibration, 30 development, 100 held out). No measured retrieval/claim-quality result is reported.
 - Select and document a Swiss Ephemeris-compatible distribution/license path. The local Moshier setting does not resolve the production licensing choice.
-- Configure Google client credentials and callback URLs on the actual domain, then run live OAuth tests.
+- Authentication is future scope. If account mode is restored, configure Google client credentials/callback URLs and run live OAuth tests before enabling it.
 - Review the external provider's model identity, terms, processing/retention, quotas and pricing. Supply a replacement secret through runtime secret management. Enable AI only after this review and pass the live synthetic smoke test.
 - Install/cache the exact E5 revision, benchmark Sanskrit/transliteration retrieval and host memory, then run the held-out corpus benchmark.
 - Configure and test backups, restore, deletion replay, Qdrant rebuild, worker availability, alerting and the real-user privacy executor.
@@ -158,6 +158,12 @@ The latest integrated application is on `main`; feature work can branch from the
 - To enable real AI: configure only a replacement secret at runtime, review provider terms, run the existing fake-server tests and approved synthetic live smoke, document result, then obtain explicit consent in product before sending user content.
 - To enable embeddings: pin model weights/revision locally, benchmark against the held-out Sanskrit/English set, test cold-load RAM and latency, and create a new Qdrant generation. Keep AI generation consent separate from vector embedding permission.
 - To add a new tradition or birth-timing module: create separate versioned chart/rule settings and reference fixtures. Do not silently mix Western, Jaimini, KP, dashas or transit rules into existing Jyotish outputs.
-- To deploy: use the runbook, configure the domain/Google redirect and secret store, resolve every tabled release gate, test restore and deletion, build the container, and wait for green CI on the exact release commit.
+- To deploy: use the runbook, configure the domain and secret store, resolve the applicable release gates, test restore and deletion, build the container, and wait for green CI on the exact release commit. Keep authentication disabled for current scope; Google redirects apply only if account mode is restored.
 
 Changes should remain small, tested and committed in phases. Current branch history includes the initial implementation commits; use new commits for later work rather than rewriting published history.
+
+## Recorded end-to-end demos and publication verification
+
+The subsequent GPT-6.1 Sol pass repeated the full local application suite (342 passed, five service-dependent skips), all 35 native calculation tests, Ruff and mypy. An additional focused web/health regression run passed 38 tests after adding the application favicon. Two successful recorded Edge journeys use only invented inputs: desktop with repeated-time offset selection, and mobile with JavaScript disabled and unknown birth time. Both calculate a chart, keep the question bound to that snapshot, show insufficient evidence, complete a private expiring export and explicitly revoke workspace access.
+
+Three downloadable videos, English captions, screenshots and written steps are attached to the public guide. The browser scripts are in `tests/browser/`; the guide verifier checks assets including posters, fragment targets, repository links, five viewport widths, keyboard navigation/disclosure, complete video playback and caption bounds. Independent reviewers found the portrait-player sizing and incomplete media checks, which were corrected before publication. The [end-to-end report](E2E-AND-DEMO-REPORT.md) records final deployment evidence and limits. This work does not turn disabled AI, missing licensed sources or untested production operations into completed release gates. Model call/token totals remain unknown; no count is inferred from the number of agents, tests or commits.

@@ -90,6 +90,7 @@ h1,h2{letter-spacing:-1px}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}
 }
 .app-preview{margin:28px 0 36px}.app-preview img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:12px}.app-preview figcaption{margin-top:12px;font-size:13px;color:var(--muted)}
+.demo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}.demo-card{min-width:0;padding:24px;background:#fff;border:1px solid var(--line);border-radius:12px}.demo-card h3{margin-top:0}.demo-card video{display:block;width:100%;max-height:500px;aspect-ratio:16/10;background:#172c2b;border-radius:7px}.demo-card p,.demo-card ol{font-size:14px}.demo-card details{margin:16px 0 0}.demo-card summary{font-size:14px;min-height:44px;cursor:pointer}.demo-card a{overflow-wrap:anywhere}@media(max-width:760px){.demo-grid{grid-template-columns:1fr}.demo-card{padding:18px}}
 @media print{body{background:white;color:black}
 header nav,.actions,.next .button,.skip{display:none}
 section:not(.hero){padding:20px 0}
@@ -100,3 +101,4 @@ a{color:black}
 .hero{padding:20px 0}
 details{display:block}
 }
+.demo-card video.demo-portrait{aspect-ratio:390/844;width:min(100%,320px);max-height:none;margin-inline:auto}

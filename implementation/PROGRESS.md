@@ -1,6 +1,10 @@
 # Application implementation progress
 
-## Latest: sign-in-free workbench — November 16, 2026
+## Latest: recorded end-to-end verification — November 16, 2026
+
+Recorded desktop and mobile (JavaScript disabled) journeys pass through profiles, chart calculation, chart-bound abstention, source limitations, completed private export and confirmed workspace deletion. The public guide now includes three captioned downloadable demos, screenshots and written steps. Fresh local checks passed 342 application tests with five service-dependent skips, 35 native calculation tests, Ruff and mypy; the favicon follow-up passed 38 web/health tests. Independent reviewers checked the documentation and browser scripts; eight Node tests and 91-file documentation validation passed. See [the end-to-end/demo report](E2E-AND-DEMO-REPORT.md) for exact final publication, playback and CI evidence and remaining gates. Previous results below are historical, not additional unique tests.
+
+## Sign-in-free workbench — November 16, 2026
 
 The user deferred authentication and requested public-site research, UI/function improvements, parallel review and rigorous testing. The current app opens directly into a separate browser workspace. Opaque session ownership, CSRF, consent, exports, deletion and curator authorization remain enforced; no global shared guest account is used. Google/OIDC is retained disabled as future scope. The work is recorded in [45 UI research](../context/45-ui-refresh-research.md) and [46 Guest/UI plan](../context/46-anonymous-workspace-and-ui-plan.md).
 
@@ -60,7 +64,7 @@ Windows Application Control blocks the uv-created launcher and selected new nati
 ## Unresolved external release gates
 
 - No real editions licensed or ingested, no domain-reviewed production rules, no150-item expert benchmark labels.
-- No live Google account authorization or third-party generation call; supplied chat credential is not reused or saved. A replacement runtime secret, configured Google client and provider review are needed.
+- No live Google account authorization or third-party generation call; supplied chat credential is not reused or saved. A replacement runtime secret and provider review are needed for live AI; Google configuration applies only to future account mode.
 - No empirically validated predictive claims. Current AI answers are constrained extracts, not full expert astrological synthesis.
 - E5 model weights, actual Sanskrit retrieval quality and host memory/latency still require measured validation.
 - No funded production host, backup/restore drill, full accessibility audit or public real-user deployment.

@@ -1,6 +1,6 @@
 # Astrology Evidence
 
-**Understand the app in five minutes:** [Open the reading guide](https://sandeshbagmare.github.io/astrology-evidence/).
+**Understand the app in five minutes:** [Open the reading guide](https://sandeshbagmare.github.io/astrology-evidence/) | [Watch the demos](https://sandeshbagmare.github.io/astrology-evidence/#demos).
 
 A Python astrology application that separates **chart calculations, source passages, and AI interpretation**. The local baseline works with synthetic data; licensed books and expert-reviewed interpretation rules still need to be supplied before real astrology-quality claims.
 
@@ -19,6 +19,7 @@ A Python astrology application that separates **chart calculations, source passa
 | Time available | Read | What you will learn |
 |---|---|---|
 | 5 minutes | [Pages overview](https://sandeshbagmare.github.io/astrology-evidence/) | What we are building, how it works and current readiness |
+| 3 minutes | [Recorded demos and end-to-end evidence](implementation/E2E-AND-DEMO-REPORT.md) | Watch desktop, mobile without JavaScript and the public guide; inspect exactly what passed |
 | 10 minutes | [Readiness report](REPORT.md) | What is complete, what is unproven and what happens next |
 | 10 minutes | [Context-to-code audit](implementation/CONTEXT-CODE-REVIEW.md) | Coverage and remaining gates across all 44 context documents |
 | 20 minutes | [GPT-6.1 Sol implementation handoff](implementation/GPT-6.1-SOL-IMPLEMENTATION-ARTICLE.md) | Detailed implementation record, commit list, tests and continuation guide |

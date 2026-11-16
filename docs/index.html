@@ -16,6 +16,7 @@
 <nav aria-label="Primary">
 <a href="#how">How it works</a>
 <a href="#read">Reading guide</a>
+<a href="#demos">Demos</a>
 <a href="#ready">Readiness</a>
 <a href="https://github.com/sandeshbagmare/astrology-evidence">Repository ↗</a>
 </nav>
@@ -195,8 +196,46 @@
 <p class="note">Authentication is future scope. The app opens directly into Overview, Birth profiles, Chart explorer, Readings, Source library and Data &amp; settings. Clearing cookies or session expiry loses workspace access; cross-device recovery is not implemented.</p>
 <p><a href="https://github.com/sandeshbagmare/astrology-evidence/blob/main/implementation/RUNBOOK.md">Open the local runbook ↗</a> · <a href="https://github.com/sandeshbagmare/astrology-evidence/blob/main/implementation/PROGRESS.md">Implementation progress ↗</a></p>
 </section>
+<section id="demos">
+<div class="section-label">05 / WATCH THE TESTED FLOWS</div>
+<h2>See it work.</h2>
+<p>Real browser recordings using invented inputs. No audio, external AI calls or licensed book content. Captions and written steps explain each journey. These demonstrate the local Python app; GitHub Pages hosts this guide and its recordings.</p>
+<div class="demo-grid">
+<article class="demo-card">
+<h3>Desktop: chart to data controls</h3>
+<video controls playsinline preload="metadata" poster="assets/demos/desktop-poster.png" aria-label="Desktop application demonstration" aria-describedby="desktop-transcript">
+<source src="assets/demos/desktop-journey.webm" type="video/webm">
+<track kind="captions" src="assets/demos/desktop.vtt" srclang="en" label="English" default>
+<a href="assets/demos/desktop-journey.webm">Download the desktop recording</a>
+</video>
+<p><a href="assets/demos/desktop-journey.webm" download>Download desktop video</a> · <a href="assets/demos/desktop-chart.png">Chart screenshot</a></p>
+<details id="desktop-transcript"><summary>Desktop steps and what passed</summary><ol><li>Open a separate workspace without signing in.</li><li>Enter an invented profile and choose the correct offset for a repeated local time.</li><li>Calculate the native chart and ask against that exact snapshot.</li><li>See an insufficient-evidence result and the library's unconfigured state.</li><li>Complete an expiring export, then confirm workspace deletion.</li></ol></details>
+</article>
+<article class="demo-card">
+<h3>Mobile: ordinary forms, JavaScript off</h3>
+<video class="demo-portrait" controls playsinline preload="metadata" poster="assets/demos/mobile-poster.png" aria-label="Mobile application demonstration without JavaScript" aria-describedby="mobile-transcript">
+<source src="assets/demos/mobile-journey.webm" type="video/webm">
+<track kind="captions" src="assets/demos/mobile.vtt" srclang="en" label="English" default>
+<a href="assets/demos/mobile-journey.webm">Download the mobile recording</a>
+</video>
+<p><a href="assets/demos/mobile-journey.webm" download>Download mobile video</a> · <a href="assets/demos/mobile-chart.png">Uncertainty screenshot</a></p>
+<details id="mobile-transcript"><summary>Mobile steps and what passed</summary><ol><li>Open a 390px workspace with JavaScript disabled.</li><li>Save invented birth inputs with an unknown time using ordinary forms.</li><li>See precise calculations withheld, then ask a chart-bound question.</li><li>Inspect source limitations, finish an export and confirm deletion.</li></ol></details>
+</article>
+<article class="demo-card">
+<h3>GitHub Pages: the reading tour</h3>
+<video controls playsinline preload="metadata" poster="assets/demos/guide-poster.png" aria-label="Published GitHub Pages guide demonstration" aria-describedby="guide-transcript">
+<source src="assets/demos/guide-tour.webm" type="video/webm">
+<track kind="captions" src="assets/demos/guide.vtt" srclang="en" label="English" default>
+<a href="assets/demos/guide-tour.webm">Download the guide recording</a>
+</video>
+<p><a href="assets/demos/guide-tour.webm" download>Download guide video</a></p>
+<details id="guide-transcript"><summary>Guide tour and test scope</summary><ol><li>Open the published guide and follow its section navigation.</li><li>Expand the research links and inspect the application preview.</li><li>Read the launch gates and view the mobile layout.</li></ol><p>The tour shows the guide before the recording section was added. The final deployed players, captions, files and links are checked separately.</p></details>
+</article>
+</div>
+<p class="note">Testing gives evidence, not a promise of 100% correctness. Read <a href="https://github.com/sandeshbagmare/astrology-evidence/blob/main/implementation/E2E-AND-DEMO-REPORT.md">the end-to-end report</a> for tested revisions, commands, results and remaining limits.</p>
+</section>
 <section id="quality">
-<div class="section-label">05 / HOW WE BUILD WELL</div>
+<div class="section-label">06 / HOW WE BUILD WELL</div>
 <h2>Small changes. Tests alongside them.</h2>
 <ol class="quality">
 <li>
