@@ -25,7 +25,7 @@ Three specialist research agents worked alongside the coordinator, within the en
 | Milestone | Status | Completion evidence needed |
 |---|---|---|
 | Feasibility and project setup | Implemented; local checks and CI pass | Provider smoke, measured host capacity, production artifact and recovery evidence |
-| Auth and profiles | Implemented; offline OIDC/session/ownership tests pass | Live Google client/callback configuration and real OAuth test |
+| Browser access and profiles | Sign-in removed by user direction; anonymous session ownership in current refresh; OIDC retained disabled | Final guest isolation/browser tests and anonymous deployment abuse/privacy review; Google is future scope |
 | Calculation engine | Implemented; 33 native unit/edge tests and CI pass | Independent position references, reviewed near-station tolerance, license decision |
 | Rights-cleared pilot corpus | Not acquired | Edition rights, artifact hashes, editorial review |
 | Retrieval | Implemented with synthetic fixtures and CI Qdrant tests | Licensed corpus, held-out retrieval evaluation and model/host measurements |

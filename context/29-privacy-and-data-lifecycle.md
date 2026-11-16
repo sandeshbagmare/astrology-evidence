@@ -2,6 +2,8 @@
 
 Prepared 2026-11-15. This engineering contract is partially implemented through owned sessions, consent, exports, deletion and durable purge jobs; see [implementation progress](../implementation/PROGRESS.md) for evidence and remaining work. It is not legal advice. Read with [authentication](08-authentication-and-security.md), [deployment](10-deployment-and-costs.md), [data contracts](12-data-and-api-contracts.md), and [configuration](43-configuration-reference.md). Jurisdictions, applicable legal bases, transfer requirements and notification duties remain unresolved launch decisions; this document does not invent statutory deadlines.
 
+Current scope override, November 16: authentication is deferred. Opaque per-browser sessions own workspace data without Google identity. Data remains private and sensitive, not legally anonymous. Clearing cookies or session expiry does not delete stored data; the UI must explain access loss and provide export/deletion. Anonymous retention, purge and abuse controls require operator policy before real-user launch. Google-specific inventory below applies only to the retained future authenticated mode.
+
 ## Privacy model and decision boundaries
 
 NIST's voluntary Privacy Framework helps organizations identify and manage privacy risks [P1]. Our proposed inventory records data elements, purposes, operators, processing locations and supplier risks. We apply that approach to birth inputs, derived charts and intimate questions. Treat these as private even when no direct name is present; removing email is minimization, not a claim of anonymity. A chart or narrative can remain attributable through account linkage or the person's own words.

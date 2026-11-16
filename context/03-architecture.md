@@ -11,7 +11,8 @@ LangChain adapts the model API. LangGraph expresses a bounded, inspectable workf
 ```mermaid
 flowchart LR
     Browser[Browser: HTML / fetch / chart SVG] -->|HTTPS and session cookie| Web[FastAPI web and API]
-    Google[Google OIDC] -->|Validated login callback| Web
+    Guest[Anonymous browser workspace] -->|Opaque session / CSRF| Web
+    Google[Future optional Google OIDC] -. disabled by default .-> Web
     Web --> DB[(PostgreSQL: accounts, profiles, jobs, readings)]
     Web --> Calc[Chart calculation module]
     Calc --> Eph[Versioned Swiss Ephemeris files]
@@ -36,7 +37,7 @@ The direct provider and gateway paths are alternatives, not two simultaneous req
 
 | Module | Owns | Must not do |
 |---|---|---|
-| Identity | Google identity, sessions, ownership, consent | Treat email as immutable identity |
+| Identity | Anonymous browser sessions, ownership, consent; disabled future OIDC | Share a global guest owner or treat email as immutable identity |
 | Profiles | Birth inputs and revisions, privacy | Guess missing time or location silently |
 | Calculations | UTC resolution, ephemeris, versioned facts | Ask the LLM to calculate a chart |
 | Corpus | Rights records, immutable editions/passages | Publish unreviewed or unlicensed material |

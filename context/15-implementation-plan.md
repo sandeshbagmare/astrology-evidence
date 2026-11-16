@@ -13,8 +13,9 @@
 ## Global constraints
 
 - This was documentation-only until the user separately approved implementation on 2026-11-15; the plan is now an ordered historical execution outline. Current status is in [implementation progress](../implementation/PROGRESS.md).
+- The user deferred authentication on November 16; [the guest/UI plan](46-anonymous-workspace-and-ui-plan.md) supersedes this historical plan's mandatory-login flow.
 - No credentials in source, fixtures, logs, docs or browser responses.
-- Google sign-in and server-derived ownership govern every private resource.
+- Server-derived anonymous-session ownership governs every private resource in the current mode; Google sign-in remains future scope.
 - Vedic/sidereal/Lahiri/whole-sign/mean-node initial defaults; Gregorian births from 1900-01-01 through current date.
 - Unknown birth time must not produce fabricated precision or time-dependent claims.
 - Direct Responses route at the user-specified provider; no chat-completions fallback.

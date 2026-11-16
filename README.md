@@ -4,11 +4,11 @@
 
 A Python astrology application that separates **chart calculations, source passages, and AI interpretation**. The local baseline works with synthetic data; licensed books and expert-reviewed interpretation rules still need to be supplied before real astrology-quality claims.
 
-> **Current state: working local synthetic-data application; not cleared for real-user production.** It implements accounts, charts, rights-gated source search, constrained readings, privacy jobs, and the server-rendered UI. External source, provider, and deployment gates remain open. Citations do not establish that astrology predicts future events.
+> **Current state: local synthetic-data application; not cleared for real-user production.** Sign-in is removed from current scope. The app uses separate anonymous browser workspaces for profiles, charts, rights-gated sources, bounded readings and data controls. Authentication is future work. External source/provider/deployment gates remain open; citations do not establish that astrology predicts future events.
 
 ## What would the app do?
 
-1. Sign in with Google and enter birth information, including whether the time is uncertain.
+1. Open the app directly and enter birth information, including whether the time is uncertain.
 2. Compute a chart using a declared, reproducible method.
 3. Retrieve relevant passages from a small, rights-cleared library.
 4. Explain the interpretation with exact edition/page/verse references, exceptions and disagreements.
@@ -28,7 +28,7 @@ A Python astrology application that separates **chart calculations, source passa
 
 ## Implemented stack
 
-Python / FastAPI · Jinja2 / small fetch enhancement / CSS · PostgreSQL · Qdrant · local multilingual embeddings · Swiss Ephemeris (licensing decision pending) · LangChain / bounded LangGraph workflow · Google OIDC.
+Python / FastAPI · Jinja2 / small fetch enhancement / CSS · PostgreSQL · Qdrant · local multilingual embeddings · Swiss Ephemeris (licensing decision pending) · LangChain / bounded LangGraph workflow · opaque anonymous browser sessions. Google OIDC is retained disabled for future scope.
 
 The generation adapter has offline Responses wire-contract tests but has not been called against the third-party service. Upstream model identity, data handling and reliability remain unverified. AI and embeddings are disabled by default. Secrets are never part of this repository.
 
@@ -61,4 +61,4 @@ The public site is static HTML/CSS in `docs/`, published by GitHub Pages. It exp
 
 A functioning local application baseline exists. Start with [the runbook](implementation/RUNBOOK.md) and [actual implementation progress](implementation/PROGRESS.md). Current code supports accounts/profiles, chart calculations, source retrieval, bounded readings and privacy jobs. Production knowledge, provider and operating gates remain unresolved.
 
-Standard development: `uv sync --frozen --python 3.12`, then `uv run uvicorn astrology_evidence.main:create_app --factory`. Python 3.12 is the verified baseline; Python 3.12 or 3.13 is required for the native chart engine. Enable synthetic login only for local development. See the runbook for Docker, worker execution, curator setup and this laptop's approved runtime configuration. Never use real birth data or represent the synthetic corpus as licensed astrological knowledge.
+Standard development: `uv sync --frozen --python 3.12`, then `uv run uvicorn astrology_evidence.main:create_app --factory`. Python 3.12 is the verified baseline; Python 3.12 or 3.13 is required for the native chart engine. No sign-in is required: `AUTHENTICATION_ENABLED=false` is the default. Browser cookies hold workspace access; clearing them or session expiry loses access, and there is no cross-device recovery yet. See the runbook for Docker, worker/curator setup and this laptop's runtime. Use synthetic data only.

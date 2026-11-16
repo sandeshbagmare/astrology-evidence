@@ -2,6 +2,8 @@
 
 Status: product design prepared 2026-11-15; core server-rendered screens are now implemented. This remains the intended interaction contract, not evidence that every flow or accessibility criterion has passed. See [implementation progress](../implementation/PROGRESS.md) for exercised flows and known gaps.
 
+Current scope override, November 16: sign-in is removed and authentication is future scope. The app opens into an isolated browser workspace with six destinations: Overview, Birth profiles, Chart explorer, Readings, Source library, and Data & settings. The refreshed design and acceptance work is in [46 Guest/UI plan](46-anonymous-workspace-and-ui-plan.md), informed by [45 Comparable-site research](45-ui-refresh-research.md). Historical account-flow wireframes below apply only to a future authenticated mode; ownership and privacy rules apply to guest sessions now.
+
 ## Experience and delivery stack
 
 Use FastAPI with Jinja2 server-rendered HTML, a small fetch enhancement and application CSS, matching implemented ADR-02. The original HTMX/Tailwind proposal is superseded. Keep meaningful URLs and ordinary form submissions so chart and library pages remain usable without client-side enhancement. Build chart graphics as escaped, application-owned SVG with an adjacent accessible data table. Do not render model-generated HTML or SVG.
@@ -15,9 +17,11 @@ The product should feel like a calm reading desk: readable explanations, a chart
 | Screen | Proposed route | Access | Main action |
 |---|---|---|---|
 | Introduction and example | `/` | Public | Understand the method and inspect a synthetic example |
-| Sign in | `/login` | Public | Continue with Google |
+| Overview | `/` and `/dashboard` | Browser workspace | Begin directly; choose the next chart/profile/reading step |
+| Birth profiles | `/profiles` | Browser owner | List, add or edit owned birth details |
+| Chart explorer | `/charts` | Browser owner | Browse owned immutable chart snapshots |
 | Birth profile | `/profiles/new` and `/profiles/{id}/edit` | Owner | Enter or correct birth inputs |
-| Reading workspace | `/readings/new` | Signed in | Ask a question against a selected profile |
+| Reading workspace | `/readings/new` | Browser owner | Ask a question against a selected profile |
 | Reading detail | `/readings/{id}` | Owner | Read answer, chart facts and sources |
 | Chart detail | `/charts/{id}` | Owner | Inspect placements, uncertainty and method |
 | Library | `/library` | Public approved metadata | Explore the published corpus and its limits |
@@ -32,10 +36,8 @@ Route ownership checks apply on the server to full pages, fragments, exports and
 
 ```mermaid
 flowchart TD
-    A[Public introduction and synthetic example] --> B[Continue with Google]
-    B --> C{Authentication successful?}
-    C -->|No| D[Explain failure and offer retry]
-    C -->|Yes| E[Privacy and model-provider disclosure]
+    A[Open the app] --> B[Create or reopen private browser workspace]
+    B --> E[Privacy and model-provider disclosure]
     E --> F[Birth date, place and time certainty]
     F --> G[Confirm resolved place and historical time zone]
     G --> H{Inputs valid?}
@@ -50,7 +52,7 @@ flowchart TD
     N --> P[Save, inspect sources, or ask follow-up]
 ```
 
-The public example uses invented inputs and explicitly labelled sample evidence. It must never masquerade as a live reading. Google login does not silently grant permission to send sensitive data to an AI provider. Before the first external model request, explain the minimum fields transmitted, purpose and retention policy in plain language. If consent is declined, retain access to local chart and library features allowed by policy.
+The public example uses invented inputs and explicitly labelled sample evidence. It must never masquerade as a live reading. Opening an anonymous workspace does not grant permission to store a profile or send data to an AI provider. Before storage explain that access belongs to this browser and clearing cookies loses access. Before the first external model request, explain minimum fields transmitted, purpose and retention policy. If consent is declined, retain access to local chart and library features allowed by policy.
 
 ## Birth input form
 

@@ -4,11 +4,11 @@ Updated November 16, 2026. This report describes the implementation and its test
 
 ## Verdict
 
-**A working local application is implemented. It is not cleared for real-user production.** The app provides authentication integration, birth profiles, deterministic charts, a rights-controlled Qdrant corpus, constrained readings, privacy jobs, and a server-rendered UI. External content, provider, accuracy, and deployment gates remain open.
+**A local application is implemented. It is not cleared for real-user production.** The latest user-directed refresh removes sign-in and uses separate anonymous browser workspaces, with a calmer six-section UI. Birth profiles, deterministic charts, rights-controlled Qdrant sources, bounded readings and privacy jobs remain. Authentication is future scope; external content, provider, accuracy and operating gates remain open. Refresh verification is recorded in implementation progress when complete.
 
 ## Implemented
 
-- Python 3.12 application, FastAPI, PostgreSQL migrations, Google OIDC integration and an explicitly enabled local synthetic login.
+- Python 3.12 application, FastAPI/PostgreSQL migrations, automatic isolated browser workspaces, retained optional future OIDC code.
 - Owner-scoped profiles/revisions, timezone fold/gap handling, isolated chart calculation and accessible chart fact views.
 - Curated edition import, explicit rights permissions, immutable index generations, Qdrant dense/lexical retrieval, source withdrawal cleanup.
 - Bounded LangGraph/Responses workflow, model-processing consent, citation hash/span validation, abstention when evidence is missing.
@@ -30,7 +30,7 @@ The app runs locally at `http://127.0.0.1:18766` in the current development sess
 | Domain rules | No expert-reviewed production rules or 150-question labeled evaluation set |
 | Chart accuracy | Unit/edge-case tests pass; independent reference parity remains unmeasured |
 | Provider | Offline Responses wire tests pass; no real provider request or provider data review |
-| Identity | OAuth protocol tests pass; live Google credentials/domain not configured |
+| Browser access | Sign-in removed; per-browser session/CSRF isolation under refresh verification. Authentication/cross-device recovery are future scope |
 | Embeddings | Local adapter implemented; model weights, memory and retrieval quality not benchmarked |
 | Security/privacy | Offline adversarial tests pass; live backup/restore and deployment operations not exercised |
 | Hosting | Compose provided; Docker image was not built on this machine, and no public Python app host is configured |

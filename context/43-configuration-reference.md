@@ -15,6 +15,8 @@ Record a redacted settings manifest with version hashes and non-secret capabilit
 | APP_ENV | development, staging or production | Explicit enum; production enables strict security requirements |
 | APP_PUBLIC_ORIGIN | Exact HTTPS origin in deployed environments | No user-controlled host/redirect construction |
 | DATABASE_URL | Secret injected PostgreSQL connection | Require TLS policy appropriate to host; redact credentials |
+| AUTHENTICATION_ENABLED | false | Current app creates separate anonymous browser workspaces; true enables retained future account/OIDC path and requires Google production configuration |
+| GUEST_WORKSPACE_GLOBAL_LIMIT_PER_MINUTE | 60 | Shared database admission for new anonymous owners; existing valid workspaces remain usable at capacity |
 | GOOGLE_CLIENT_ID | Deployment-specific OAuth client | Must match validated token audience |
 | GOOGLE_CLIENT_SECRET | Secret injection | Never exposed to template/browser |
 | GOOGLE_REDIRECT_URI | Origin plus /auth/google/callback | Exact registered URI, separate environments |
@@ -40,6 +42,7 @@ Deployment must also define trusted proxy headers/hosts deliberately; blindly ac
 | AI_TIMEOUT_SECONDS | 120 maximum | Reduce to remaining total request deadline |
 | AI_MAX_RETRIES | 0 | Avoid hidden duplicate provider requests |
 | ANSWER_DEADLINE_SECONDS | 150 | Includes the entire bounded answer operation; repair cannot reset |
+| ANSWER_GLOBAL_DAILY_LIMIT | 100 | Shared count of accepted readings per UTC day; no refund on deletion, failure or cookie reset, and at most two model calls per reading |
 | ANSWER_MAX_GENERATIONS | 2 | Initial generation plus at most one repair |
 | ANSWER_INPUT_CONTEXT_TOKENS | 6000 | Proposed retrieved-context budget, count headers and qualifiers |
 | ANSWER_OUTPUT_TOKENS | 1800 | Enable only after provider parameter compatibility verified |

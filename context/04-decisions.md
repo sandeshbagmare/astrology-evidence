@@ -14,7 +14,7 @@ Initial entries proposed on 2026-11-15; implemented deviations are recorded belo
 | ADR-08 | Hybrid dense + sparse retrieval, verse-aware child/parent chunks | Terms and verse IDs need lexical precision; semantics aid paraphrases | Dense-only baseline retained for ablation, reranking only if quality gains justify latency |
 | ADR-09 | Swiss Ephemeris calculation adapter | Reproducible astronomical engine, explicit settings | License decision required; alternative engine only after feature and reference-parity review |
 | ADR-10 | Vedic-first Lahiri/whole-sign/mean-node conventions | Coherent initial interpretation framework | Other schools become explicitly separate, versioned profiles |
-| ADR-11 | Google OIDC with opaque server-side sessions | User requirement; avoids storing reusable tokens in browser JS | Hosted identity service if operational needs justify extra dependency |
+| ADR-11 | Sign-in-free anonymous workspaces with opaque server-side sessions; Google OIDC disabled as future scope | User's November 16 direction removes login friction while preserving browser-level ownership and CSRF | Explicitly designed account linking/recovery/authentication when requested; never silently expose old account data to a guest |
 | ADR-12 | Small rights-cleared corpus before mass ingestion | Quality and provenance matter more than quantity | Scale from 3–5 pilot editions to 20–50, then 100+ only after evaluations |
 | ADR-13 | Local-first development, constrained free demo, paid reliable service | Free tiers do not imply enough RAM or uptime for all components | A real zero-cash public demo may need reduced scope; document measurements |
 | ADR-14 | Human review of traditional rule applicability | Retrieval alone does not prove a rule applies | Structured reviewed rule registry can automate narrow checks, never unlimited LLM rule discovery |
@@ -22,7 +22,7 @@ Initial entries proposed on 2026-11-15; implemented deviations are recorded belo
 
 ## Decision dependencies
 
-- Public launch depends on source rights, ephemeris licensing, provider data handling, Google OAuth configuration and measured hosting fit.
+- Public launch depends on source rights, ephemeris licensing, provider data handling, anonymous-workspace abuse/privacy controls and measured hosting fit. Google OAuth configuration is required only for a future authenticated release.
 - The proposed open-source/AGPL versus commercially licensed deployment choice is unresolved; do not assume either authorization. Swiss Ephemeris primary licensing page was directly inspected on 2026-11-15 and describes AGPL and Professional options: https://www.astro.com/swisseph/swephinfo_e.htm . Review the actual license and wrapper dependencies before distribution or hosted launch.
 - Corpus language determines embedding evaluation. A multilingual label alone does not establish Sanskrit retrieval quality.
 - Free hosting cannot be chosen solely from advertised CPU credits: measure cold start, model-load peak RAM, steady RAM, query latency and disk behavior.

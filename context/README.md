@@ -4,6 +4,8 @@ Prepared 2026-11-15 and updated during implementation. This is the design and re
 
 For a quick audit of which requirements have code, tests, or open release gates, use the [44-document context-to-code review](../implementation/CONTEXT-CODE-REVIEW.md).
 
+The latest user-directed change is sign-in-free browser workspaces and a calm six-section UI. Read [45 UI research](45-ui-refresh-research.md) and [46 Guest/UI plan](46-anonymous-workspace-and-ui-plan.md); they supersede mandatory Google login in historical design files. Authentication is future scope.
+
 ## Recommended reading order
 
 1. [Product and scope](01-product-and-scope.md)

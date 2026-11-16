@@ -4,19 +4,19 @@
 
 Build an astrology application where users can inspect why an interpretation was produced: the birth inputs and calculation settings, reproducible chart facts, relevant passages from identifiable editions, and the model's explanation. The problem is unsupported authority and hidden reasoning in ordinary readings; the product should help users evaluate claims rather than encourage blind trust.
 
-**User requirements:** Python as the main stack; LangChain using the supplied Responses-compatible provider; Qdrant vector database; lightweight local embeddings; consideration of LiteLLM; Google account authentication; detailed source-backed answers; book/domain research; architecture and UI context; coding rules; progress tracking; realistic free-hosting options; documentation before any code.
+**User requirements:** Python as the main stack; LangChain using the supplied Responses-compatible provider; Qdrant vector database; lightweight local embeddings; consideration of LiteLLM; detailed source-backed answers; book/domain research; architecture and UI context; coding rules; progress tracking; realistic free-hosting options; documentation before any code. On November 16 the user removed sign-in from current scope and deferred authentication; anonymous browser workspaces now replace mandatory Google login.
 
 **Proposed defaults:** Vedic/Jyotish first, English UI and explanations, aligned Sanskrit passages where rights permit; Lahiri sidereal zodiac, whole-sign houses, mean lunar nodes; adult private beta; one natal-chart reading workflow and book search before expanding traditions. These are design choices, not user-confirmed religious or doctrinal preferences.
 
 ## Main journey
 
-A user signs in with Google, sees the privacy and interpretation notice, enters birth date/place and time precision, confirms the resolved place and time zone, and reviews chart settings. They ask a question. The result separates calculated facts, traditional rules, model interpretation, disagreements, and missing information. Every source card opens a permitted excerpt with author/work/edition/page-or-verse reference. Users can save a reading, compare the impact of a changed setting, export their records, or delete them.
+A user opens a private browser workspace directly, sees the privacy and interpretation notice, enters birth date/place and time precision, confirms the place and time zone, and reviews chart settings. They ask a question. The result separates calculated facts, traditional rules, model interpretation, disagreements, and missing information. Every source card opens a permitted excerpt with author/work/edition/page-or-verse reference. Users can save a reading, inspect chart versions, export workspace records, or delete them. Another browser/device has a separate workspace; clearing its access cookies loses access until a future recovery/authentication feature is designed.
 
 No exact birth time? Offer a limited reading and explicitly identify excluded time-sensitive conclusions. A date/place-based chart must not quietly substitute noon as a known birth time. See domain rules for interval-based calculation.
 
 ## MVP
 
-- Google sign-in/out, account deletion, private birth profiles and readings.
+- Direct sign-in-free browser access, workspace deletion/export, private birth profiles and readings isolated by opaque browser sessions.
 - Date, time precision/interval, place confirmation, timezone ambiguity handling, versioned calculation settings.
 - Deterministic natal chart facts and a simple accessible chart/table.
 - Question answering grounded in a small curated corpus, with source cards and explicit abstention.
@@ -26,6 +26,8 @@ No exact birth time? Offer a limited reading and explicitly identify excluded ti
 - Rate limits, service error states, health checks, backups and evaluation report.
 
 ## Later phases
+
+Account authentication, Google sign-in and cross-device recovery are future scope, disabled in the current journey. Retained OIDC code/tests are a compatibility foundation, not an active user-facing feature.
 
 After validated natal-chart grounding: reviewed Vimshottari dasha calculations and transits, supported by their own test fixtures; opt-in multilingual explanations; expert annotation tools; comparisons across declared traditions; audited private library uploads; payments only if requested; user-feedback experiments with consent. Larger corpus scale follows measured retrieval quality, not book-count marketing.
 

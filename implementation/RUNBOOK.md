@@ -1,6 +1,6 @@
 ﻿# Local development runbook
 
-This package is for local synthetic-data development. The Compose configuration binds services to loopback, uses PostgreSQL 16 and Qdrant 1.20.0, runs migrations before the web process and privacy worker, and preserves service data in named volumes. AI and embeddings remain disabled by default. Readiness means the database can answer a query; it does not certify source rights, Google login, AI, or retrieval availability.
+This package is for local synthetic-data development. The app opens directly into a separate anonymous browser workspace, without sign-in. Authentication is future scope and disabled by default. Compose binds services to loopback, uses PostgreSQL 16/Qdrant 1.20.0, runs migrations before web/worker and preserves service data in named volumes. AI/embeddings remain disabled by default. Readiness means the database can answer a query, not that source rights, AI or retrieval have been validated.
 
 ## Windows setup
 
@@ -8,11 +8,11 @@ Install uv through an approved installation method, then from the repository roo
 
 ```powershell
 ./scripts/bootstrap.ps1
-$env:DEV_LOGIN_ENABLED = 'true'
+$env:AUTHENTICATION_ENABLED = 'false'
 ./.venv/Scripts/python.exe -m uvicorn astrology_evidence.main:create_app --factory --host 127.0.0.1 --port 8000
 ```
 
-Open `http://127.0.0.1:8000` and select **Use local synthetic demo** on the sign-in page. This creates a local demo account; it is not Google authentication. Use invented birth data only. Start the durable privacy executor in another terminal:
+Open `http://127.0.0.1:8000`. No login or Google credentials are needed. Each browser receives its own opaque workspace cookie; another browser has separate records. Clearing cookies or session expiry loses access, with no recovery or cross-device sync yet. Use invented birth data only. Start the durable privacy executor in another terminal:
 
 ```powershell
 ./.venv/Scripts/python.exe -m astrology_evidence.jobs.worker
@@ -32,7 +32,7 @@ docker compose ps
 docker compose logs migrate web worker
 ```
 
-Keep that password available for later Compose commands; named volumes retain the original database password. The database password must be URL-safe because it is included in `DATABASE_URL`. Open the same loopback URL and synthetic sign-in flow. `docker compose stop` preserves data. Schema migrations are a separate `migrate` service. After changing migrations, rerun `docker compose run --rm migrate` before restarting web and worker. Do not use `down -v` unless you intend to erase the local database and index. Take a PostgreSQL backup and Qdrant snapshot before upgrading persisted services.
+Keep that password available for later Compose commands; named volumes retain the original database password. The database password must be URL-safe because it is included in `DATABASE_URL`. Open the same loopback URL and start directly in the anonymous workspace. `docker compose stop` preserves data. Schema migrations are a separate `migrate` service. After changing migrations, rerun `docker compose run --rm migrate` before restarting web/worker. Do not use `down -v` unless you intend to erase the local database/index. Take a PostgreSQL backup and Qdrant snapshot before upgrading services.
 
 ## Verification
 
@@ -60,7 +60,7 @@ These checks create a unique PostgreSQL schema and Qdrant collection, then remov
 
 `examples/synthetic-corpus.json` is a labeled test fixture, not a licensed astrology collection. Do not grant real content rights by copying its permission flags. Corpus import/publication requires an authorized administrator, edition-specific ingestion/display/transmission rights, and a configured pinned embedding model. No production content is automatically seeded.
 
-Google sign-in needs runtime `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` and the matching `/auth/google/callback` redirect URL. Real-user deployment additionally needs HTTPS, secure cookies, disabled development login, reviewed ephemeris licensing/files, an operating privacy worker, backups/restoration checks, and review of the actual provider/data transfer. Set `OPENAI_API_KEY` only in the runtime secret store after provider review; no credential is included here. Optional embedding dependencies/models must be installed and pinned separately. Do not enable production merely to bypass these gates.
+Real-user deployment still needs HTTPS, secure cookies, disabled development login, reviewed ephemeris licensing/files, a reliable privacy worker, anonymous-workspace abuse limits, backups/restoration checks, and provider/data-transfer review. Set `OPENAI_API_KEY` only in a runtime secret store after provider review. Optional embedding dependencies/models must be installed and pinned separately. Do not enable production merely to bypass these gates. Google credentials are unnecessary in the current mode. The retained future authentication path is enabled only with `AUTHENTICATION_ENABLED=true`, configured Google client/callback and separate live validation; account linking/recovery is not implemented.
 
 Docker build/start and live PostgreSQL/Qdrant delivery tests have not been executed on this Windows host because Docker is unavailable. CI is configured to perform the service tests; a workflow file is not evidence of a completed CI run.
 

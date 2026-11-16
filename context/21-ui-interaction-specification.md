@@ -2,6 +2,8 @@
 
 Status: implementation specification prepared 2026-11-15 and partially realized in the current UI. Extends [09 UI overview](09-ui-and-user-flows.md) and uses [12 API/data contracts](12-data-and-api-contracts.md) as the canonical schema. English, adult private beta, Vedic D1 natal scope. A synthetic browser flow has been exercised, but this specification still contains unimplemented interactions and unverified accessibility criteria. Numerical limits below remain requirements that must be synchronized with server validation; browser validation alone is insufficient.
 
+November 16 scope override: authentication is future work, disabled by default. Use automatic separate anonymous browser workspaces in the current UI; no login/logout step or Google prompts. Interpret owner checks below as server-derived browser-session ownership. See [the current guest/UI plan](46-anonymous-workspace-and-ui-plan.md) and [public-site research](45-ui-refresh-research.md) for the six-section navigation and refresh criteria. Historical Google-specific acceptance cases remain tests for the retained optional future mode.
+
 ## Interaction model and invariants
 
 Render pages with FastAPI/Jinja2, enhance forms with a small fetch script, use application CSS, and keep normal navigation/forms usable, matching implemented ADR-02. The server owns authentication, resource permissions, input normalization, job state and citation verification. The browser never computes authoritative planetary placements or decides that a passage supports a claim. Small client scripts may manage focus, disclosure panels and chart presentation; they cannot substitute for service validation.

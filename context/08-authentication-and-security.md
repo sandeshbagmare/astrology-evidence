@@ -1,8 +1,12 @@
 # Authentication, privacy, and security
 
-Status: proposed implementation contract; no authentication has been implemented. Research accessed 2026-11-15. Decisions below are project requirements, not claims that the application already enforces them.
+Status updated November 16: the user deferred authentication. The default app uses separate anonymous browser workspaces with opaque sessions and CSRF, without sign-in/out screens. Account/OIDC code is retained behind `AUTHENTICATION_ENABLED=true` for future compatibility. The Google flow below is future scope; ownership, cookie, CSRF, consent and deletion requirements still apply now. Research accessed 2026-11-15; current verification is in [implementation progress](../implementation/PROGRESS.md).
 
-## Account model and Google login
+## Current anonymous workspace
+
+Safe page navigation or `/api/me` creates a random owner and opaque browser session. A browser never shares another guest's profiles/readings or inherits an old signed-in identity. Mutations require the existing session, CSRF token and exact origin; a bare mutation cannot create a workspace. Health/static/public library reads avoid workspace allocation. Clearing cookies, expiry or deletion can lose access; there is no account recovery/cross-device sync. The UI must state this before storage. Anonymous users have no curator role. Abuse controls, quotas and production privacy operations remain release requirements.
+
+## Future account model and Google login
 
 Use Google OpenID Connect authorization-code flow through the Python backend. Authlib is the proposed integration library; pin and validate its FastAPI/Starlette integration during implementation. Request only `openid email profile`; do not request Drive, contacts, calendar, or offline access.
 

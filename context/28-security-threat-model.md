@@ -1,6 +1,6 @@
 # Security threat model and release evidence
 
-Status: proposed design, researched 2026-11-15. This is not an audit, implemented protection, or ASVS certification. It extends documents 08, 12, 13 and 43; task numbers refer to [the implementation plan](15-implementation-plan.md). All verification cases below remain pending. FreeGG endpoint behavior is user-reported and unverified; no provider request was made for this research.
+Status: proposed design, researched 2026-11-15, with scope updated November 16. This is not an audit, implemented protection, or ASVS certification. The current boundary is an opaque per-browser workspace with server-derived ownership, CSRF and origin checks; Google/OIDC threats below apply to a disabled future mode. Anonymous owner allocation, cookie-clearing quota evasion, inactive-workspace retention, orphan cleanup and unauthenticated traffic need explicit release controls. FreeGG endpoint behavior is user-reported and unverified; no provider request was made for this research.
 
 ## Assets, actors and boundaries
 

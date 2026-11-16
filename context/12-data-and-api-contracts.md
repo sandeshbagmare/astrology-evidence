@@ -6,7 +6,7 @@ This is the canonical data/API design. The application now implements a tested s
 
 | Entity | Required fields and invariants |
 |---|---|
-| User | id, Google issuer+subject unique, display name, verified-email snapshot, created_at, deletion_state; email is not identity |
+| User | id, issuer+subject unique, created_at, deletion_state; default issuer is anonymous-workspace with a random subject, no personal identity; Google/display-name/email are optional future-account fields, email is not identity |
 | Session | hashed random token, user_id, created_at, expires_at, last_seen_at, revoked_at; never log raw token |
 | Consent | user_id, notice_version, purpose, granted_at, revoked_at; record provider processing opt-in separately |
 | BirthProfile | id, owner_id, name/alias, birth_date, local_time nullable, time_precision enum, earliest/latest local time nullable, place label, latitude, longitude, IANA timezone, historical offset resolution status, DST fold nullable, created_at |
