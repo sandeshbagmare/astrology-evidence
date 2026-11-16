@@ -44,3 +44,23 @@ jobs:
           TEST_QDRANT_URL: http://localhost:6333
       - run: uv run ruff check src tests
       - run: uv run mypy src
+      - name: Build distributable wheel
+        run: uv build --wheel
+      - name: Check packaged web assets
+        run: |
+          uv run python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+
+          wheel = next(Path("dist").glob("*.whl"))
+          with ZipFile(wheel) as package:
+              names = set(package.namelist())
+          for required in (
+              "astrology_evidence/web/templates/source.html",
+              "astrology_evidence/web/templates/profile_form.html",
+              "astrology_evidence/web/static/app.js",
+              "astrology_evidence/web/static/app.css",
+          ):
+              assert required in names, f"Missing packaged asset: {required}"
+          print("Wheel includes required web assets")
+          PY

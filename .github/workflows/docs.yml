@@ -15,4 +15,5 @@ jobs:
         with:
           node-version: '24'
       - run: node --test scripts/check-docs.test.mjs
+      - run: node --test tests/ui_app_js.test.mjs
       - run: node scripts/check-docs.mjs
