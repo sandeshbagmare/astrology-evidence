@@ -1,14 +1,17 @@
 """Server-rendered browser application routes."""
 
+import hashlib
+import hmac
 import json
+from datetime import date, datetime, time
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
-from fastapi import APIRouter, HTTPException, Request, Response
+from fastapi import APIRouter, Form, HTTPException, Request, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from pydantic import ValidationError
+from pydantic import BaseModel, ConfigDict, ValidationError
 from sqlalchemy import select
 from starlette.concurrency import run_in_threadpool
 
@@ -16,7 +19,7 @@ from astrology_evidence import identity, privacy, profiles
 from astrology_evidence.answers import routes as answers
 from astrology_evidence.corpus import CorpusService, EditionImport
 from astrology_evidence.corpus import routes as corpus_routes
-from astrology_evidence.identity import get_db, get_settings, require_user
+from astrology_evidence.identity import get_db, get_settings, require_csrf, require_user
 from astrology_evidence.models import (
     ActiveCorpus,
     Chart,
@@ -29,6 +32,49 @@ from astrology_evidence.models import (
 BASE = Path(__file__).parent
 router = APIRouter()
 templates = Jinja2Templates(directory=str(BASE / "templates"))
+
+
+class TimeOptionsInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    birth_date: date
+    local_time: time
+    timezone: str
+
+
+def local_time_choices(birth: profiles.BirthInput) -> list[dict[str, Any]]:
+    unresolved = birth.model_copy(update={"fold": None})
+    resolved = profiles.resolve_birth_time(unresolved)
+    assert birth.local_time is not None
+    local = datetime.combine(birth.birth_date, birth.local_time)
+    options = []
+    for fold, instant in enumerate(resolved.candidates):
+        # Resolved candidates use the pinned tzdata package, independent of the host.
+        offset = local - instant.replace(tzinfo=None)
+        seconds = int(offset.total_seconds())
+        sign = "+" if seconds >= 0 else "-"
+        hours, remainder = divmod(abs(seconds), 3600)
+        minutes, extra_seconds = divmod(remainder, 60)
+        label_offset = f"UTC{sign}{hours:02d}:{minutes:02d}"
+        if extra_seconds:
+            label_offset += f":{extra_seconds:02d}"
+        occurrence = "First" if fold == 0 else "Second"
+        options.append(
+            {
+                "fold": fold,
+                "offset": label_offset,
+                "label": f"{occurrence} occurrence ({label_offset})",
+            }
+        )
+    return options
+
+
+def time_signature(request: Request, birth: profiles.BirthInput) -> str:
+    fields = birth.model_dump(
+        mode="json", include={"birth_date", "local_time", "timezone", "time_precision"}
+    )
+    key = request.cookies.get(get_settings(request).session_cookie, "").encode()
+    message = json.dumps(fields, sort_keys=True, separators=(",", ":")).encode()
+    return hmac.new(key, b"profile-time-review:" + message, hashlib.sha256).hexdigest()
 
 
 def render(request: Request, name: str, **context: Any):
@@ -100,6 +146,25 @@ def profile_new(request: Request):
     return render(request, "profile_form.html", **common(request, user), profile=None)
 
 
+@router.post("/api/time-options")
+def time_options(request: Request, payload: TimeOptionsInput):
+    require_csrf(request)
+    try:
+        birth = profiles.BirthInput(
+            birth_date=payload.birth_date,
+            local_time=payload.local_time,
+            time_precision="exact",
+            latitude=0,
+            longitude=0,
+            timezone=payload.timezone,
+            timezone_history="confirmed",
+        )
+        options = local_time_choices(birth)
+    except ValueError as exc:
+        raise HTTPException(422, "Local time is invalid for the selected timezone") from exc
+    return {"ambiguous": len(options) > 1, "candidates": options}
+
+
 @router.get("/profiles/{profile_id}/edit", response_class=HTMLResponse)
 def profile_edit(request: Request, profile_id: str):
     user = page_user(request)
@@ -119,8 +184,18 @@ def profile_edit(request: Request, profile_id: str):
                 ProfileRevision.revision == profile.version,
             )
         )
+        if revision is None:
+            raise HTTPException(404, "Profile revision not found")
+    birth = profiles.BirthInput.model_validate(revision.birth_input)
+    options = local_time_choices(birth) if birth.time_precision == "exact" else []
     return render(
-        request, "profile_form.html", **common(request, user), profile=profile, revision=revision
+        request,
+        "profile_form.html",
+        **common(request, user),
+        profile=profile,
+        revision=revision,
+        fold_options=options,
+        time_signature=time_signature(request, birth),
     )
 
 
@@ -166,7 +241,99 @@ def library(request: Request):
         passage = service.source(identifier)
         if passage:
             sources.append(passage.model_dump())
-    return render(request, "library.html", **common(request), sources=sources)
+    return render(
+        request,
+        "library.html",
+        **common(request),
+        sources=sources,
+        query="",
+        search_performed=False,
+    )
+
+
+@router.post("/library/search", response_class=HTMLResponse)
+def library_search(request: Request, question: str = Form(...)):
+    query = question.strip()
+    if not query or len(query) > 2000:
+        return render(
+            request,
+            "library.html",
+            **common(request),
+            sources=[],
+            query=question,
+            search_performed=True,
+            search_error="Enter a search between 1 and 2,000 characters.",
+        )
+    retriever = getattr(request.app.state, "retriever", None)
+    if retriever is None:
+        return render(
+            request,
+            "library.html",
+            **common(request),
+            sources=[],
+            query=question,
+            search_performed=True,
+            search_error="Source search is not configured.",
+        )
+    try:
+        sources = [item.model_dump() for item in retriever.search(query, action="display")]
+    except (ValueError, RuntimeError):
+        return render(
+            request,
+            "library.html",
+            **common(request),
+            sources=[],
+            query=question,
+            search_performed=True,
+            search_error="Source search is temporarily unavailable.",
+        )
+    return render(
+        request,
+        "library.html",
+        **common(request),
+        sources=sources,
+        query=question,
+        search_performed=True,
+    )
+
+
+@router.get("/library/sources/{passage_id}", response_class=HTMLResponse)
+def source_page(request: Request, passage_id: str, reading_id: str | None = None):
+    service = CorpusService(get_db(request))
+    back_url = "/library"
+    generation_id = None
+    expected_hash = None
+    if reading_id is not None:
+        user = page_user(request)
+        reading = answers.read(request, reading_id)
+        evidence = next(
+            (
+                item
+                for item in reading.get("evidence_manifest", {}).get("passages", [])
+                if item.get("id") == passage_id
+            ),
+            None,
+        )
+        if evidence is None:
+            raise HTTPException(404, "Source not found")
+        generation_id = evidence["generation_id"]
+        expected_hash = evidence["text_hash"]
+        back_url = f"/readings/{reading_id}"
+        user_context = user
+    else:
+        user_context = None
+    source = service.source(passage_id, action="display", generation_id=generation_id)
+    if source is None:
+        raise HTTPException(404 if reading_id is None else 410, "Source unavailable")
+    if expected_hash is not None and source.text_hash != expected_hash:
+        raise HTTPException(410, "Source evidence is no longer available")
+    return render(
+        request,
+        "source.html",
+        **common(request, user_context),
+        source=source,
+        back_url=back_url,
+    )
 
 
 @router.get("/settings", response_class=HTMLResponse)
@@ -217,6 +384,7 @@ def dispatch_form(request: Request, form: dict[str, Any]):
             response.headers["location"] = "/login"
             return response
         if action == "profile":
+            user = require_csrf(adapted)
             precision = form.get("time_precision", "unknown")
             birth = {
                 "birth_date": form.get("birth_date"),
@@ -228,6 +396,8 @@ def dispatch_form(request: Request, form: dict[str, Any]):
             }
             if precision == "exact":
                 birth["local_time"] = form.get("local_time")
+                fold = form.get("fold")
+                birth["fold"] = int(str(fold)) if fold in ("0", "1") else None
             elif precision == "approximate":
                 birth.update(
                     earliest_local=form.get("earliest_local"), latest_local=form.get("latest_local")
@@ -238,6 +408,37 @@ def dispatch_form(request: Request, form: dict[str, Any]):
                 "storage_consent": form.get("storage_consent") == "true",
                 "notice_version": "privacy-1",
             }
+            birth_input = profiles.BirthInput.model_validate(birth)
+            if precision == "exact":
+                options = local_time_choices(birth_input)
+                signature = time_signature(adapted, birth_input)
+                if len(options) > 1 and (
+                    birth_input.fold is None
+                    or not hmac.compare_digest(str(form.get("time_signature", "")), signature)
+                ):
+                    profile = None
+                    if form.get("profile_id"):
+                        profile = profiles.get_profile(adapted, str(form["profile_id"]))
+                        profile["alias"] = str(form.get("alias", ""))
+                        profile["version"] = int(str(form.get("expected_version")))
+                    draft = birth_input.model_copy(update={"fold": None}).model_dump(mode="json")
+                    response = render(
+                        request,
+                        "profile_form.html",
+                        **common(request, user),
+                        profile=profile,
+                        revision={"birth_input": draft},
+                        draft_alias=str(form.get("alias", "")),
+                        storage_consent=form.get("storage_consent") == "true",
+                        fold_options=options,
+                        time_signature=signature,
+                        time_error=(
+                            "Review the offsets and choose the first or second occurrence "
+                            "for this local time before saving."
+                        ),
+                    )
+                    response.status_code = 422
+                    return response
             if form.get("profile_id"):
                 payload["expected_version"] = int(str(form.get("expected_version")))
                 profiles.update_profile(
@@ -264,6 +465,8 @@ def dispatch_form(request: Request, form: dict[str, Any]):
                 "/readings/" + result["reading_id"] if result.get("reading_id") else "/readings"
             )
         elif action == "delete_reading":
+            if form.get("confirm_delete") != "DELETE":
+                raise HTTPException(422, "Type DELETE to confirm removal of this reading")
             answers.delete(adapted, str(form["reading_id"]))
             target = "/readings"
         elif action == "delete_profile":

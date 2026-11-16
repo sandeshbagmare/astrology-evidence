@@ -1,1 +1,25 @@
-{% extends "base.html" %}{% block content %}<h1>Source library</h1><p>{{ sources|length }} currently display-permitted passages in the published corpus. Citations establish what a source says, not scientific prediction.</p>{% for source in sources %}<article class="card"><h2>{{ source.title }}</h2><p>{{ source.attributed_author }} ? {{ source.layer_type }}</p><p>{{ source.attribution }}</p><dl>{% for key,value in source.locators.items() %}<dt>{{ key }}</dt><dd>{{ value }}</dd>{% endfor %}</dl><blockquote>{{ source.text }}</blockquote></article>{% else %}<div class="notice">No approved corpus passages are currently available for display.</div>{% endfor %}{% endblock %}
+{% extends "base.html" %}
+{% block title %}Source library{% endblock %}
+{% block content %}
+<h1>Source library</h1>
+<p>{% if search_performed %}{{ sources|length }} matching passages with display permission{% else %}{{ sources|length }} display-permitted passages in the published corpus{% endif %}. Citations establish what a source says, not scientific prediction.</p>
+<form action="/library/search" method="post" class="narrow">
+  <label for="library-query">Search approved passages</label>
+  <textarea id="library-query" name="question" required maxlength="2000" rows="3">{{ query }}</textarea>
+  <button type="submit">Search sources</button>
+</form>
+{% if search_error %}<p role="alert" class="notice">{{ search_error }}</p>
+{% elif search_performed and not sources %}<p class="notice">No approved passages matched this search.</p>{% endif %}
+{% for source in sources %}
+<article class="card">
+  <h2>{{ source.title }}</h2>
+  <p>{{ source.attributed_author }} · {{ source.layer_type }}</p>
+  <p>{{ source.attribution }}</p>
+  <dl>{% for key,value in source.locators.items() %}<dt>{{ key|replace('_',' ')|capitalize }}</dt><dd>{{ value }}</dd>{% endfor %}</dl>
+  <blockquote>{{ source.text }}</blockquote>
+  <a href="/library/sources/{{ source.id }}">Inspect this source</a>
+</article>
+{% else %}
+  {% if not search_performed %}<div class="notice">No approved corpus passages are currently available for display.</div>{% endif %}
+{% endfor %}
+{% endblock %}
