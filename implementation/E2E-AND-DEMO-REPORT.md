@@ -2,6 +2,8 @@
 
 November 16, 2026. Application baseline: `91812d1`; favicon update: `e2da911`; published demos: `992f094`. This pass adds recorded demonstrations, repeatable browser checks and a missing application favicon. It does not enable live AI or add production books. Public deployment and complete-playback evidence appears below.
 
+Latest follow-up: the deeper quality pass and its new regressions are recorded in [implementation progress](PROGRESS.md). The recordings below remain evidence for their explicitly named revision; they are not presented as recordings of later fixes.
+
 ## What the recordings show
 
 All profiles and questions are invented. There is no audio. English captions, written steps, downloadable WebM videos and screenshots are available in the [published guide's demo section](https://sandeshbagmare.github.io/astrology-evidence/#demos).

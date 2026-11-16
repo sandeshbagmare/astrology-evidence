@@ -1,5 +1,17 @@
 # Application implementation progress
 
+## Latest: deeper regression review - November 16, 2026
+
+Three parallel reviewers and the coordinator reproduced and fixed four defects in the previously passing baseline:
+
+- `6f96a3e`: cancelling a reading, revoking consent or purging its owner/profile could free a concurrency slot while workflow I/O was still running. Independent database permits now survive those actions and release when the workflow returns or their bounded lease expires. This preserves immediate cancellation and publication denial; an uncooperative upstream may still execute beyond the lease deadline.
+- `b63458e`: chart reuse now includes runtime/data reproducibility, preserving older immutable snapshots while creating a fresh snapshot after engine or timezone-data changes. Answer validation also rejects boolean/integer/float substitutions in facts and source locators, including nested values.
+- `a67b180`: deleting a profile through the UI now requires typing DELETE before revoking that profile, its charts and its readings. The server enforces the same confirmation; API ownership semantics are unchanged. Two damaged UI separators were corrected.
+
+The integrated local run passed **368 non-native tests**, with **six service-dependent skips**, plus **35 native calculation tests**. Ruff and mypy passed; the existing eight Node checks and a new browser-cleanup regression passed. The latter prevents a cleanup error from hiding the original test failure and ensures browser contexts close. Independent reviewers reproduced the failures before implementation and reviewed the fixes afterward.
+
+A fresh local Edge run could not complete ordinary click stability checks: two independently launched sessions delivered zero animation frames even with a visible, focused page. Reduced motion and a new session did not resolve it. The alternate installed Chromium binary failed to spawn. These are recorded environment failures, not browser passes. The repeated application journey is being moved into Linux CI with synthetic data, disabled AI and no credentials; its exact result is recorded after execution. Historical demo recordings remain available and are identified by their tested revision.
+
 ## Latest: recorded end-to-end verification — November 16, 2026
 
 Recorded desktop and mobile (JavaScript disabled) journeys pass through profiles, chart calculation, chart-bound abstention, source limitations, completed private export and confirmed workspace deletion. The public guide now includes three captioned downloadable demos, screenshots and written steps. Fresh local checks passed 342 application tests with five service-dependent skips, 35 native calculation tests, Ruff and mypy; the favicon follow-up passed 38 web/health tests. Independent reviewers checked the documentation and browser scripts; eight Node tests and 91-file documentation validation passed. See [the end-to-end/demo report](E2E-AND-DEMO-REPORT.md) for exact final publication, playback and CI evidence and remaining gates. Previous results below are historical, not additional unique tests.

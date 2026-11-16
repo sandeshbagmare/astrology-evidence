@@ -60,7 +60,51 @@ jobs:
               "astrology_evidence/web/templates/profile_form.html",
               "astrology_evidence/web/static/app.js",
               "astrology_evidence/web/static/app.css",
+              "astrology_evidence/web/static/favicon.svg",
           ):
               assert required in names, f"Missing packaged asset: {required}"
           print("Wheel includes required web assets")
           PY
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - name: Install pinned browser test tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/browser-tools" --no-save --package-lock=false playwright@1.58.2
+          node "$RUNNER_TEMP/browser-tools/node_modules/playwright/cli.js" install --with-deps chromium
+      - name: Verify synthetic application in Chromium
+        timeout-minutes: 5
+        env:
+          APP_ENV: test
+          APP_PUBLIC_ORIGIN: http://127.0.0.1:8000
+          DATABASE_URL: sqlite:///${{ runner.temp }}/browser-app.db
+          AUTHENTICATION_ENABLED: 'false'
+          DEV_LOGIN_ENABLED: 'false'
+          AI_ENABLED: 'false'
+          EMBEDDING_ENABLED: 'false'
+          PLAYWRIGHT_PACKAGE_DIR: ${{ runner.temp }}/browser-tools/node_modules/playwright
+        run: |
+          .venv/bin/python -m uvicorn astrology_evidence.main:create_app --factory --host 127.0.0.1 --port 8000 > "$RUNNER_TEMP/browser-app.log" 2>&1 &
+          app_pid=$!
+          worker_pid=''
+          cleanup() {
+            if [ -n "$worker_pid" ]; then
+              kill "$worker_pid" 2>/dev/null || true
+              wait "$worker_pid" 2>/dev/null || true
+            fi
+            kill "$app_pid" 2>/dev/null || true
+            wait "$app_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8000/health/ready > /dev/null; then break; fi
+            if ! kill -0 "$app_pid" 2>/dev/null; then cat "$RUNNER_TEMP/browser-app.log"; exit 1; fi
+            sleep 2
+          done
+          curl --fail --silent http://127.0.0.1:8000/health/ready > /dev/null
+          .venv/bin/python -m astrology_evidence.jobs.worker > "$RUNNER_TEMP/browser-worker.log" 2>&1 &
+          worker_pid=$!
+          if ! node scripts/run-browser-check.mjs; then
+            cat "$RUNNER_TEMP/browser-app.log" "$RUNNER_TEMP/browser-worker.log"
+            exit 1
+          fi

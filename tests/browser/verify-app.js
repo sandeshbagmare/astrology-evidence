@@ -6,6 +6,8 @@ async page => {
   const browser = page.context().browser();
   const context = await browser.newContext({viewport:{width:1440,height:1000}});
   const contexts = [context];
+  const deletedContexts = new Set();
+  let primaryFailure;
   try {
   const owner = await context.newPage();
   const pageErrors = [];
@@ -78,6 +80,20 @@ async page => {
   await owner.getByLabel('Type DELETE to remove this reading:').fill('DELETE');
   await owner.getByRole('button',{name:'Delete reading',exact:true}).click();
   await owner.waitForURL('**/readings');
+  await owner.goto(origin + '/profiles/' + profileRecord.id + '/edit');
+  const deleteProfile = owner.getByRole('button', {name:'Delete profile and its readings',exact:true});
+  await deleteProfile.click();
+  const confirmation = owner.getByLabel('Type DELETE to remove this profile and its readings:', {exact:true});
+  if (await confirmation.evaluate(input => input.validity.valid)) throw new Error('Profile deletion does not require confirmation');
+  const unconfirmed = await context.request.get(origin + '/api/profiles/' + profileRecord.id);
+  if (unconfirmed.status() !== 200) throw new Error('Unconfirmed profile deletion removed data');
+  await confirmation.fill('DELETE');
+  await deleteProfile.click();
+  await owner.waitForURL('**/dashboard');
+  for (const resource of ['/api/profiles/' + profileRecord.id, '/api/charts/' + chartId]) {
+    const removed = await context.request.get(origin + resource);
+    if (removed.status() !== 404) throw new Error('Confirmed profile deletion did not revoke ' + resource);
+  }
   const nojs = await browser.newContext({javaScriptEnabled:false,viewport:{width:320,height:740}});
   contexts.push(nojs);
   const fallback = await nojs.newPage();
@@ -99,15 +115,37 @@ async page => {
   await fallback.goto(origin + '/settings');
   await fallback.getByRole('button',{name:'Request export',exact:true}).click();
   await fallback.getByRole('heading',{name:'Export queued',exact:true}).waitFor();
+  const download = fallback.getByRole('link', {name:'Download export',exact:true});
+  const exportDeadline = Date.now() + 15000;
+  while (!(await download.count()) && Date.now() < exportDeadline) {
+    await fallback.waitForTimeout(Math.max(0, Math.min(500, exportDeadline - Date.now())));
+    const remaining = exportDeadline - Date.now();
+    if (remaining <= 0) break;
+    await fallback.getByRole('link', {name:'Refresh export status',exact:true}).click({timeout:remaining});
+  }
+  if (!(await download.count())) throw new Error('Privacy worker did not finish the export within 15 seconds');
+  const exportUrl = new URL(await download.getAttribute('href'), origin).href;
+  const exported = await nojs.request.get(exportUrl);
+  if (exported.status() !== 200 || exported.headers()['cache-control'] !== 'no-store') throw new Error('Owner export download failed or may be cached');
+  await exported.dispose();
+  const forbiddenExport = await foreignContext.request.get(exportUrl);
+  if (forbiddenExport.status() !== 404) throw new Error('Export is accessible from another workspace');
+  await forbiddenExport.dispose();
   await fallback.goto(origin + '/settings');
   await fallback.getByLabel('Type DELETE to confirm',{exact:true}).fill('DELETE');
   await fallback.getByRole('button',{name:'Delete workspace data',exact:true}).click();
   await fallback.getByRole('link',{name:'Start a fresh workspace',exact:true}).waitFor();
+  deletedContexts.add(nojs);
   if (pageErrors.length) throw new Error('Page errors ' + JSON.stringify(pageErrors));
-  return {status:'PASS',layouts:layouts.length,guestIsolation:denied,chartFacts:chart.facts.length,jsErrors:pageErrors.length,flow:'guest/DST/chart/reading/delete/noJS/export/delete-workspace'};
+  return {status:'PASS',layouts:layouts.length,guestIsolation:denied,chartFacts:chart.facts.length,jsErrors:pageErrors.length,profileDeletion:true,exportCompleted:true,exportOwnerOnly:true,flow:'guest/DST/chart/reading/delete/noJS/export/delete-workspace'};
+  } catch (error) {
+    primaryFailure = error;
+    throw error;
   } finally {
+    const cleanupErrors = [];
     for (const disposable of contexts.reverse()) {
       try {
+        if (deletedContexts.has(disposable)) continue;
         const cleanup = await disposable.newPage();
         await cleanup.goto(origin + '/settings');
         const remove = cleanup.getByRole('button', {name: 'Delete workspace data', exact: true});
@@ -116,9 +154,19 @@ async page => {
           await remove.click();
           await cleanup.getByRole('link', {name: 'Start a fresh workspace', exact: true}).waitFor();
         }
+      } catch (error) {
+        cleanupErrors.push(error);
       } finally {
-        await disposable.close();
+        try {
+          await disposable.close();
+        } catch (error) {
+          cleanupErrors.push(error);
+        }
       }
+    }
+    if (cleanupErrors.length) {
+      if (primaryFailure) primaryFailure.cleanupErrors = cleanupErrors;
+      else throw new AggregateError(cleanupErrors, 'Browser verification cleanup failed');
     }
   }
 }
