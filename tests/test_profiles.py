@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 import pytest
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
@@ -8,7 +10,7 @@ from astrology_evidence.config import Settings
 from astrology_evidence.db import create_db
 from astrology_evidence.identity import issue_login
 from astrology_evidence.identity import router as identity_router
-from astrology_evidence.models import Profile, ProfileRevision, User
+from astrology_evidence.models import Chart, Profile, ProfileRevision, User
 
 BIRTH = {
     "birth_date": "2000-01-01",
@@ -173,3 +175,84 @@ def test_chart_rejects_client_engine_paths(client):
         ).status_code
         == 422
     )
+
+
+def test_chart_cache_tracks_runtime_without_rewriting_saved_snapshots(client):
+    profile = create(client).json()
+    snapshot = {
+        "manifest": {
+            "input_hash": "a" * 64,
+            "settings_hash": "b" * 64,
+            "reproducibility_hash": "c" * 64,
+            "engine_version": "original-runtime",
+            "computed_at": "2000-01-01T00:00:00Z",
+        },
+        "settings": {},
+        "facts": [{"fact_id": "original:sun:longitude", "value": 100.0}],
+        "unavailable_facts": {},
+    }
+    client.app.state.calculator = lambda birth, settings: SimpleNamespace(
+        model_dump=lambda **kwargs: snapshot
+    )
+
+    def calculate():
+        response = client.post(
+            "/api/charts",
+            json={"profile_revision_id": profile["profile_revision_id"]},
+            headers=headers(client),
+        )
+        assert response.status_code == 201
+        return response.json()
+
+    first = calculate()
+    snapshot["manifest"]["computed_at"] = "2000-01-02T00:00:00Z"
+    assert calculate()["id"] == first["id"]
+    snapshot["manifest"].update(
+        reproducibility_hash="d" * 64, engine_version="updated-runtime"
+    )
+    snapshot["facts"] = [{"fact_id": "updated:sun:longitude", "value": 101.0}]
+    updated = calculate()
+    assert updated["id"] != first["id"]
+    assert updated["facts"][0]["value"] == 101.0
+    assert updated["manifest"]["engine_version"] == "updated-runtime"
+    assert updated["manifest"]["settings_hash"] == first["manifest"]["settings_hash"]
+    assert client.get("/api/charts/" + first["id"]).json() == first
+    assert calculate()["id"] == updated["id"]
+
+
+def test_legacy_chart_cache_row_remains_readable_after_runtime_cache_upgrade(client):
+    profile = create(client).json()
+    with client.app.state.db.session() as db:
+        legacy = Chart(
+            owner_id=profile["owner_id"],
+            profile_revision_id=profile["profile_revision_id"],
+            input_hash="a" * 64,
+            settings_hash="b" * 64,
+            settings={},
+            manifest={"input_hash": "a" * 64, "settings_hash": "b" * 64},
+            facts=[{"fact_id": "old", "value": 100.0}],
+            unavailable_facts={},
+        )
+        db.add(legacy)
+        db.flush()
+        legacy_id = legacy.id
+    client.app.state.calculator = lambda birth, settings: SimpleNamespace(
+        model_dump=lambda **kwargs: {
+            "manifest": {
+                "input_hash": "a" * 64,
+                "settings_hash": "b" * 64,
+                "reproducibility_hash": "c" * 64,
+            },
+            "settings": {},
+            "facts": [{"fact_id": "new", "value": 101.0}],
+            "unavailable_facts": {},
+        }
+    )
+    response = client.post(
+        "/api/charts",
+        json={"profile_revision_id": profile["profile_revision_id"]},
+        headers=headers(client),
+    )
+    assert response.status_code == 201
+    assert response.json()["id"] != legacy_id
+    assert client.get("/api/charts/" + legacy_id).json()["facts"][0]["value"] == 100.0

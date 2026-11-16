@@ -76,13 +76,28 @@ def _boundary(text: str, offset: int) -> bool:
     return offset == 0 or any(match.end() == offset for match in regex.finditer(r"\X", text))
 
 
+def _same_json(left: Any, right: Any) -> bool:
+    # Python equality conflates booleans and numbers, including inside containers.
+    if type(left) is not type(right):
+        return False
+    if isinstance(left, dict):
+        return left.keys() == right.keys() and all(
+            _same_json(value, right[key]) for key, value in left.items()
+        )
+    if isinstance(left, list):
+        return len(left) == len(right) and all(
+            _same_json(a, b) for a, b in zip(left, right, strict=True)
+        )
+    return bool(left == right)
+
+
 def validate_answer(value: Any, passages: list[Any], facts: list[dict]) -> ReadingAnswer:
     answer = ReadingAnswer.model_validate(value)
     by_id = {p.id: p for p in passages}
     citations = {c.citation_id: c for c in answer.evidence_manifest}
     if len(citations) != len(answer.evidence_manifest):
         raise ValueError("duplicate citation")
-    if any(fact not in facts for fact in answer.computed_facts):
+    if any(not any(_same_json(fact, saved) for saved in facts) for fact in answer.computed_facts):
         raise ValueError("invented chart fact")
     fact_ids = {fact["fact_id"] for fact in facts}
     for citation in citations.values():
@@ -102,7 +117,7 @@ def validate_answer(value: Any, passages: list[Any], facts: list[dict]) -> Readi
             raise ValueError("quote mismatch")
         if not _boundary(p.text, citation.start) or not _boundary(p.text, citation.end):
             raise ValueError("grapheme split")
-        if citation.locators != p.locators:
+        if not _same_json(citation.locators, p.locators):
             raise ValueError("invented locator")
     if len({c.claim_id for c in answer.traditional_claims}) != len(answer.traditional_claims):
         raise ValueError("duplicate claim")

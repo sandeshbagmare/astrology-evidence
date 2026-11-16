@@ -1,5 +1,6 @@
 """Owned birth profiles, append-only revisions and chart snapshots."""
 
+from hashlib import sha256
 from typing import Any, Literal, cast
 
 from fastapi import APIRouter, HTTPException, Request
@@ -232,7 +233,10 @@ def create_chart(request: Request, payload: ChartCreate):
     result = snapshot.model_dump(mode="json")
     manifest = result["manifest"]
     input_hash = manifest["input_hash"]
-    settings_hash = manifest["settings_hash"]
+    # This column is the internal cache key; the manifest retains the settings-only digest.
+    settings_hash = sha256(
+        f"{manifest['settings_hash']}:{manifest['reproducibility_hash']}".encode()
+    ).hexdigest()
     with get_db(request).session() as db:
         existing = db.scalar(
             select(Chart).where(

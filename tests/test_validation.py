@@ -199,3 +199,42 @@ def test_rule_cannot_run_code_or_unknown_operations():
             passage_ids=["p1"],
             conditions=[{"kind": "sign", "equals": "aries", "eval": "danger"}],
         )
+
+
+@pytest.mark.parametrize(
+    "original,replacement",
+    [(False, 0), (True, 1), (0, False), (1, 1.0), (1.0, 1),
+     ({"nested": [False]}, {"nested": [0]})],
+)
+def test_generated_facts_preserve_value_types(original, replacement):
+    fact = {**FACT, "value": original}
+    data = answer()
+    data["computed_facts"] = [{**fact, "value": replacement}]
+    with pytest.raises(ValueError, match="invented chart fact"):
+        validate(data, facts=[fact])
+
+
+@pytest.mark.parametrize(
+    "original,replacement",
+    [(False, 0), (True, 1), (0, False), (1, 1.0), (1.0, 1),
+     ({"pages": [1, False]}, {"pages": [1, 0]})],
+)
+def test_generated_locators_preserve_value_types(original, replacement):
+    source = passage()
+    source.locators = {"printed_page": original}
+    data = answer()
+    data["evidence_manifest"][0]["locators"] = {"printed_page": replacement}
+    with pytest.raises(ValueError, match="invented locator"):
+        validate(data, ps=[source])
+
+
+def test_exact_nested_fact_and_locator_data_can_reorder_dictionary_keys():
+    fact = {**FACT, "value": {"a": [False, 1, 1.0], "b": "text"}}
+    source = passage()
+    source.locators = {"chapter": 1, "pages": [2, 3], "metadata": {"a": False, "b": 1.0}}
+    data = answer()
+    data["computed_facts"] = [{**fact, "value": {"b": "text", "a": [False, 1, 1.0]}}]
+    data["evidence_manifest"][0]["locators"] = {
+        "metadata": {"b": 1.0, "a": False}, "pages": [2, 3], "chapter": 1,
+    }
+    assert validate(data, ps=[source], facts=[fact]).status == "partial"

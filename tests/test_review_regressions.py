@@ -16,7 +16,10 @@ from astrology_evidence.models import Profile, ReadingRequest, utcnow
 def test_identical_birth_data_keeps_chart_bound_to_requested_revision(client):
     client.app.state.calculator = lambda birth, settings: SimpleNamespace(
         model_dump=lambda **kwargs: {
-            "manifest": {"input_hash": "a" * 64, "settings_hash": "b" * 64},
+            "manifest": {
+                "input_hash": "a" * 64, "settings_hash": "b" * 64,
+                "reproducibility_hash": "c" * 64,
+            },
             "settings": {},
             "facts": [],
             "unavailable_facts": [],
@@ -37,7 +40,10 @@ def test_identical_birth_data_keeps_chart_bound_to_requested_revision(client):
 def test_deleted_profile_chart_cannot_be_returned_for_new_profile(client):
     client.app.state.calculator = lambda birth, settings: SimpleNamespace(
         model_dump=lambda **kwargs: {
-            "manifest": {"input_hash": "a" * 64, "settings_hash": "b" * 64},
+            "manifest": {
+                "input_hash": "a" * 64, "settings_hash": "b" * 64,
+                "reproducibility_hash": "c" * 64,
+            },
             "settings": {},
             "facts": [],
             "unavailable_facts": [],
