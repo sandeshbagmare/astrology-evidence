@@ -23,7 +23,12 @@ async page => {
       const response = await owner.goto(origin + path);
       if (response.status() !== 200) throw new Error(path + ' returned ' + response.status());
       const size = await owner.evaluate(() => ({width:innerWidth,scrollWidth:document.documentElement.scrollWidth}));
-      if (size.scrollWidth > size.width) throw new Error('Overflow ' + path + ' at ' + width + ': ' + size.scrollWidth);
+      if (size.scrollWidth > size.width) {
+        const overflowing = await owner.evaluate(() => [...document.querySelectorAll('input,select,label,fieldset,section,aside')]
+          .map(element => ({tag:element.tagName,name:element.getAttribute('name'),right:element.getBoundingClientRect().right}))
+          .filter(element => element.right > innerWidth).slice(0, 8));
+        throw new Error('Overflow ' + path + ' at ' + width + ': ' + size.scrollWidth + ' ' + JSON.stringify(overflowing));
+      }
       if (await owner.locator('a[href="/login"],input[value="logout"]').count()) throw new Error('Login UI on ' + path);
       layouts.push({path,width,pass:true});
     }
